@@ -9,6 +9,7 @@ from coreQt.widgets._ui import wg_rangeUI
 class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
     """
     Range Class: Range selector Widget
+    Usage: widget = Range(rangeMin=0, rangeMax=1000, normalized=True, rampData=None, parent=None)
 
     :param rangeMin: Minimum range value
     :type rangeMin: int
@@ -16,7 +17,9 @@ class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
     :type rangeMax: int
     :param normalized: Normalize range value
     :type normalized: bool
-    :param rampData: Ramp range data
+    :param rampData: Ramp range data (rampDict={'0': 'rgba(0, 0, 0, 255)',
+                                                '0.5': 'rgba(0, 255, 0, 255)',
+                                                '1': 'rgba(255, 255, 255, 255)'}
     :type rampData: dict
     :param parent: Parent widget
     :type parent: QtGui.QMainWindow | QtGui.QWidget
