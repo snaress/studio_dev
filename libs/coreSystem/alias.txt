@@ -1,0 +1,27 @@
+ls = dir /ON
+lsl = dir /OD
+c = cls
+
+
+pyUic = C:\Python27\Lib\site-packages\PyQt4\pyuic4.bat $*
+pyCharm = "C:\Program Files (x86)\JetBrains\PyCharm Community Edition 3.4.1\bin\pycharm.exe "
+designer = "C:\Python27\Lib\site-packages\PyQt4\designer.exe"
+
+
+maya = F:\apps\Autodesk\Maya2014\bin\maya.exe $*
+mayaPy = F:\apps\Autodesk\Maya2014\bin\mayapy.exe $*
+mayaBatch = F:\apps\Autodesk\Maya2014\bin\mayabatch.exe $*
+mayaRender = F:\apps\Autodesk\Maya2014\bin\Render.exe $*
+
+
+foundry = "C:\Program Files (x86)\The Foundry\LicensingTool
+nuke5 = F:\apps\Nuke5.0v2\nuke5.0.exe $*
+nuke9 = F:\apps\Nuke9.0v1\nuke9.0.exe $*
+
+
+synchro = F:\rnd\workspace\studio_dev\libs\coreSystem\synchro.py $*
+widgets = F:\rnd\workspace\studio_dev\libs\coreQt\widgets\__usage__.py $*
+
+
+my = "F:\rnd\workspace\studio_dev\lib\system\alias.txt"
+aliasHelp = type C:%HOMEPATH%\alias.txt
