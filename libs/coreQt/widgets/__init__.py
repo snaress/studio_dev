@@ -1,5 +1,5 @@
 import os
-from coreQt import procQt as pQt
+from coreQt import pQt
 
 
 #===== PACKAGE VAR =====#
@@ -13,10 +13,18 @@ print '%s %s %s' % ('#'*30, toolName.capitalize() ,'#'*30)
 print 'Tool Path : ', toolPath
 print 'Tool Package : ', toolPack
 print '#%s#' % ('-'*(60+len(toolName)))
+
 def compileUi(uiFiles):
+    """
+    Compile given ui files
+
+    :param uiFiles: Ui files
+    :type uiFiles: str | list
+    """
     if isinstance(uiFiles, basestring):
         uiFiles = [uiFiles]
     for f in uiFiles:
         pQt.CompileUi().compileFile(srcFile=os.path.join(toolPath, '_src', f),
                                     dstFile=os.path.join(toolPath, '_ui', f.replace('.ui', '.py')))
+
 print '%s\n' % ('#'*(62+len(toolName)))

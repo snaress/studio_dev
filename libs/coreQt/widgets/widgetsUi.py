@@ -160,10 +160,6 @@ class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
 if __name__ == '__main__':
     import sys
 
-    ramp = {'0': 'rgba(0, 0, 0, 255)',
-            '0.5': 'rgba(0, 255, 0, 255)',
-            '1': 'rgba(255, 255, 255, 255)'}
-
     app = QtGui.QApplication(sys.argv)
     window = Range()
     window.show()

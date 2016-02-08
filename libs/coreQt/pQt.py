@@ -6,7 +6,7 @@ from coreSystem import env
 
 class CompileUi(object):
     """
-    Convert given ui file or path to python file into dstUi path or file
+    CompileUi Class: Convert given ui file or path to python file into dstUi path or file
 
     :param pyUic: pyuic.bat absolut path (default: coreSystem.env.pyUic)
     :type pyUic: str
@@ -150,3 +150,79 @@ class CompileUi(object):
                 else:
                     print "%s \t ---> \t OK" % os.path.basename(pyFile)
                     return 'ok'
+
+#========================================== STYLE SHEET ==========================================#
+
+class Style(object):
+    """
+    Style Class: Contains ui styleSheets
+    """
+
+    def __init__(self):
+        self.col = "color"
+        self.bgCol = "background-color"
+        self.aBgCol = "alternate-background-color"
+
+    @property
+    def styles(self):
+        """
+        Get avalaible styles
+
+        :return: StyleSheets
+        :rtype: list
+        """
+        return ['default', 'darkGrey']
+
+    @property
+    def default(self):
+        """
+        Default Ui styleSheet
+
+        :return: Style sheet
+        :rtype: str
+        """
+        return ""
+
+    @property
+    def darkGrey(self):
+        """
+        Dark Grey Ui styleSheet
+
+        :return: Style sheet
+        :rtype: str
+        """
+        #-- Values --#
+        color_1 = "rgb(200, 200, 200)"
+        bgColor_1 = "rgb(50, 50, 50)"
+        bgColor_2 = "rgb(40, 40, 40)"
+        bgColor_3 = "rgb(65, 65, 65)"
+        #-- Style Sheet --#
+        style = ["QWidget {%s: %s; %s: %s; %s: %s;}" % (self.bgCol, bgColor_1,
+                                                        self.aBgCol, bgColor_2,
+                                                        self.col, color_1),
+                 "QPushButton:hover, QLineEdit:hover, QTabBar::tab:hover {%s: %s}" % (self.bgCol, bgColor_3),
+                 "QMenuBar::item {%s: %s; %s: %s;}" % (self.bgCol, bgColor_1,
+                                                       self.col, color_1),
+                 "QMenuBar::item:selected, QMenu::item:selected {%s: %s}" % (self.bgCol, bgColor_3),
+                 "QHeaderView::section {%s: %s;}" % (self.bgCol, bgColor_1),
+                 "QProgressBar {border: %s;}" % bgColor_1,
+                 "QLineEdit {%s: %s}" % (self.bgCol, bgColor_2),
+                 "QTabBar::tab {%s: %s;}" % (self.bgCol, bgColor_2),
+                 "QTabBar::tab:selected {%s: %s;}" % (self.bgCol, bgColor_1)]
+        #-- Result --#
+        return ''.join(style)
+
+    def getStyle(self, style):
+        """
+        Get styleSheet from given style
+
+        :param style: StyleSheet name (must be in self.styles)
+        :type style: str
+        :return: StyleSheet
+        :rtype: str
+        """
+        if style in self.styles:
+            if style == 'default':
+                return self.default
+            elif style == 'darkGrey':
+                return self.darkGrey
