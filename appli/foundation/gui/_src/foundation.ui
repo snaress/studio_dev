@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mw_foundation</class>
+ <widget class="QMainWindow" name="mw_foundation">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>502</width>
+    <height>398</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Foundation</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QFrame" name="qf_left">
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <layout class="QVBoxLayout" name="vl_left">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QFrame" name="qf_treeUp">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>250</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>250</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QVBoxLayout" name="vl_treeUp">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="qf_treeDn">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QVBoxLayout" name="vl_treeDn">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QFrame" name="qf_right">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <layout class="QVBoxLayout" name="vl_right">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QFrame" name="qf_datasUp">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QVBoxLayout" name="vl_datas">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="qf_datasDn">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QVBoxLayout" name="vl_log">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>502</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="m_project">
+    <property name="title">
+     <string>Project</string>
+    </property>
+    <addaction name="mi_newProject"/>
+    <addaction name="mi_loadProject"/>
+    <addaction name="separator"/>
+    <addaction name="mi_newAsset"/>
+    <addaction name="mi_newShot"/>
+    <addaction name="separator"/>
+    <addaction name="mi_projectSettings"/>
+   </widget>
+   <widget class="QMenu" name="m_help">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <widget class="QMenu" name="m_logLevel">
+     <property name="title">
+      <string>Log Level</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="m_style">
+     <property name="title">
+      <string>Style</string>
+     </property>
+    </widget>
+    <addaction name="mi_toolTips"/>
+    <addaction name="m_logLevel"/>
+    <addaction name="m_style"/>
+   </widget>
+   <addaction name="m_project"/>
+   <addaction name="m_help"/>
+  </widget>
+  <action name="mi_log">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Log</string>
+   </property>
+  </action>
+  <action name="mi_userGroups">
+   <property name="text">
+    <string>UserGroups</string>
+   </property>
+  </action>
+  <action name="mi_newProject">
+   <property name="text">
+    <string>New Project</string>
+   </property>
+  </action>
+  <action name="mi_loadProject">
+   <property name="text">
+    <string>Load Project</string>
+   </property>
+  </action>
+  <action name="mi_projectSettings">
+   <property name="text">
+    <string>Project Settings</string>
+   </property>
+  </action>
+  <action name="actionTmp1">
+   <property name="text">
+    <string>tmp1</string>
+   </property>
+  </action>
+  <action name="mi_toolTips">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tool Tips</string>
+   </property>
+  </action>
+  <action name="mi_newAsset">
+   <property name="text">
+    <string>New Asset</string>
+   </property>
+  </action>
+  <action name="mi_newShot">
+   <property name="text">
+    <string>New Shot</string>
+   </property>
+  </action>
+  <action name="mi_toolSettings">
+   <property name="text">
+    <string>Tool Settings</string>
+   </property>
+  </action>
+  <action name="mi_defaultStyle">
+   <property name="text">
+    <string>Default</string>
+   </property>
+  </action>
+  <action name="mi_darkGreyStyle">
+   <property name="text">
+    <string>DarkGrey</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
