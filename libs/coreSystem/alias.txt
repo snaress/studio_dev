@@ -21,6 +21,7 @@ nuke9 = F:\apps\Nuke9.0v1\nuke9.0.exe $*
 
 synchro = F:\rnd\workspace\studio_dev\libs\coreSystem\synchro.py $*
 widgets = F:\rnd\workspace\studio_dev\libs\coreQt\widgets\__usage__.py $*
+dialogs = F:\rnd\workspace\studio_dev\libs\coreQt\dialogs\__usage__.py $*
 
 foundation = F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
 fdn = F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
