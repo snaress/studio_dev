@@ -1,6 +1,6 @@
 import sys
 from PyQt4 import QtGui
-from coreQt.widgets import widgetsUi
+import widgetsUi
 
 
 def launchWidget(widgetName):

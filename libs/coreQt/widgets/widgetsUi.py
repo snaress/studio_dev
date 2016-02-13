@@ -4,7 +4,8 @@ from functools import partial
 
 
 widgets.compileUi('wg_range.ui')
-from coreQt.widgets._ui import wg_rangeUI
+from _ui import wg_rangeUI
+
 
 class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
     """
