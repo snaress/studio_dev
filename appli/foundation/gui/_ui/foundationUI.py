@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\appli\foundation\gui\_src\foundation.ui'
 #
-# Created: Mon Feb 08 02:34:39 2016
+# Created: Sat Feb 13 14:10:06 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -100,6 +100,8 @@ class Ui_mw_foundation(object):
         self.m_logLevel.setObjectName(_fromUtf8("m_logLevel"))
         self.m_style = QtGui.QMenu(self.m_help)
         self.m_style.setObjectName(_fromUtf8("m_style"))
+        self.m_settings = QtGui.QMenu(self.menuBar)
+        self.m_settings.setObjectName(_fromUtf8("m_settings"))
         mw_foundation.setMenuBar(self.menuBar)
         self.mi_log = QtGui.QAction(mw_foundation)
         self.mi_log.setCheckable(True)
@@ -122,23 +124,24 @@ class Ui_mw_foundation(object):
         self.mi_newAsset.setObjectName(_fromUtf8("mi_newAsset"))
         self.mi_newShot = QtGui.QAction(mw_foundation)
         self.mi_newShot.setObjectName(_fromUtf8("mi_newShot"))
-        self.mi_toolSettings = QtGui.QAction(mw_foundation)
-        self.mi_toolSettings.setObjectName(_fromUtf8("mi_toolSettings"))
         self.mi_defaultStyle = QtGui.QAction(mw_foundation)
         self.mi_defaultStyle.setObjectName(_fromUtf8("mi_defaultStyle"))
         self.mi_darkGreyStyle = QtGui.QAction(mw_foundation)
         self.mi_darkGreyStyle.setObjectName(_fromUtf8("mi_darkGreyStyle"))
+        self.mi_toolSettings = QtGui.QAction(mw_foundation)
+        self.mi_toolSettings.setObjectName(_fromUtf8("mi_toolSettings"))
         self.m_project.addAction(self.mi_newProject)
         self.m_project.addAction(self.mi_loadProject)
         self.m_project.addSeparator()
         self.m_project.addAction(self.mi_newAsset)
         self.m_project.addAction(self.mi_newShot)
-        self.m_project.addSeparator()
-        self.m_project.addAction(self.mi_projectSettings)
         self.m_help.addAction(self.mi_toolTips)
         self.m_help.addAction(self.m_logLevel.menuAction())
         self.m_help.addAction(self.m_style.menuAction())
+        self.m_settings.addAction(self.mi_toolSettings)
+        self.m_settings.addAction(self.mi_projectSettings)
         self.menuBar.addAction(self.m_project.menuAction())
+        self.menuBar.addAction(self.m_settings.menuAction())
         self.menuBar.addAction(self.m_help.menuAction())
 
         self.retranslateUi(mw_foundation)
@@ -150,6 +153,7 @@ class Ui_mw_foundation(object):
         self.m_help.setTitle(_translate("mw_foundation", "Help", None))
         self.m_logLevel.setTitle(_translate("mw_foundation", "Log Level", None))
         self.m_style.setTitle(_translate("mw_foundation", "Style", None))
+        self.m_settings.setTitle(_translate("mw_foundation", "Settings", None))
         self.mi_log.setText(_translate("mw_foundation", "Log", None))
         self.mi_userGroups.setText(_translate("mw_foundation", "UserGroups", None))
         self.mi_newProject.setText(_translate("mw_foundation", "New Project", None))
@@ -159,7 +163,7 @@ class Ui_mw_foundation(object):
         self.mi_toolTips.setText(_translate("mw_foundation", "Tool Tips", None))
         self.mi_newAsset.setText(_translate("mw_foundation", "New Asset", None))
         self.mi_newShot.setText(_translate("mw_foundation", "New Shot", None))
-        self.mi_toolSettings.setText(_translate("mw_foundation", "Tool Settings", None))
         self.mi_defaultStyle.setText(_translate("mw_foundation", "Default", None))
         self.mi_darkGreyStyle.setText(_translate("mw_foundation", "DarkGrey", None))
+        self.mi_toolSettings.setText(_translate("mw_foundation", "Tool Settings", None))
 

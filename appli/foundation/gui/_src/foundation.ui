@@ -155,8 +155,6 @@
     <addaction name="separator"/>
     <addaction name="mi_newAsset"/>
     <addaction name="mi_newShot"/>
-    <addaction name="separator"/>
-    <addaction name="mi_projectSettings"/>
    </widget>
    <widget class="QMenu" name="m_help">
     <property name="title">
@@ -176,7 +174,15 @@
     <addaction name="m_logLevel"/>
     <addaction name="m_style"/>
    </widget>
+   <widget class="QMenu" name="m_settings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="mi_toolSettings"/>
+    <addaction name="mi_projectSettings"/>
+   </widget>
    <addaction name="m_project"/>
+   <addaction name="m_settings"/>
    <addaction name="m_help"/>
   </widget>
   <action name="mi_log">
@@ -233,11 +239,6 @@
     <string>New Shot</string>
    </property>
   </action>
-  <action name="mi_toolSettings">
-   <property name="text">
-    <string>Tool Settings</string>
-   </property>
-  </action>
   <action name="mi_defaultStyle">
    <property name="text">
     <string>Default</string>
@@ -246,6 +247,11 @@
   <action name="mi_darkGreyStyle">
    <property name="text">
     <string>DarkGrey</string>
+   </property>
+  </action>
+  <action name="mi_toolSettings">
+   <property name="text">
+    <string>Tool Settings</string>
    </property>
   </action>
  </widget>

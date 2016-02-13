@@ -11,6 +11,7 @@ gui.compileUi()
 from _ui import foundationUI
 from foundation.core import foundation
 
+
 class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
     """
     FoundationUi Class: Contains foundation mainUi
@@ -90,17 +91,17 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         :type logLevel: str
         """
         self.log.detail(">>> Launch 'Log Level': %s ..." % logLevel)
-        #-- Uncheck All --#
+        #--- Uncheck All ---#
         for menuItem in self.m_logLevel.children():
             menuItem.setChecked(False)
-        #-- Check Given LogLvl --#
+        #--- Check Given LogLvl ---#
         for menuItem in self.m_logLevel.children():
             if str(menuItem.text()) == logLevel:
                 menuItem.setChecked(True)
                 break
-        #-- Set Log Level --#
+        #--- Set Log Level ---#
         self.log.level = logLevel
-        # self.foundation.log.level = logLevel
+        self.fdn.log.level = logLevel
 
     def on_miStyle(self, style):
         """
@@ -110,15 +111,15 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         :type style: str
         """
         self.log.detail(">>> Launch 'Style': %s ..." % style)
-        #-- Uncheck All --#
+        #--- Uncheck All ---#
         for menuItem in self.m_style.children():
             menuItem.setChecked(False)
-        #-- Check Given LogLvl --#
+        #--- Check Given LogLvl ---#
         for menuItem in self.m_style.children():
             if str(menuItem.text()) == style:
                 menuItem.setChecked(True)
                 break
-        #-- Set StyleSheet --#
+        #--- Set StyleSheet ---#
         self.setStyleSheet(pQt.Style().getStyle(style))
 
 

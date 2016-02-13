@@ -9,16 +9,16 @@ toolPack = __package__
 
 
 #===== COMPILE UI =====#
-print '%s %s %s' % ('#'*30, toolName.capitalize() ,'#'*30)
-print 'Tool Path : ', toolPath
-print 'Tool Package : ', toolPack
-print '#%s#' % ('-'*(60+len(toolName)))
-
 def compileUi():
     """
     Compile ui path
     """
+    #--- Log ---#
+    print '%s %s %s' % ('#'*30, toolName.capitalize() ,'#'*30)
+    print 'Tool Path : ', toolPath
+    print 'Tool Package : ', toolPack
+    print '#%s#' % ('-'*(60+len(toolName)))
+    #--- Compile Ui ---#
     pQt.CompileUi().compileDir(srcDir=os.path.join(toolPath, '_src'),
                                dstDir=os.path.join(toolPath, '_ui'))
-
-print '%s\n' % ('#'*(62+len(toolName)))
+    print '%s\n' % ('#'*(62+len(toolName)))
