@@ -1,4 +1,5 @@
 import os
+from PyQt4 import QtGui
 from coreSystem import env
 
 
@@ -150,6 +151,89 @@ class CompileUi(object):
                 else:
                     print "%s \t ---> \t OK" % os.path.basename(pyFile)
                     return 'ok'
+
+#========================================== QTreeWidget ==========================================#
+
+def getAllItems(QTreeWidget):
+    """
+    Get all QTreeWidgetItem of given QTreeWidget
+
+    :param QTreeWidget: QTreeWidget object
+    :type QTreeWidget: QtGui.QTreeWidget
+    :return: All QTreeWidgetItem list
+    :rtype: list
+    """
+    items = []
+    allItems = QtGui.QTreeWidgetItemIterator(QTreeWidget, QtGui.QTreeWidgetItemIterator.All) or None
+
+    if allItems is not None:
+        while allItems.value():
+            item = allItems.value()
+            items.append(item)
+            allItems += 1
+
+    return items
+
+def getTopItems(QTreeWidget):
+    """
+    Get all topLevelItems of given QTreeWidget
+
+    :param QTreeWidget: QTreeWidget object
+    :type QTreeWidget: QtGui.QTreeWidget
+    :return: All topLevelItem list
+    :rtype: list
+    """
+    items = []
+    nTop = QTreeWidget.topLevelItemCount()
+
+    for n in range(nTop):
+        items.append(QTreeWidget.topLevelItem(n))
+
+    return items
+
+def getAllChildren(QTreeWidgetItem, depth=-1):
+    """
+    Get all children of given QTreeWidgetItem
+
+    :param QTreeWidgetItem: Recusion start QTreeWidgetItem
+    :type QTreeWidgetItem: QtGui.QTreeWidgetItem
+    :param depth: Number of recursion (-1 = infinite)
+    :type depth: int
+    :return: QTreeWigdetItem list
+    :rtype: list
+    """
+    items = []
+
+    def recurse(currentItem, depth):
+        items.append(currentItem)
+        if depth != 0:
+            for n in range(currentItem.childCount()):
+                recurse(currentItem.child(n), depth-1)
+
+    recurse(QTreeWidgetItem, depth)
+    return items
+
+def getAllParent(QTreeWidgetItem, depth=-1):
+    """
+    Get all parent of given QTreeWidgetItem
+
+    :param QTreeWidgetItem: Recusion start QTreeWidgetItem
+    :type QTreeWidgetItem: QtGui.QTreeWidgetItem
+    :param depth: Number of recursion (-1 = infinite)
+    :type depth: int
+    :return: QTreeWigdetItem list
+    :rtype: list
+    """
+    items = []
+
+    def recurse(currentItem, depth):
+        items.append(currentItem)
+        if depth != 0:
+            if currentItem.parent() is not None:
+                recurse(currentItem.parent(), depth-1)
+
+    recurse(QTreeWidgetItem, depth)
+    return items
 
 #========================================== STYLE SHEET ==========================================#
 
