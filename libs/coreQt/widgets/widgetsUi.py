@@ -40,14 +40,14 @@ class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
         self.setupUi(self)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setMargin(0)
-        #-- Edit Value --#
+        #--- Edit Value ---#
         if self.normalized:
             self.le_min.setText(str(float(self._rangeMin) / self._rangeMax))
             self.le_max.setText(str(float(self._rangeMax) / self._rangeMax))
         else:
             self.le_min.setText(str(self._rangeMin))
             self.le_max.setText(str(self._rangeMax))
-        #-- Edit Range --#
+        #--- Edit Range ---#
         self._initRamp()
         self.hs_min.setMinimum(self._rangeMin)
         self.hs_min.setMaximum(self._rangeMax - 1)
@@ -55,7 +55,7 @@ class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
         self.hs_max.setMaximum(self._rangeMax)
         self.hs_min.setValue(self._rangeMin)
         self.hs_max.setValue(self._rangeMax)
-        #-- Connect --#
+        #--- Connect ---#
         self.le_min.editingFinished.connect(partial(self.on_value, rangeMode='min'))
         self.le_max.editingFinished.connect(partial(self.on_value, rangeMode='max'))
         self.hs_min.valueChanged.connect(partial(self.on_slider, rangeMode='min'))

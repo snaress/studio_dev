@@ -124,19 +124,6 @@ def readPyFile(filePath, keepBuiltin=False):
             params.pop('__builtins__')
             return params
 
-def writeDictFile(filePath, dictToWrite):
-    """
-    Create readable text file from given dict
-
-    :param filePath: File absolut path
-    :type filePath: str
-    :param dictToWrite: Dict to translate and print
-    :type dictToWrite: dict
-    """
-    fileId = open(filePath, 'w')
-    fileId.write(pprint.pformat(dictToWrite))
-    fileId.close()
-
 def writeFile(filePath, textToWrite, add=False):
     """
     Create and edit text file. If file already exists, it is overwritten
@@ -160,6 +147,19 @@ def writeFile(filePath, textToWrite, add=False):
         fileId.write(textToWrite)
     elif isinstance(textToWrite, (list, tuple)):
         fileId.writelines(textToWrite)
+    fileId.close()
+
+def writeDictFile(filePath, dictToWrite):
+    """
+    Create readable text file from given dict
+
+    :param filePath: File absolut path
+    :type filePath: str
+    :param dictToWrite: Dict to translate and print
+    :type dictToWrite: dict
+    """
+    fileId = open(filePath, 'w')
+    fileId.write(pprint.pformat(dictToWrite))
     fileId.close()
 
 # noinspection PyTypeChecker

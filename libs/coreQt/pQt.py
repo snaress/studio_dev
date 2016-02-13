@@ -191,12 +191,12 @@ class Style(object):
         :return: Style sheet
         :rtype: str
         """
-        #-- Values --#
+        #--- Values ---#
         color_1 = "rgb(200, 200, 200)"
         bgColor_1 = "rgb(50, 50, 50)"
         bgColor_2 = "rgb(40, 40, 40)"
         bgColor_3 = "rgb(65, 65, 65)"
-        #-- Style Sheet --#
+        #--- Style Sheet ---#
         style = ["QWidget {%s: %s; %s: %s; %s: %s;}" % (self.bgCol, bgColor_1,
                                                         self.aBgCol, bgColor_2,
                                                         self.col, color_1),
@@ -209,7 +209,7 @@ class Style(object):
                  "QLineEdit {%s: %s}" % (self.bgCol, bgColor_2),
                  "QTabBar::tab {%s: %s;}" % (self.bgCol, bgColor_2),
                  "QTabBar::tab:selected {%s: %s;}" % (self.bgCol, bgColor_1)]
-        #-- Result --#
+        #--- Result ---#
         return ''.join(style)
 
     def getStyle(self, style):
