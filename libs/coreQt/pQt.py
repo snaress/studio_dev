@@ -152,7 +152,7 @@ class CompileUi(object):
                     print "%s \t ---> \t OK" % os.path.basename(pyFile)
                     return 'ok'
 
-#========================================== QTreeWidget ==========================================#
+#========================================== TREE WIDGET ==========================================#
 
 def getAllItems(QTreeWidget):
     """
@@ -234,6 +234,70 @@ def getAllParent(QTreeWidgetItem, depth=-1):
 
     recurse(QTreeWidgetItem, depth)
     return items
+
+#============================================ DIALOGS ============================================#
+
+def errorDialog(message, parent):
+    """
+    Launch default error dialog
+    
+    :param message: Message to print
+    :type message: str | list
+    :param parent: Parent ui
+    :type parent: QtGui.QMainWindow | QtGui.QWidget
+    """
+    errorDial = QtGui.QErrorMessage(parent)
+    if isinstance(message, list):
+        errorDial.showMessage('\n'.join(message))
+    else:
+        errorDial.showMessage(message)
+
+def fileDialog(fdMode='open', fdFileMode='AnyFile', fdRoot=None, fdRoots=None, fdFilters=None, fdCmd=None):
+    """
+    FileDialog popup
+    
+    :param fdMode: setAcceptMode 'open' or 'save'
+    :type fdMode: str
+    :param fdFileMode: setFileMode 'AnyFile', 'ExistingFile', 'Directory', 'DirectoryOnly'
+    :type fdFileMode: str
+    :param fdRoot: Start root path
+    :type fdRoot: str
+    :param fdRoots: List of recent files (list[str(QUrl)])
+    :type fdRoots: list
+    :param fdFilters: List of extensions
+    :type fdFilters: list
+    :param fdCmd: Command for accepted execution
+    :type fdCmd: function
+    :return: QFileDialog widget object
+    :rtype: QtGui.QFileDialog
+    """
+    fd = QtGui.QFileDialog()
+    #--- FileDialog AcceptedMode ---#
+    if fdMode == 'open':
+        fd.setAcceptMode(QtGui.QFileDialog.AcceptOpen)
+    elif fdMode == 'save':
+        fd.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+    #--- FileDialog FileMode ---#
+    if fdFileMode == 'AnyFile':
+        fd.setFileMode(QtGui.QFileDialog.AnyFile)
+    elif fdFileMode == 'ExistingFile':
+        fd.setFileMode(QtGui.QFileDialog.ExistingFile)
+    elif fdFileMode == 'Directory':
+        fd.setFileMode(QtGui.QFileDialog.Directory)
+    elif fdFileMode == 'DirectoryOnly':
+        fd.setFileMode(QtGui.QFileDialog.DirectoryOnly)
+    #--- FileDialog Params ---#
+    if fdRoot is not None:
+        fd.setDirectory(fdRoot)
+    if fdRoots is not None:
+        fd.setSidebarUrls(fdRoots)
+    if fdFilters is not None:
+        fd.setFilters(fdFilters)
+    if fdCmd is not None:
+        # noinspection PyUnresolvedReferences
+        fd.accepted.connect(fdCmd)
+    #--- Result ---#
+    return fd
 
 #========================================== STYLE SHEET ==========================================#
 
