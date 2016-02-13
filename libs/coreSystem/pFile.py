@@ -1,4 +1,4 @@
-import os, math, time
+import os, math, time, pprint
 
 
 def conformPath(path):
@@ -49,10 +49,10 @@ def createPath(paths, recursive=False, root=None, log=None):
     :param log: Log object (verbose)
     :type log: Logger
     """
-    #-- Check Args --#
+    #--- Check Args ---#
     if isinstance(paths, basestring):
         paths = [paths]
-    #-- Create Paths --#
+    #--- Create Paths ---#
     for path in paths:
         if recursive:
             if root is None:
@@ -62,7 +62,7 @@ def createPath(paths, recursive=False, root=None, log=None):
                 else:
                     print mess
                 raise AttributeError(mess)
-            #-- Decompose Folders --#
+            #--- Decompose Folders ---#
             folders = path.replace('%s/' % root, '').split('/')
             recPath = root
             for fld in folders:
@@ -70,6 +70,97 @@ def createPath(paths, recursive=False, root=None, log=None):
                 makeDir(recPath, log=log)
         else:
             makeDir(path, log=log)
+
+def readFile(filePath):
+    """
+    Get text from file
+
+    :param filePath: File absolut path
+    :type filePath: str
+    :return: Text line by line
+    :rtype: list
+    """
+    if not os.path.exists(filePath):
+        raise IOError, "!!! Error: Can't read, file doesn't exists !!!"
+    fileId = open(filePath, 'r')
+    getText = fileId.readlines()
+    fileId.close()
+    return getText
+
+def readDictFile(filePath):
+    """
+    Read dict pyFile
+
+    :param filePath: File absolut path
+    :type filePath: str
+    :return: Translated dictionnary
+    :rtype: dict
+    """
+    fileLines = ''.join(readFile(filePath))
+    if not fileLines in ['', ' ']:
+        return eval(''.join(fileLines))
+    else:
+        return dict()
+
+def readPyFile(filePath, keepBuiltin=False):
+    """
+    Get text from pyFile
+
+    :param filePath: Python file absolut path
+    :type filePath: str
+    :param keepBuiltin: Keep builtins key
+    :type keepBuiltin: bool
+    :return: File dict
+    :rtype: dict
+    """
+    if not os.path.exists(filePath):
+        raise IOError, "!!! Error: Can't read, file doesn't exists !!!"
+    params = {}
+    execfile(filePath, params)
+    if keepBuiltin:
+        return params
+    else:
+        if '__builtins__' in params.keys():
+            params.pop('__builtins__')
+            return params
+
+def writeDictFile(filePath, dictToWrite):
+    """
+    Create readable text file from given dict
+
+    :param filePath: File absolut path
+    :type filePath: str
+    :param dictToWrite: Dict to translate and print
+    :type dictToWrite: dict
+    """
+    fileId = open(filePath, 'w')
+    fileId.write(pprint.pformat(dictToWrite))
+    fileId.close()
+
+def writeFile(filePath, textToWrite, add=False):
+    """
+    Create and edit text file. If file already exists, it is overwritten
+
+    :param filePath: File absolut path
+    :type filePath: str
+    :param textToWrite: Text to edit in file
+    :type textToWrite: str | list
+    :param add: Add text to existing one in file
+    :type add: bool
+    """
+    oldTxt = ""
+    if add:
+        oldTxt = ''.join(readFile(filePath))
+        if not oldTxt.endswith('\n'):
+            oldTxt = "%s\n" % oldTxt
+    fileId = open(filePath, 'w')
+    if add:
+        fileId.write(oldTxt)
+    if isinstance(textToWrite, str):
+        fileId.write(textToWrite)
+    elif isinstance(textToWrite, (list, tuple)):
+        fileId.writelines(textToWrite)
+    fileId.close()
 
 # noinspection PyTypeChecker
 def fileSizeFormat(_bytes, precision=2):
