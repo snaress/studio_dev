@@ -235,6 +235,22 @@ def getAllParent(QTreeWidgetItem, depth=-1):
     recurse(QTreeWidgetItem, depth)
     return items
 
+#=========================================== COMBO BOX ===========================================#
+
+def getComboBoxItems(QComboBox):
+    """
+    Get all given conboBox items
+
+    :param QComboBox: QComboBox
+    :type QComboBox: QtGui.QComboBox
+    :return: Items text list
+    :rtype: list
+    """
+    items = []
+    for n in range(QComboBox.count()):
+        items.append(str(QComboBox.itemText(n)))
+    return items
+
 #============================================ DIALOGS ============================================#
 
 def errorDialog(message, parent):
