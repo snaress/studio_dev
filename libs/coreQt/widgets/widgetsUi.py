@@ -5,8 +5,6 @@ from functools import partial
 
 widgets.compileUi('wg_range.ui')
 from _ui import wg_rangeUI
-
-
 class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
     """
     Range Class: Range selector Widget
