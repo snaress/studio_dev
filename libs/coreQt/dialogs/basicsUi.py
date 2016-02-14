@@ -23,8 +23,10 @@ class Confirm(QtGui.QDialog, dial_confirmUI.Ui_dial_confirm):
     def __init__(self, message="Confirm Massage", buttons=list(), btnCmds=list(), cancelBtn=True, parent=None):
         super(Confirm, self).__init__(parent)
         self.message = message
-        self.btns = buttons.reverse()
-        self.btnCmds = btnCmds.reverse()
+        buttons.reverse()
+        self.btns = buttons
+        btnCmds.reverse()
+        self.btnCmds = btnCmds
         self.cancelBtn = cancelBtn
         #--- Setup ---#
         self.setupUi(self)
