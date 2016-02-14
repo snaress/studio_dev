@@ -2,7 +2,7 @@ import os, pprint
 from coreQt import pQt
 from PyQt4 import QtGui
 from coreQt import widgets
-from coreSystem import env
+from coreSys import env
 from functools import partial
 
 

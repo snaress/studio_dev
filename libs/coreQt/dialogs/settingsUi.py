@@ -1,7 +1,7 @@
 import os
 from coreQt import pQt
 from PyQt4 import QtGui
-from coreSystem import env
+from coreSys import env
 
 
 from _ui import dial_settingsUI

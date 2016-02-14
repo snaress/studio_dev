@@ -1,6 +1,6 @@
 import os
 from PyQt4 import QtGui
-from coreSystem import env
+from coreSys import env
 
 
 #========================================== COMPILE UI ===========================================#
