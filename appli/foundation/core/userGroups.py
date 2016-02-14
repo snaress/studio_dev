@@ -1,5 +1,5 @@
 import os, pprint
-from coreSystem import pFile
+from coreSys import pFile
 
 
 class Group(object):

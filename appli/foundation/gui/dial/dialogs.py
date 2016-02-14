@@ -1,10 +1,10 @@
-import stgUserGrps
 from coreQt import pQt
 from PyQt4 import QtGui
-from coreQt.dialogs import basics, settings
+import ts_userGrps, ts_users
+from coreQt.dialogs import basicsUi, settingsUi
 
 
-class ToolSettings(settings.Settings):
+class ToolSettings(settingsUi.Settings):
     """
     ToolSettings Dialog: Contains Foundation tool settings, child of FoundationUi
 
@@ -36,9 +36,10 @@ class ToolSettings(settings.Settings):
         super(ToolSettings, self)._initWidgets()
         self.setWindowTitle("%s | %s" % (self.log.title, self.fdn.__user__))
         #--- UserGroups ---#
-        self.wg_groups = stgUserGrps.Groups(self)
+        self.wg_groups = ts_userGrps.Groups(self)
+        self.wg_users = ts_users.Users(self, settingsMode='tool')
         #--- Refresh ---#
-        for widget in [self.wg_groups]:
+        for widget in [self.wg_groups, self.wg_users]:
             widget.setVisible(False)
             self.vl_settingsWidget.addWidget(widget)
 
@@ -65,7 +66,7 @@ class ToolSettings(settings.Settings):
                                'subCat': {0: {'groups': {'widget': self.wg_groups,
                                                          'code': 'groups',
                                                          'label': 'Groups'}},
-                                          1: {'users': {'widget': None,
+                                          1: {'users': {'widget': self.wg_users,
                                                         'code': 'users',
                                                         'label': 'Users'}}}}}
 
@@ -107,10 +108,11 @@ class ToolSettings(settings.Settings):
         selItems = self.tw_category.selectedItems() or []
         #--- Build Tree ---#
         if selItems:
-            if selItems[0].itemWidget is not None:
-                if not selItems[0].itemWidget.__edited__:
-                    selItems[0].itemWidget._initWidget()
-                selItems[0].itemWidget.buildTree()
+            if hasattr(selItems[0], 'itemWidget'):
+                if selItems[0].itemWidget is not None:
+                    if not selItems[0].itemWidget.__edited__:
+                        selItems[0].itemWidget._initWidget()
+                    selItems[0].itemWidget.buildTree()
 
     def on_save(self):
         """
@@ -141,9 +143,9 @@ class ToolSettings(settings.Settings):
                        "Unsaved category detected:"]
             for item in editedItems:
                 message.append("---> %s" % item.itemLabel)
-            self.cd_close = basics.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
-                                           btnCmds=[self._saveSettings, self._discardSettings])
-            self.cd_close.setStyleSheet(self.parent()._styleSheet)
+            self.cd_close = basicsUi.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
+                                             btnCmds=[self._saveSettings, self._discardSettings])
+            self.cd_close.setStyleSheet(self.parent().styleSheet())
             self.cd_close.exec_()
         #-- Close Settings --#
         else:

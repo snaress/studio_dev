@@ -1,5 +1,5 @@
 import os, pprint, shutil
-from coreSystem import pFile
+from coreSys import pFile
 
 
 class User(object):

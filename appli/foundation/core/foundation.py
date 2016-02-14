@@ -1,6 +1,6 @@
 import os
 import userGroups, users
-from coreSystem import pFile
+from coreSys import pFile
 
 
 class Foundation(object):

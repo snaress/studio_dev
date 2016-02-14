@@ -3,12 +3,11 @@ from coreQt import pQt
 from PyQt4 import QtGui
 from foundation import gui
 from functools import partial
-from coreSystem import pFile, env
-
+from coreSys import pFile, env
+from foundation.gui.dial import dialogs
 
 #--- Compile Ui ---#
 gui.compileUi()
-import dialogs
 from _ui import foundationUI
 from foundation.core import foundation
 
@@ -122,6 +121,8 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         #--- Set Log Level ---#
         self.log.level = logLevel
         self.fdn.log.level = logLevel
+        self.fdn.userGrps.log.level = logLevel
+        self.fdn.users.log.level = logLevel
 
     def on_miStyle(self, style):
         """
