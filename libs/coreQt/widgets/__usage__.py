@@ -1,31 +1,43 @@
-import sys
-from PyQt4 import QtGui
-import widgetsUi
+import optparse
 
 
-def launchWidget(widgetName):
-    """
-    Launch given widget class name
+__widgets__ = dict(BasicTree='basicTreeUi',
+                   Range='rangeUi')
 
-    :param widgetName: Widget class name ('Range')
-    :type widgetName: str
-    """
-    #-- Init --"
-    app = QtGui.QApplication(sys.argv)
-    widget = None
-    #-- Range --#
-    if widgetName == 'Range':
-        widget = widgetsUi.Range()
-    #-- Launch Widget --#
-    if widget is not None:
-        print ">>>> Launching %s" % widgetName
-        print widget.__doc__
-        widget.show()
-        sys.exit(app.exec_())
+usage = "widgets -n [WidgetClassName]"
+
+parser = optparse.OptionParser(usage=usage)
+parser.add_option('-n', '--name', type='string', help="Widget class name")
+parser.add_option('-l', '--list', action='store_true', help="List all widgets class name")
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        launchWidget(sys.argv[-1])
+    options, args = parser.parse_args()
+    options = eval(str(options))
+
+    #--- List All Widgets ---#
+    if options['list']:
+        for widget in sorted(__widgets__.keys()):
+            print widget
+
+    #--- Show Widget ---#
     else:
-        launchWidget('Range')
+
+        #--- Check Widget Class Name ---#
+        if not options['name'] in __widgets__.keys():
+            print "Widget class name not found: %s" % options['name']
+            for widget in sorted(__widgets__.keys()):
+                print widget
+
+        #--- Launch Widget ---#
+        else:
+            import sys
+            from PyQt4 import QtGui
+
+            wp = __import__(__widgets__[options['name']])
+
+            app = QtGui.QApplication(sys.argv)
+            w = eval('wp.%s()' % options['name'])
+            print w.__doc__
+            w.show()
+            sys.exit(app.exec_())

@@ -77,7 +77,7 @@ class Settings(QtGui.QDialog, dial_settingsUI.Ui_dial_settings):
         """
         Build category Tree widget
         """
-        if self.log is not None:
+        if hasattr(self, 'log'):
             self.log.detail("Build Category Tree ...")
         self.tw_category.clear()
         categoryDict = self.category
@@ -152,7 +152,8 @@ class Settings(QtGui.QDialog, dial_settingsUI.Ui_dial_settings):
 
         Save settings to disk
         """
-        self.log.debug("#--- Save Settings ---#")
+        if hasattr(self, 'log'):
+            self.log.debug("#--- Save Settings ---#")
 
     def on_close(self):
         """
@@ -160,4 +161,5 @@ class Settings(QtGui.QDialog, dial_settingsUI.Ui_dial_settings):
 
         Close settings ui
         """
-        self.log.debug("#--- Close Dialog ---#")
+        if hasattr(self, 'log'):
+            self.log.debug("#--- Close Dialog ---#")

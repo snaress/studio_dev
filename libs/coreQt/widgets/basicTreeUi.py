@@ -333,6 +333,15 @@ class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
             self.log.detail(">>> Launch 'Apply' ...")
         self.__edited__ = True
 
+    def on_save(self):
+        """
+        Command launched when 'Save' QPushButton is clicked
+
+        Save data
+        """
+        if hasattr(self, 'log'):
+            self.log.detail(">>> Launch 'Save %s' ..." % self.treeTitle)
+
     def on_cancel(self):
         """
         Command launched when 'Cancel' QPushButton is clicked
@@ -345,15 +354,6 @@ class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
         self.buildTree()
         self.__edited__ = False
 
-    def on_save(self):
-        """
-        Command launched when 'Save' QPushButton is clicked
-
-        Save data
-        """
-        if hasattr(self, 'log'):
-            self.log.detail(">>> Launch 'Save %s' ..." % self.treeTitle)
-
     def on_discard(self):
         """
         Command launched when 'Discard' QPushButton is clicked
@@ -364,3 +364,12 @@ class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
             self.log.detail(">>> Launch 'Discard %s' ..." % self.treeTitle)
         self.__editedItems__ = dict(added=[], edited=[], deleted=[])
         self._initWidget()
+
+
+if __name__ == '__main__':
+    import sys
+
+    app = QtGui.QApplication(sys.argv)
+    window = BasicTree()
+    window.show()
+    sys.exit(app.exec_())
