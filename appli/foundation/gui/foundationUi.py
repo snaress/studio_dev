@@ -2,12 +2,13 @@ import sys
 from coreQt import pQt
 from PyQt4 import QtGui
 from foundation import gui
-from coreSystem import pFile
 from functools import partial
+from coreSystem import pFile, env
 
 
 #--- Compile Ui ---#
 gui.compileUi()
+import dialogs
 from _ui import foundationUI
 from foundation.core import foundation
 
@@ -21,6 +22,7 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
     """
 
     log = pFile.Logger(title="FoundationUi")
+    __iconPath__ = env.iconsPath
 
     def __init__(self, logLvl='info'):
         self.log.level = logLvl
@@ -58,6 +60,9 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         """
         Init main ui menus
         """
+        #--- Menu Settings ---#
+        self.mi_toolSettings.setShortcut("Ctrl+Shift+T")
+        self.mi_toolSettings.triggered.connect(self.on_miToolSettings)
         #--- Menu Help ---#
         #- Log Level
         for level in self.log.levels:
@@ -81,6 +86,21 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         :rtype: bool
         """
         return self.mi_toolTips.isChecked()
+
+    def on_miToolSettings(self):
+        """
+        Command launched when 'Tool Settings' QMenuItem is triggered
+
+        Launch toolSettings dialog
+        """
+        self.log.detail(">>> Launch 'Tool Settings' ...")
+        #--- Check User Grade ---#
+        if not self.fdn.users._user.grade <= 1:
+            pQt.errorDialog("Your grade does not allow you to edit tool settings !", self)
+        else:
+            #--- Launch Dialog ---#
+            dial_ts = dialogs.ToolSettings(self.fdn, parent=self)
+            dial_ts.exec_()
 
     def on_miLogLevel(self, logLevel):
         """
