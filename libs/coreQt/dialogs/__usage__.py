@@ -1,6 +1,6 @@
 import sys
 from PyQt4 import QtGui
-import dialogsUi
+import basics, settings
 
 
 def launchDialog(dialogName):
@@ -10,12 +10,17 @@ def launchDialog(dialogName):
     :param dialogName: Dialog class name ('Settings')
     :type dialogName: str
     """
-    #-- Init --"
+    #--- Init ---#
     app = QtGui.QApplication(sys.argv)
     dialog = None
-    #-- Range --#
+
+    #--- Confirm ---#
+    if dialogName == 'Confirm':
+        dialog = basics.Confirm()
+    #--- Settings --#
     if dialogName == 'Settings':
-        dialog = dialogsUi.Settings()
+        dialog = settings.Settings()
+    
     #-- Launch Widget --#
     if dialog is not None:
         print ">>>> Launching %s" % dialogName
