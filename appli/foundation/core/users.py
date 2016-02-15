@@ -133,9 +133,7 @@ class User(object):
             self.userPinedProjects.append(project)
             self.log.info("%r added to pinProjects" % project)
         else:
-            mess = "!!! Project %r already in pinedProjects, Skipp !!!" % project
-            self.log.warning(mess)
-            raise ValueError(mess)
+            raise ValueError("!!! Project %r already in pinedProjects, Skipp !!!" % project)
 
     def delPinedProject(self, project):
         """
@@ -148,9 +146,7 @@ class User(object):
             self.userPinedProjects.remove(project)
             self.log.info("%r removed from pinedProjects" % project)
         else:
-            mess = "!!! %r not found, Skipp !!!" % project
-            self.log.warning(mess)
-            raise ValueError(mess)
+            raise ValueError("!!! %r not found, Skipp !!!" % project)
 
     def writeFile(self):
         """
@@ -166,9 +162,7 @@ class User(object):
             pFile.writeDictFile(self.userFile, self.getData())
             self.log.debug("---> User file successfully written: %s" % self.userFile)
         except:
-            mess = "!!! Can not write userFile: %s !!!" % self.userName
-            self.log.error(mess)
-            raise IOError(mess)
+            raise IOError("!!! Can not write userFile: %s !!!" % self.userName)
 
 
 class Users(object):
@@ -361,9 +355,7 @@ class Users(object):
         self.log.info("Create New User %r ..." % userName)
         #--- Check UserName ---#
         if userName in self.users:
-            mess = "!!! UserName %r already exists !!!" % userName
-            self.log.error(mess)
-            raise AttributeError(mess)
+            raise AttributeError("!!! UserName %r already exists !!!" % userName)
         #--- Add User Object ---#
         userObj = User(userName, self)
         if install:
@@ -387,16 +379,14 @@ class Users(object):
             userObj = self.getUserObjFromName(userName)
         #--- Check User Object ---#
         if userObj is None:
-            mess = "!!! User not found: %s !!!" % userName
-            self.log.error(mess)
-            raise AttributeError(mess)
+            raise AttributeError("!!! User not found: %s !!!" % userName)
         #--- Archive User ---#
         if archive:
             self.log.info("Archive user %r" % userObj.userName)
             dateTime = '%s--%s' % (pFile.getDate(), pFile.getTime())
             archivePath = pFile.conformPath(os.path.join(self.archivePath, userObj.userPrefix, userObj.userName,
                                                          dateTime))
-            pFile.createPath(archivePath, recursive=True, root=self.usersPath)
+            pFile.createPath(archivePath, recursive=True, root=self.usersPath, log=self.log)
             archiveFullPath = pFile.conformPath(os.path.join(archivePath, userObj.userName))
             if os.path.exists(userObj.userPath):
                 try:
@@ -404,13 +394,9 @@ class Users(object):
                     shutil.rmtree(userObj.userPath)
                     self.log.debug("---> User %r archived in %s" % (userObj.userName, archivePath))
                 except:
-                    mess = "!!! Can not copy tree: %s !!!" % userObj.userPath
-                    self.log.error(mess)
-                    raise IOError(mess)
+                    raise IOError("!!! Can not copy tree: %s !!!" % userObj.userPath)
             else:
-                mess = "!!! User path not found: %s !!!" % userObj.userPath
-                self.log.error(mess)
-                raise IOError(mess)
+                raise IOError("!!! User path not found: %s !!!" % userObj.userPath)
         #--- Delete User Object ---#
         if userObj in self._users:
             self.log.info("Deleting user object %r ..." % userObj.userName)

@@ -8,6 +8,7 @@ from foundation.gui.dial import dialogs
 
 #--- Compile Ui ---#
 gui.compileUi()
+from dial import dialogs
 from _ui import foundationUI
 from foundation.core import foundation
 
@@ -43,6 +44,7 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         #--- Refresh ---#
         self._initMainUi()
         self._initMenu()
+        self.rf_menuVisibility()
 
     def _initMainUi(self):
         """
@@ -59,6 +61,11 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         """
         Init main ui menus
         """
+        #--- Menu Project ---#
+        self.mi_newProject.setShortcut("Ctrl+Shift+N")
+        self.mi_newProject.triggered.connect(self.on_miNewProject)
+        self.mi_loadProject.setShortcut("Ctrl+Shift+L")
+        self.mi_loadProject.triggered.connect(self.on_miLoadProject)
         #--- Menu Settings ---#
         self.mi_toolSettings.setShortcut("Ctrl+Shift+T")
         self.mi_toolSettings.triggered.connect(self.on_miToolSettings)
@@ -85,6 +92,92 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         :rtype: bool
         """
         return self.mi_toolTips.isChecked()
+
+    def rf_menuVisibility(self):
+        """
+        Refresh menuItem visibility considering user grade
+        """
+        #-- Project Settings --#
+        if self.fdn.project.project is None:
+            self._editMenuVisibility(self.mi_projectSettings, state=False)
+        else:
+            self._editMenuVisibility(self.mi_projectSettings, state=True)
+        #-- Grade 1 --#
+        for menuItem in [self.mi_toolSettings]:
+            self._editMenuVisibility(menuItem, grade=1)
+        #-- Grade 2 --#
+        for menuItem in [self.mi_newProject]:
+            self._editMenuVisibility(menuItem, grade=2)
+        #-- Grade 4 --#
+        for menuItem in [self.mi_projectSettings]:
+            if self.fdn.project.project is not None:
+                self._editMenuVisibility(menuItem, grade=4)
+
+    def _editMenuVisibility(self, menuItem, grade=None, state=None):
+        """
+        Edit menu item visibility
+
+        :param menuItem: Menu item to edit
+        :type menuItem: QMenuAction
+        :param grade: Max allowed grade
+        :type grade: int
+        :param state: Visibility state
+        :type state: bool
+        """
+        #-- Get State And Font --#
+        if state is not None:
+            if state:
+                _font = self.enableFont
+            else:
+                _font = self.disableFont
+        else:
+            if self.fdn.users._user.grade <= grade:
+                _font = self.enableFont
+                state = True
+            else:
+                _font = self.disableFont
+                state = False
+        #-- Edit Menu Item --#
+        menuItem.setFont(_font)
+        menuItem.setEnabled(state)
+
+    def loadProject(self, project=None):
+        """
+        Load given project. If project is None, load current core project
+
+        :param project: Project (name--code)
+        :type project: str
+        """
+        if project is not None:
+            self.foundation.project.loadProject(project)
+        self.setWindowTitle("Foundation | %s | %s" % (self.fdn.project.project, self.fdn.__user__))
+        self.rf_menuVisibility()
+        self.qf_left.setVisible(True)
+
+    def on_miNewProject(self):
+        """
+        Command launched when 'New Project' QMenuItem is triggered
+
+        Launch NewProject dialog
+        """
+        self.log.detail(">>> Launch 'New Project' ...")
+        #--- Check User Grade ---#
+        if not self.fdn.users._user.grade <= 2:
+            pQt.errorDialog("Your grade does not allow you to create new project !", self)
+        #--- Launch Dialog ---#
+        else:
+            dial_newProject = dialogs.NewProject(self)
+            dial_newProject.exec_()
+
+    def on_miLoadProject(self):
+        """
+        Command launched when 'Load Project' QMenuItem is triggered
+
+        Launch LoadProject dialog
+        """
+        self.log.detail(">>> Launch 'Load Project' ...")
+        dial_loadProject = dialogs.LoadProject(self)
+        dial_loadProject.exec_()
 
     def on_miToolSettings(self):
         """
@@ -123,6 +216,7 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.fdn.log.level = logLevel
         self.fdn.userGrps.log.level = logLevel
         self.fdn.users.log.level = logLevel
+        self.fdn.project.log.level = logLevel
 
     def on_miStyle(self, style):
         """

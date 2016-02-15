@@ -1,6 +1,6 @@
 import os
-import userGroups, users
 from coreSys import pFile
+import userGroups, users, project
 
 
 class Foundation(object):
@@ -23,6 +23,7 @@ class Foundation(object):
         self._setup()
         self.userGrps = userGroups.UserGroups(self)
         self.users = users.Users(self)
+        self.project = project.Project(self)
 
     def _setup(self):
         """

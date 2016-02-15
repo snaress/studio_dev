@@ -233,9 +233,7 @@ class UserGroups(object):
         """
         #--- Check GrpName ---#
         if grpCode in self.codes:
-            mess = "!!! Group code %r already exists !!!" % grpCode
-            self.log.error(mess)
-            raise AttributeError(mess)
+            raise AttributeError("!!! Group code %r already exists !!!" % grpCode)
         #--- Create Group ---#
         grpObj = Group(self)
         if 'grpCode' in kwargs:
@@ -272,9 +270,7 @@ class UserGroups(object):
             pFile.writeDictFile(self.settingsFile, self.defaultGroups)
             self.log.debug("---> UserGroups file successfully written: %s" % self.settingsFile)
         except:
-            mess = "!!! Can not write userGroups file: %s !!!" % os.path.basename(self.settingsFile)
-            self.log.error(mess)
-            raise IOError(mess)
+            raise IOError("!!! Can not write userGroups file: %s !!!" % os.path.basename(self.settingsFile))
 
     def writeSettingsFile(self):
         """
@@ -285,6 +281,4 @@ class UserGroups(object):
             pFile.writeDictFile(self.settingsFile, self.getData())
             self.log.debug("---> UserGroup file successfully written: %s" % self.settingsFile)
         except:
-            mess = "!!! Can not write userGroups file: %s !!!" % self.settingsFile
-            self.log.error(mess)
-            raise IOError(mess)
+            raise IOError("!!! Can not write userGroups file: %s !!!" % self.settingsFile)
