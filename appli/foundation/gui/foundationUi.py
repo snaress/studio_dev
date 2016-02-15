@@ -4,7 +4,6 @@ from PyQt4 import QtGui
 from foundation import gui
 from functools import partial
 from coreSys import pFile, env
-from foundation.gui.dial import dialogs
 
 #--- Compile Ui ---#
 gui.compileUi()
