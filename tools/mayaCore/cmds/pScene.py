@@ -149,3 +149,68 @@ def clearSelection():
     Clear vertex selection on model
     """
     mc.select(cl=True)
+
+def invertSelection():
+    """
+    Invert current selection
+
+    Preference is given to objects if both objects and components are selected.
+    there is no user case where the user wants to invert a mixed selection of objects and components
+    """
+    #// determine if anything is selected
+    selection = mc.ls(sl=True)
+    if selection:
+        #// now determine if any objects are selected
+        objects = mc.ls(sl=True, dag=True, v=True)
+        if objects:
+            mc.select(tgl=True, ado=True, vis=True)
+            #//check if selection is in a hierarchy
+            parents = mc.listRelatives()
+            if parents:
+                mc.select(parents, d=True)
+                for parent in parents:
+                    children = mc.listRelatives(parent, c=True, path=True)
+                    mc.select(children, add=True)
+                #// make sure the original objects are not selected
+                mc.select(selection, d=True)
+        else:
+            #// must be a component selected
+            newComponents = []
+            for component in selection:
+                newComponents.append('%s[*]' % component.split('[')[0])
+            mc.select(newComponents, r=True)
+            mc.select(selection, d=True)
+    else:
+        #// nothing is selected
+        print "!!! Nothing is selected !!!"
+
+def polySelectTraverse(traversal=1):
+    """
+    Grow polyComponent selection
+
+    :param traversal: 0 = Off.
+                      1 = More : will add current selection border to current selection.
+                      2 = Less : will remove current selection border from current selection.
+                      3 = Border : will keep only current selection border.
+                      4 = Contiguous Edges : Add edges aligned with the current edges selected
+    :type traversal: int
+    """
+    #--- Vertex ---#
+    result = mc.polyListComponentConversion(fv=True, tv=True)
+    if result:
+        mc.polySelectConstraint(pp=traversal, t=0x0001)
+    else:
+        #--- Edge ---#
+        result = mc.polyListComponentConversion(fe=True, te=True)
+        if result:
+            mc.polySelectConstraint(pp=traversal, t=0x8000)
+        else:
+            #--- Face ---#
+            result = mc.polyListComponentConversion(ff=True, tf=True)
+            if result:
+                mc.polySelectConstraint(pp=traversal, t=0x0008)
+            else:
+                #--- Uv ---#
+                result = mc.polyListComponentConversion(fuv=True, tuv=True)
+                if result:
+                    mc.polySelectConstraint(pp=traversal, t=0x0010)
