@@ -95,6 +95,54 @@ def createGroups(grpDict, force=False):
             else:
                 print "!!! WARNING: Group %r already exists, skipp creation !!!" % k
 
+def createAndConnectNode(nodeName, nodeType, connectionDict, clearNode=False, useExisting=False, _raiseError=False):
+    """
+    Create and connect new node
+
+    :param nodeName: Node Name
+    :type nodeName: str
+    :param nodeType: Node Type
+    :type nodeType: str
+    :param connectionDict: Node connections
+    :type connectionDict: dict
+    :param clearNode: Delete node if exists
+    :type clearNode: bool
+    :param useExisting: Use existing node
+    :type useExisting: bool
+    :param _raiseError: Raise an error if node already exists
+    :type _raiseError: bool
+    :return: New node name
+    :rtype: str
+    """
+    #--- Check NodeName ---#
+    if mc.objExists(nodeName):
+        if _raiseError:
+            raise IOError("!!! ERROR: Node already exists: %s !!!" % nodeName)
+        if clearNode:
+            print "Node %r found, delete !" % nodeName
+            mc.delete(nodeName)
+        if useExisting:
+            nodeName = nodeName
+    else:
+        nodeName = mc.createNode(nodeType, n=nodeName)
+    #--- Connect NodeName ---#
+    for k, v in connectionDict.iteritems():
+        if not v.split('.')[0] == nodeName:
+            v.replace(v.split('.')[0], nodeName)
+        if isinstance(v, list):
+            for conn in v:
+                try:
+                    mc.connectAttr(k, conn, f=True)
+                except:
+                    pass
+        else:
+            try:
+                mc.connectAttr(k, v, f=True)
+            except:
+                pass
+    #--- Result ---#
+    return nodeName
+
 def getPlugNode(connectionPlug):
     """
     Get plug node from given connection
