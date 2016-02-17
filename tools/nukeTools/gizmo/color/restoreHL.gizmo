@@ -1,0 +1,223 @@
+#! F:/apps/Nuke9.0v1/nuke-9.0.1.dll -nx
+version 9.0 v1
+Gizmo {
+ inputs 2
+ help "Show alpha channel"
+ tile_color 0x9e985eff
+ addUserKnob {20 tabRestoreHl l RestoreHL}
+ addUserKnob {26 line0 l "Mask Control"}
+ addUserKnob {6 cbUseMask l "Use Mask" +STARTLINE}
+ addUserKnob {6 cbMask l "Show Mask" t "Show Mask Channel" -STARTLINE}
+ addUserKnob {41 maskChannel l "mask channel" T Keymix1.maskChannel}
+ addUserKnob {41 invertMask l invert -STARTLINE T Keymix1.invertMask}
+ addUserKnob {26 line1 l "Alpha Control"}
+ addUserKnob {6 cbAlpha l "Show Alpha" t "Show Alpha Channel" +STARTLINE}
+ addUserKnob {41 range l "Alpha Range" t "Adjust high light range" T Keyer1.range}
+ addUserKnob {41 fpSize l "Alpha Blur Size" t "Blur high light range" T Blur1.size}
+ addUserKnob {26 line2 l "Grade Control"}
+ addUserKnob {41 multiply T hlBack.multiply}
+ addUserKnob {6 cbGrade l "Grade Boost" +STARTLINE}
+ addUserKnob {41 multiply_1 l multiply T hlReboost.multiply}
+ addUserKnob {41 gamma T hlReboost.gamma}
+ addUserKnob {41 saturation T hlSaturation.saturation}
+ addUserKnob {26 line3 l "Output Control"}
+ addUserKnob {6 cbReplaceAlpha l "Replace Alpha" +STARTLINE}
+}
+ Input {
+  inputs 0
+  name Mask
+  xpos 599
+  ypos -443
+  number 1
+ }
+set N446b000 [stack 0]
+push $N446b000
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  alpha white
+  name Mask1
+  xpos 519
+  ypos -382
+ }
+ Switch {
+  inputs 2
+  which {{parent.cbUseMask}}
+  name SwitchMaskInput
+  xpos 599
+  ypos -329
+ }
+ Dot {
+  name DotMask
+  note_font_size 20
+  xpos 633
+  ypos -252
+ }
+set N446b800 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name AlphaMask
+  xpos 599
+  ypos -197
+ }
+set N44db000 [stack 0]
+ PostageStamp {
+  name AlphaMaskResult
+  xpos 51
+  ypos -256
+  hide_input true
+ }
+ Input {
+  inputs 0
+  name Source
+  xpos 458
+  ypos -526
+ }
+ Dot {
+  name DotIn
+  label " Input"
+  note_font_size 20
+  xpos 492
+  ypos -486
+ }
+set N44da400 [stack 0]
+ Dot {
+  name Dot5
+  xpos 346
+  ypos -486
+ }
+set N44da000 [stack 0]
+ Keyer {
+  operation "luminance key"
+  range {0.5667848192 0.6191377175 1 1}
+  name Keyer1
+  xpos 161
+  ypos -496
+ }
+ Blur {
+  channels alpha
+  size 6
+  name Blur1
+  xpos 161
+  ypos -431
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name hlMask
+  xpos 161
+  ypos -365
+ }
+set N44db400 [stack 0]
+ Merge2 {
+  inputs 2
+  operation in
+  name Merge1
+  xpos 161
+  ypos -197
+  disable {{"abs(parent.cbUseMask - 1)"}}
+ }
+ Dot {
+  name Dot8
+  xpos 195
+  ypos -123
+ }
+set N4507400 [stack 0]
+ Dot {
+  name Dot1
+  xpos 195
+  ypos -66
+ }
+push $N4507400
+push $N44db000
+push $N446b800
+push $N44db400
+ Dot {
+  name Dot2
+  xpos 271
+  ypos -361
+ }
+set N4506c00 [stack 0]
+ Dot {
+  name Dot3
+  xpos 271
+  ypos -309
+ }
+set N4506800 [stack 0]
+ Dot {
+  name Dot4
+  xpos 271
+  ypos -252
+ }
+push $N4506800
+push $N4506c00
+push $N44da000
+ Grade {
+  inputs 1+1
+  multiply 0.65
+  name hlBack
+  xpos 312
+  ypos -365
+ }
+ Grade {
+  inputs 1+1
+  multiply 1.1
+  name hlReboost
+  xpos 312
+  ypos -313
+  disable {{"abs(parent.cbGrade - 1)"}}
+ }
+ Saturation {
+  inputs 1+1
+  saturation 1.05
+  mode Average
+  name hlSaturation
+  xpos 312
+  ypos -256
+  disable {{"abs(parent.cbGrade - 1)"}}
+ }
+push $N44da400
+ Keymix {
+  inputs 3
+  name Keymix1
+  xpos 458
+  ypos -262
+ }
+ Switch {
+  inputs 2
+  which {{parent.cbMask}}
+  name SwitchMask
+  xpos 458
+  ypos -197
+ }
+ Switch {
+  inputs 2
+  which {{parent.cbAlpha}}
+  name SwitchAlpha
+  xpos 458
+  ypos -127
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy1
+  xpos 458
+  ypos -70
+  disable {{"abs(parent.cbReplaceAlpha - 1)"}}
+ }
+ Dot {
+  name DotOut
+  label " Output"
+  note_font_size 20
+  xpos 492
+  ypos -23
+ }
+ Output {
+  name Out
+  xpos 458
+  ypos 27
+ }
+end_group

@@ -1,0 +1,199 @@
+#! F:/apps/Nuke9.0v1/nuke-9.0.1.dll -nx
+version 9.0 v1
+Gizmo {
+ help "Keep selected channel.\n(Kind of shuffle)"
+ tile_color 0xb23b68ff
+ label "\[value pcChannel]"
+ addUserKnob {20 tabReorder l Reorder}
+ addUserKnob {26 line0 l "Channel Control"}
+ addUserKnob {4 pcChannel l Channel M {Red Green Blue}}
+ addUserKnob {26 line1 l "Alpha Control"}
+ addUserKnob {6 cbReplaceAlpha l "Replace Alpha" +STARTLINE}
+ cbReplaceAlpha true
+ addUserKnob {4 pcReplaceBy l "Replace By" -STARTLINE M {None White Black ""}}
+}
+ Input {
+  inputs 0
+  name Source
+  xpos -126
+  ypos -103
+ }
+ Dot {
+  name DotIn
+  xpos -92
+  ypos -63
+ }
+set N432a400 [stack 0]
+ Dot {
+  name Dot3
+  xpos -149
+  ypos -63
+ }
+set N432b400 [stack 0]
+ Dot {
+  name Dot2
+  xpos -244
+  ypos -63
+ }
+set N432b000 [stack 0]
+ Dot {
+  name Dot1
+  xpos -338
+  ypos -63
+ }
+set N432ac00 [stack 0]
+ Dot {
+  name Dot7
+  xpos -428
+  ypos -63
+ }
+set N432bc00 [stack 0]
+ Shuffle {
+  alpha black
+  name Black
+  xpos -462
+  ypos 60
+ }
+ Dot {
+  name Dot11
+  label Black
+  xpos -428
+  ypos 143
+  hide_input true
+ }
+push $N432bc00
+ Dot {
+  name Dot8
+  xpos -527
+  ypos -63
+ }
+ Shuffle {
+  alpha white
+  name White
+  xpos -561
+  ypos 61
+ }
+ Dot {
+  name Dot9
+  label "White\n"
+  xpos -527
+  ypos 146
+  hide_input true
+ }
+push $N432a400
+ Dot {
+  name Dot6
+  xpos -30
+  ypos -63
+ }
+set N4388000 [stack 0]
+ Dot {
+  name Dot5
+  xpos 64
+  ypos -63
+ }
+set N4389c00 [stack 0]
+ Dot {
+  name Dot4
+  xpos 159
+  ypos -63
+ }
+ Shuffle {
+  red blue
+  green blue
+  alpha blue
+  name Blue1
+  xpos 125
+  ypos -1
+ }
+push $N4389c00
+ Shuffle {
+  red green
+  blue green
+  alpha green
+  name Green1
+  xpos 30
+  ypos -2
+ }
+push $N4388000
+ Shuffle {
+  green red
+  blue red
+  alpha red
+  name Red1
+  xpos -64
+  ypos -2
+ }
+ Switch {
+  inputs 3
+  which {{parent.pcChannel}}
+  name Switch2
+  xpos 30
+  ypos 54
+ }
+push $N432b400
+ Shuffle {
+  red blue
+  green blue
+  name Blue
+  xpos -183
+  ypos -5
+ }
+push $N432b000
+ Shuffle {
+  red green
+  blue green
+  name Green
+  xpos -278
+  ypos -6
+ }
+push $N432ac00
+ Shuffle {
+  green red
+  blue red
+  name Red
+  xpos -372
+  ypos -6
+ }
+ Switch {
+  inputs 3
+  which {{parent.pcChannel}}
+  name Switch1
+  xpos -278
+  ypos 58
+ }
+ Switch {
+  inputs 2
+  which {{parent.cbReplaceAlpha}}
+  name Switch3
+  xpos -119
+  ypos 111
+ }
+set N43adc00 [stack 0]
+ Dot {
+  name Dot10
+  label None
+  xpos -474
+  ypos 115
+  hide_input true
+ }
+ Switch {
+  inputs 3
+  which {{parent.pcReplaceBy}}
+  name Switch4
+  xpos -508
+  ypos 206
+ }
+push $N43adc00
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy1
+  xpos -119
+  ypos 206
+ }
+ Output {
+  name Output1
+  xpos -119
+  ypos 281
+ }
+end_group
