@@ -143,6 +143,23 @@ def createAndConnectNode(nodeName, nodeType, connectionDict, clearNode=False, us
     #--- Result ---#
     return nodeName
 
+def disconnectAll(nodeName):
+    """
+    Disconnect all given node connections
+
+    :param nodeName: Node name
+    :type nodeName: str
+    """
+    conns = mc.listConnections(nodeName, s=True, d=True, p=True, c=True)
+    for n in range(0, len(conns), 2):
+        try:
+            if mc.connectionInfo(conns[n], isSource=True):
+                mc.disconnectAttr(conns[n], conns[n+1])
+            else:
+                mc.disconnectAttr(conns[n+1], conns[n])
+        except:
+            print "Warning: Can not disconnect %s" % conns[n]
+
 def getPlugNode(connectionPlug):
     """
     Get plug node from given connection
