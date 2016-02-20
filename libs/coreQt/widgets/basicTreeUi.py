@@ -222,7 +222,7 @@ class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
         :param kwargs: Item datas
         :type kwargs: dict
         """
-        item.itemObj.setData(**kwargs)
+        item.itemObj.update(**kwargs)
 
     def on_moveItem(self, side):
         """
