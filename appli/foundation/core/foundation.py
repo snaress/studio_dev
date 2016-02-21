@@ -1,6 +1,6 @@
 import os
 from coreSys import pFile
-import userGroups
+import userGroups, project
 
 
 class Foundation(object):
@@ -20,6 +20,7 @@ class Foundation(object):
         self._setup(logLvl)
         self._groups = userGroups.Groups(self)
         self._users = userGroups.Users(self)
+        self._project = project.Project(self)
 
     def _setup(self, logLvl):
         """

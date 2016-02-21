@@ -86,9 +86,9 @@ class User(common.Child):
         :rtype: int
         """
         if self.userGroup is not None:
-            grpObj = self._parent._groups.getChilds(grpCode=self.userGroup)
-            if grpObj is not None:
-                return grpObj.grpGrade
+            grpObjs = self._parent._groups.getChilds(grpCode=self.userGroup)
+            if len(grpObjs) == 1:
+                return grpObjs[0].grpGrade
 
     def setDataFromUserFile(self):
         """
@@ -212,6 +212,30 @@ class Groups(common.Storage):
             grpDict[n] = grpData
         #--- Result ---#
         return grpDict
+
+    @property
+    def codes(self):
+        """
+        Get codes list
+
+        :return: Groups code list
+        :rtype: list
+        """
+        return self.getValues('grpCode')
+
+    @property
+    def grades(self):
+        """
+        Get all userGroups grades
+
+        :return: User groups grade
+        :rtype: list
+        """
+        gradeList = []
+        for grpObj in self.childs:
+            if not grpObj.grpGrade in gradeList:
+                gradeList.append(grpObj.grpGrade)
+        return gradeList
 
     def newChild(self, **kwargs):
         """
@@ -346,7 +370,29 @@ class Users(common.Storage):
         """
         return self.getValues('userName')
 
-    def collecteUsers(self, userPrefix=None, userName=None, clear=False):
+    def getUserPrefixes(self, capital=False):
+        """
+        Get user prefix list
+
+        :param capital: Return upper form prefix
+        :type capital: bool
+        :return: User prefix list
+        :rtype: list
+        """
+        prefixList = []
+        for userObj in self.childs:
+            #--- Get Prefix ---#
+            if capital:
+                prefix = userObj.userPrefix.upper()
+            else:
+                prefix = userObj.userPrefix
+            #--- Store Prefix ---#
+            if not prefix in prefixList:
+                prefixList.append(prefix)
+        #--- Result ---#
+        return sorted(prefixList)
+
+    def collecteUsers(self, userPrefix=None, userName=None, clear=False, checkStatus=False):
         """
         Collecte Users from disk
 
@@ -356,6 +402,8 @@ class Users(common.Storage):
         :type userName: str
         :param clear: Clear childs contents
         :type clear: bool
+        :param checkStatus: Consider userStatus when collecting
+        :type checkStatus: bool
         :return: Collected user objects
         :rtype: list
         """
@@ -381,13 +429,21 @@ class Users(common.Storage):
                 #--- Create User Object ---#
                 userObj = self.newChild(userName=user)
                 userObj.setDataFromUserFile()
-                #--- Store Current User ---#
-                if user == self._fdn.__user__:
-                    self._user = userObj
-                #--- Add User Object ---#
-                self.addChild(userObj)
-                userObjects.append(userObj)
-                self.log.detail("---> User Object %r added" % user)
+                #--- Check Status ---#
+                addUserObj = True
+                if checkStatus:
+                    addUserObj = userObj.userStatus
+                if addUserObj:
+                    #--- Store Current User ---#
+                    if user == self._fdn.__user__:
+                        self._user = userObj
+                    #--- Add User Object ---#
+                    self.addChild(userObj)
+                    userObjects.append(userObj)
+                    self.log.detail("---> User Object %r added" % user)
+                else:
+                    #--- Reject Current User ---#
+                    self.log.detail("---> User Object skipped, %r status is False" % user)
         #--- Result ---#
         return userObjects
 
