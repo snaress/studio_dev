@@ -6,6 +6,39 @@ except:
     pass
 
 
+def workspaceToDict():
+    """
+    Store workspace info to dict
+
+    :return: Workspace info
+    :rtype: dict
+    """
+    wsDict = {'projectName': mc.workspace(q=True, fn=True).split('/')[-1],
+              'projectPath': mc.workspace(q=True, fn=True), 'fileRules': {}}
+    fr = mc.workspace(q=True, fr=True)
+    for n in range(0, len(fr), 2):
+        wsDict['fileRules'][fr[n]] = fr[n+1]
+    return wsDict
+
+def workspaceDictToStr(wsDict=None):
+    """
+    Convert workspace dict to string
+
+    :param wsDict: Workspace info (If None, use current workspace)
+    :type wsDict: dict
+    :return: Workspace info
+    :rtype: str
+    """
+    if wsDict is None:
+        wsDict = workspaceToDict
+    txt = ["#-- Workspace Info --#",
+           "Project Name = %s" % wsDict['projectName'],
+           "Project Path = %s" % wsDict['projectPath'],
+           "#-- File Rules --#"]
+    for k, v in wsDict['fileRules'].iteritems():
+        txt.append("%s = %s" % (k, v))
+    return '\n'.join(txt)
+
 def getCurrentSceneName():
     """
     Get current maya scene name
@@ -122,6 +155,34 @@ def getTimeRange():
             'rangeStart': mc.playbackOptions(q=True, ast=True),
             'rangeStop': mc.playbackOptions(q=True, aet=True)}
 
+def createGroups(grpDict, force=False):
+    """
+    Create groups from given dict
+
+    :param grpDict: {index: {'GroupName': 'ParentName'}}
+    :type grpDict: dict
+    :param force: Delete group if already exists
+    :type force: bool
+    """
+    for n in sorted(grpDict.keys()):
+        for k, v in grpDict[n].iteritems():
+            #--- Check if grp exists ---#
+            grpExists = False
+            if mc.objExists(k):
+                grpExists = True
+                if force:
+                    mc.delete(k)
+                    grpExists = False
+            #--- Create Group ---#
+            if not grpExists:
+                print "Creating group: %s ..." % k
+                if v is None:
+                    mc.group(em=True, n=k, w=True)
+                else:
+                    mc.group(em=True, n=k, p=v)
+            else:
+                print "!!! WARNING: Group %r already exists, skipp creation !!!" % k
+
 def getSceneSelection(**kwargs):
     """
     Get scene selection considering kwargs
@@ -214,3 +275,68 @@ def polySelectTraverse(traversal=1):
                 result = mc.polyListComponentConversion(fuv=True, tuv=True)
                 if result:
                     mc.polySelectConstraint(pp=traversal, t=0x0010)
+
+def createAndConnectNode(nodeName, nodeType, connectionDict, clearNode=False, useExisting=False, _raiseError=False):
+    """
+    Create and connect new node
+
+    :param nodeName: Node Name
+    :type nodeName: str
+    :param nodeType: Node Type
+    :type nodeType: str
+    :param connectionDict: Node connections
+    :type connectionDict: dict
+    :param clearNode: Delete node if exists
+    :type clearNode: bool
+    :param useExisting: Use existing node
+    :type useExisting: bool
+    :param _raiseError: Raise an error if node already exists
+    :type _raiseError: bool
+    :return: New node name
+    :rtype: str
+    """
+    #--- Check NodeName ---#
+    if mc.objExists(nodeName):
+        if _raiseError:
+            raise IOError("!!! ERROR: Node already exists: %s !!!" % nodeName)
+        if clearNode:
+            print "Node %r found, delete !" % nodeName
+            mc.delete(nodeName)
+        if useExisting:
+            nodeName = nodeName
+    else:
+        nodeName = mc.createNode(nodeType, n=nodeName)
+    #--- Connect NodeName ---#
+    for k, v in connectionDict.iteritems():
+        if not v.split('.')[0] == nodeName:
+            v.replace(v.split('.')[0], nodeName)
+        if isinstance(v, list):
+            for conn in v:
+                try:
+                    mc.connectAttr(k, conn, f=True)
+                except:
+                    pass
+        else:
+            try:
+                mc.connectAttr(k, v, f=True)
+            except:
+                pass
+    #--- Result ---#
+    return nodeName
+
+def disconnectAll(nodeName):
+    """
+    Disconnect all given node connections
+
+    :param nodeName: Node name
+    :type nodeName: str
+    """
+    conns = mc.listConnections(nodeName, s=True, d=True, p=True, c=True)
+    for n in range(0, len(conns), 2):
+        try:
+            if mc.connectionInfo(conns[n], isSource=True):
+                mc.disconnectAttr(conns[n], conns[n+1])
+            else:
+                mc.disconnectAttr(conns[n+1], conns[n])
+        except:
+            print "Warning: Can not disconnect %s" % conns[n]

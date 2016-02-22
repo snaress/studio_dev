@@ -16,6 +16,84 @@ def getMayaMainWindow():
     """
     return sip.wrapinstance(long(mOpen.MQtUtil.mainWindow()), QtCore.QObject)
 
+def dockQtWindow(dockName='newTool', allowedArea='all', area='right', content=None, label='toolName'):
+    """
+    Add given windon to maya dock
+
+    :param dockName: Maya dock layout name
+    :type dockName: str
+    :param allowedArea: Areas where the dock control may be placed;
+                        'top', 'bottom', 'right', 'left' and 'all' (default is 'all')
+    :type allowedArea: str || list
+    :param area: Initial dock area; 'top', 'bottom', 'right', 'left'
+                 (default is 'right')
+    :type area: str
+    :param content: Window name to put in dock
+    :type content: str
+    :param label: Dock label
+    :type label: str
+    :return: Dock control
+    :rtype: mc.dockControl
+    """
+    dock = mc.dockControl(dockName, aa=allowedArea, a=area, content=content, label=label)
+    return dock
+
+def clearDock(dockName):
+    """
+    Clear given dock layout
+
+    :param dockName: Dock layout name
+    :type dockName: str
+    """
+    if dockName in mc.lsUI(type='dockControl'):
+        try:
+            mc.deleteUI(dockName)
+        except:
+            pass
+
+def clearQtWindow(toolName):
+    """
+    Clear Qt window
+
+    :param toolName: Qt tool name
+    :type toolName: str
+    """
+    if mc.window(toolName, q=True, ex=True):
+        try:
+            mc.deleteUI(toolName, wnd=True)
+        except:
+            pass
+
+def launchQtWindow(toolName, toolUi, toolObj, dockName=None):
+    """
+    Launch Qt tool
+
+    :param toolName: Qt tool name (ex: 'ToolManager')
+    :type toolName: str
+    :param toolUi: Qt object name (ex: 'mw_toolManager')
+    :type toolUi: str
+    :param toolObj: Qt object
+    :type toolObj: QtGui.QObject
+    :param dockName: Maya dock layout name
+    :type dockName: str
+    :return: Qt object, Dock object
+    :rtype: QtGui.QObject, mc.dockControl
+    """
+    #--- Clear Windows ---#
+    if dockName is not None:
+        clearDock(dockName)
+    clearQtWindow(toolUi)
+    #--- Launch Tool ---#
+    global window
+    window = toolObj(parent=getMayaMainWindow())
+    if dockName is not None:
+        dock = dockQtWindow(dockName=dockName, allowedArea=['left', 'right'], content=toolUi, label=toolName)
+    else:
+        dock = None
+        window.show()
+    #--- Result ---#
+    return window, dock
+
 def mayaWarning(message):
     """
     Display maya warning
@@ -33,132 +111,6 @@ def mayaError(message):
     :type message: str
     """
     mc.error(message)
-
-def workspaceToDict():
-    """
-    Store workspace info to dict
-
-    :return: Workspace info
-    :rtype: dict
-    """
-    wsDict = {'projectName': mc.workspace(q=True, fn=True).split('/')[-1],
-              'projectPath': mc.workspace(q=True, fn=True), 'fileRules': {}}
-    fr = mc.workspace(q=True, fr=True)
-    for n in range(0, len(fr), 2):
-        wsDict['fileRules'][fr[n]] = fr[n+1]
-    return wsDict
-
-def workspaceDictToStr(wsDict=None):
-    """
-    Convert workspace dict to string
-
-    :param wsDict: Workspace info (If None, use current workspace)
-    :type wsDict: dict
-    :return: Workspace info
-    :rtype: str
-    """
-    if wsDict is None:
-        wsDict = workspaceToDict
-    txt = ["#-- Workspace Info --#",
-           "Project Name = %s" % wsDict['projectName'],
-           "Project Path = %s" % wsDict['projectPath'],
-           "#-- File Rules --#"]
-    for k, v in wsDict['fileRules'].iteritems():
-        txt.append("%s = %s" % (k, v))
-    return '\n'.join(txt)
-
-def createGroups(grpDict, force=False):
-    """
-    Create groups from given dict
-
-    :param grpDict: {index: {'GroupName': 'ParentName'}}
-    :type grpDict: dict
-    :param force: Delete group if already exists
-    :type force: bool
-    """
-    for n in sorted(grpDict.keys()):
-        for k, v in grpDict[n].iteritems():
-            #--- Check if grp exists ---#
-            grpExists = False
-            if mc.objExists(k):
-                grpExists = True
-                if force:
-                    mc.delete(k)
-                    grpExists = False
-            #--- Create Group ---#
-            if not grpExists:
-                print "Creating group: %s ..." % k
-                if v is None:
-                    mc.group(em=True, n=k, w=True)
-                else:
-                    mc.group(em=True, n=k, p=v)
-            else:
-                print "!!! WARNING: Group %r already exists, skipp creation !!!" % k
-
-def createAndConnectNode(nodeName, nodeType, connectionDict, clearNode=False, useExisting=False, _raiseError=False):
-    """
-    Create and connect new node
-
-    :param nodeName: Node Name
-    :type nodeName: str
-    :param nodeType: Node Type
-    :type nodeType: str
-    :param connectionDict: Node connections
-    :type connectionDict: dict
-    :param clearNode: Delete node if exists
-    :type clearNode: bool
-    :param useExisting: Use existing node
-    :type useExisting: bool
-    :param _raiseError: Raise an error if node already exists
-    :type _raiseError: bool
-    :return: New node name
-    :rtype: str
-    """
-    #--- Check NodeName ---#
-    if mc.objExists(nodeName):
-        if _raiseError:
-            raise IOError("!!! ERROR: Node already exists: %s !!!" % nodeName)
-        if clearNode:
-            print "Node %r found, delete !" % nodeName
-            mc.delete(nodeName)
-        if useExisting:
-            nodeName = nodeName
-    else:
-        nodeName = mc.createNode(nodeType, n=nodeName)
-    #--- Connect NodeName ---#
-    for k, v in connectionDict.iteritems():
-        if not v.split('.')[0] == nodeName:
-            v.replace(v.split('.')[0], nodeName)
-        if isinstance(v, list):
-            for conn in v:
-                try:
-                    mc.connectAttr(k, conn, f=True)
-                except:
-                    pass
-        else:
-            try:
-                mc.connectAttr(k, v, f=True)
-            except:
-                pass
-    #--- Result ---#
-    return nodeName
-
-def disconnectAll(nodeName):
-    """
-    Disconnect all given node connections
-
-    :param nodeName: Node name
-    :type nodeName: str
-    """
-    conns = mc.listConnections(nodeName, s=True, d=True, p=True, c=True)
-    for n in range(0, len(conns), 2):
-        try:
-            if mc.connectionInfo(conns[n], isSource=True):
-                mc.disconnectAttr(conns[n], conns[n+1])
-            else:
-                mc.disconnectAttr(conns[n+1], conns[n])
-        except:
-            print "Warning: Can not disconnect %s" % conns[n]
 
 def getPlugNode(connectionPlug):
     """
