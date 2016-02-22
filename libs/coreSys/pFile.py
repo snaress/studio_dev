@@ -12,6 +12,32 @@ def conformPath(path):
     """
     return path.replace('\\', '/')
 
+def pathToDict(path, conformed=False):
+    """
+    Translate directory contents to dict
+
+    :param path: Absolut path
+    :type path: str
+    :param conformed: Conform path before storing
+    :type conformed: bool
+    :return: Path contents
+    :rtype: dict
+    """
+    #--- Check Path ---#
+    if not os.path.exists(path):
+        raise IOError, "!!! ERROR: Path not found!!!\n%s" % path
+    #--- Parsing ---#
+    pathDict = {'_order': []}
+    for root, flds, files in os.walk(path):
+        if conformed:
+            rootPath = conformPath(root)
+        else:
+            rootPath = root
+        pathDict['_order'].append(rootPath)
+        pathDict[rootPath] = {'folders': flds, 'files': files}
+    #--- Result ---#
+    return pathDict
+
 def makeDir(path, log=None):
     """
     Create Given Path
