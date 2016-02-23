@@ -64,7 +64,7 @@ def clearQtWindow(toolName):
         except:
             pass
 
-def launchQtWindow(toolName, toolUi, toolObj, dockName=None):
+def launchQtWindow(toolName, toolUi, toolObj, toolArgs=list(), toolKwargs=None, dockName=None):
     """
     Launch Qt tool
 
@@ -74,18 +74,24 @@ def launchQtWindow(toolName, toolUi, toolObj, dockName=None):
     :type toolUi: str
     :param toolObj: Qt object
     :type toolObj: QtGui.QObject
+    :param toolArgs: Tool args
+    :type toolArgs: list
+    :param toolKwargs: Tool kwargs
+    :type toolKwargs: dict
     :param dockName: Maya dock layout name
     :type dockName: str
     :return: Qt object, Dock object
     :rtype: QtGui.QObject, mc.dockControl
     """
+    if toolKwargs is None:
+        toolKwargs = dict()
     #--- Clear Windows ---#
     if dockName is not None:
         clearDock(dockName)
     clearQtWindow(toolUi)
     #--- Launch Tool ---#
     global window
-    window = toolObj(parent=getMayaMainWindow())
+    window = toolObj(*toolArgs, **toolKwargs)
     if dockName is not None:
         dock = dockQtWindow(dockName=dockName, allowedArea=['left', 'right'], content=toolUi, label=toolName)
     else:
