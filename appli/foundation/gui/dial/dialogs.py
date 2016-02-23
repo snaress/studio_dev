@@ -189,7 +189,7 @@ class LoadProject(QtGui.QDialog, loadProjectUI.Ui_Dialog):
         newFont.setItalic(True)
         for n in range(twTree.columnCount()):
             newItem.setTextAlignment(n, 5)
-            if not self._fdn.__user__ in data['watchers']:
+            if not self._fdn.__user__ in data['projectWatchers']:
                 newItem.setFont(n, newFont)
                 newItem.setTextColor(n, QtGui.QColor(125, 125, 125))
         #--- Result ---#
@@ -257,7 +257,7 @@ class LoadProject(QtGui.QDialog, loadProjectUI.Ui_Dialog):
         #--- Load Project ---#
         if selItems:
             userName = self._fdn.__user__
-            if not self._fdn.__user__ in selItems[0].projectData['watchers']:
+            if not self._fdn.__user__ in selItems[0].projectData['projectWatchers']:
                 pQt.errorDialog("User %r is not set as projectUser in %s !" % (userName, selItems[0].project), self)
             else:
                 self.mainUi.loadProject(project=selItems[0].project)
@@ -478,7 +478,8 @@ class ProjectSettings(settingsUi.Settings):
         :return: Category datas
         :rtype: dict
         """
-        return {0: self.projectCategory}
+        return {0: self.projectCategory,
+                1: self.entitiesCategory}
 
     @property
     def projectCategory(self):
@@ -493,6 +494,23 @@ class ProjectSettings(settingsUi.Settings):
                             'subCat': {0: {'watchers': {'widget': self.wg_watchers,
                                                         'code': 'watchers',
                                                         'label': 'Watchers'}}}}}
+
+    @property
+    def entitiesCategory(self):
+        """
+        Get Entities category
+
+        :return: Entities category
+        :rtype: dict
+        """
+        return {'entities': {'code': 'entities',
+                             'label': 'Entities',
+                             'subCat': {0: {'assets': {'widget': None,
+                                                       'code': 'assets',
+                                                       'label': 'Assets'}},
+                                        1: {'shots': {'widget': None,
+                                                      'code': 'shots',
+                                                      'label': 'Shots'}}}}}
 
     def getEditedItems(self):
         """

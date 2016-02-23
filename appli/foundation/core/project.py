@@ -10,14 +10,16 @@ class Project(object):
     :type fdnObject: foundation.Foundation
     """
 
+    __attrPrefix__ = 'project'
+
     def __init__(self, fdnObject):
         #--- Global ---#
         self._fdn = fdnObject
         #--- Data ---#
         self.project = None
-        self.watchers = []
-        self._assets = None
-        self._shots = None
+        self.projectWatchers = []
+        self.projectAssets = dict()
+        self.projectShots = dict()
         #--- Update ---#
         self._setup()
 
@@ -123,12 +125,15 @@ class Project(object):
     @property
     def attributes(self):
         """
-        List all attributes
+        List class attributes
 
         :return: Attributes
         :rtype: list
         """
-        attrs = ['project', 'watchers', '_assets', '_shots']
+        attrs = []
+        for attr in self.__dict__.keys():
+            if attr.startswith(self.__attrPrefix__):
+                attrs.append(attr)
         return attrs
 
     def getData(self):
@@ -140,10 +145,7 @@ class Project(object):
         """
         data = dict()
         for attr in self.attributes:
-            if not attr.startswith('_'):
-                data[attr] = getattr(self, attr)
-            else:
-                data[attr] = getattr(self, attr)
+            data[attr] = getattr(self, attr)
         return data
 
     def update(self, **kwargs):
@@ -154,11 +156,10 @@ class Project(object):
         :type kwargs: dict
         """
         for k, v in kwargs.iteritems():
-            if not k.startswith('_'):
-                if k in self.attributes:
-                    setattr(self, k, v)
-                else:
-                    self.log.warning("!!! Unrecognized attribute: %s. Skip !!!" % k)
+            if k in self.attributes:
+                setattr(self, k, v)
+            else:
+                self.log.warning("!!! Unrecognized attribute: %s. Skip !!!" % k)
 
     def addWatcher(self, userName):
         """
@@ -167,8 +168,8 @@ class Project(object):
         :param userName: User name
         :type userName: str
         """
-        if not userName in self.watchers:
-            self.watchers.append(userName)
+        if not userName in self.projectWatchers:
+            self.projectWatchers.append(userName)
             self.log.detail("User %r added to project %r" % (userName, self.project))
 
     def delWatcher(self, userName):
@@ -178,8 +179,8 @@ class Project(object):
         :param userName: User name
         :type userName: str
         """
-        if userName in self.watchers:
-            self.watchers.remove(userName)
+        if userName in self.projectWatchers:
+            self.projectWatchers.remove(userName)
             self.log.detail("User %r removed from project %r" % (userName, self.project))
 
     def newProject(self, projectName, projectCode):
@@ -207,7 +208,7 @@ class Project(object):
         pFile.createPath([newProjectPath], log=self.log)
         #--- Create Project File ---#
         projFile = pFile.conformPath(os.path.join(newProjectPath, '%s--%s.py' % (projectName, projectCode)))
-        projDict = dict(project="%s--%s" % (projectName, projectCode), watchers=[self._fdn.__user__],
+        projDict = dict(project="%s--%s" % (projectName, projectCode), projectWatchers=[self._fdn.__user__],
                         _assets=None, _shots=None)
         try:
             pFile.writeDictFile(projFile, projDict)
@@ -233,7 +234,7 @@ class Project(object):
         except:
             raise IOError("!!! Can not load project %r !!!" % project)
         #--- Load Project ---#
-        if self._fdn.__user__ in projectDict['watchers']:
+        if self._fdn.__user__ in projectDict['projectWatchers']:
             self.update(**projectDict)
             self.log.info("---> Project %r successfully loaded" % project)
         else:

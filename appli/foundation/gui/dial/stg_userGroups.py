@@ -543,7 +543,7 @@ class Users(basicTreeUi.BasicTree):
         if self.settingsMode == 'tool':
             newItem.itemWidget = self.new_itemButton(itemObj.userStatus)
         elif self.settingsMode == 'project':
-            if itemObj.userName in self._project.watchers:
+            if itemObj.userName in self._project.projectWatchers:
                 newItem.itemWidget = self.new_itemButton(True)
             else:
                 newItem.itemWidget = self.new_itemButton(False)
