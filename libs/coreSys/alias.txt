@@ -3,9 +3,12 @@ lsl = dir /OD
 c = cls
 
 
-pyUic = C:\Python27\Lib\site-packages\PyQt4\pyuic4.bat $*
-pyCharm = "C:\Program Files (x86)\JetBrains\PyCharm Community Edition 3.4.1\bin\pycharm.exe "
 designer = "C:\Python27\Lib\site-packages\PyQt4\designer.exe"
+foundry = "C:\Program Files (x86)\The Foundry\LicensingTools7.0\bin\RLM\rlm.foundry.exe"
+
+
+nuke5 = F:\apps\Nuke5.0v2\nuke5.0.exe $*
+nuke9 = F:\apps\Nuke9.0v1\nuke9.0.exe $*
 
 
 maya = F:\apps\Autodesk\Maya2014\bin\maya.exe $*
@@ -14,18 +17,18 @@ mayaBatch = F:\apps\Autodesk\Maya2014\bin\mayabatch.exe $*
 mayaRender = F:\apps\Autodesk\Maya2014\bin\Render.exe $*
 
 
-foundry = "C:\Program Files (x86)\The Foundry\LicensingTool
-nuke5 = F:\apps\Nuke5.0v2\nuke5.0.exe $*
-nuke9 = F:\apps\Nuke9.0v1\nuke9.0.exe $*
+pyUic = C:\Python27\Lib\site-packages\PyQt4\pyuic4.bat $*
+djvView = F:\apps\djvView\djv-1.0.3-Windows-64\bin\djv_view.exe $*
+djvInfo = F:\apps\djvView\djv-1.0.3-Windows-64\bin\djv_info.exe $*
+djvList = F:\apps\djvView\djv-1.0.3-Windows-64\bin\djv_ls.exe $*
+djvConvert = F:\apps\djvView\djv-1.0.3-Windows-64\bin\djv_convert.exe $*
+nConvert = F:\apps\nConvert\nconvert.exe $*
+ffmpeg = f:\apps\ffmpeg\bin\ffmpeg.exe $*
 
 
-synchro = F:\rnd\workspace\studio_dev\libs\coreSys\synchro.py $*
-widgets = F:\rnd\workspace\studio_dev\libs\coreQt\widgets\__usage__.py $*
-dialogs = F:\rnd\workspace\studio_dev\libs\coreQt\dialogs\__usage__.py $*
+foundation = python F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
+fdn = python F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
 
-foundation = F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
-fdn = F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
-
-
+synchro = python F:\rnd\workspace\studio_dev\lib\system\synchro.py
 my = "F:\rnd\workspace\studio_dev\libs\coreSys\alias.txt"
 aliasHelp = type C:%HOMEPATH%\alias.txt
