@@ -23,6 +23,9 @@
       <property name="selectionMode">
        <enum>QAbstractItemView::NoSelection</enum>
       </property>
+      <property name="indentation">
+       <number>0</number>
+      </property>
       <attribute name="headerVisible">
        <bool>false</bool>
       </attribute>

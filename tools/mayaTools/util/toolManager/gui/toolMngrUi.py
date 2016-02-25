@@ -1,7 +1,8 @@
-from coreSys import pFile
+import os
+from _ui import toolManagerUI
+from coreSys import pFile, env
 from PyQt4 import QtGui, QtCore
 from mayaCore.cmds import pUtil
-from _ui import toolManagerUI
 from mayaTools.util.toolManager.gui import toolMngrWgts, toolMngrCmds
 
 
@@ -17,6 +18,7 @@ class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
 
     __rootDir__ = 'mayaTools'
     __rootPath__ = '/'.join(pFile.conformPath(__file__).split('/')[:-4])
+    __iconPath__ = pFile.conformPath(os.path.join(env.iconsPath, 'png'))
 
     def __init__(self, logLvl='info', parent=None):
         self.log = pFile.Logger(title=self.__class__.__name__, level=logLvl)
@@ -33,9 +35,6 @@ class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
         self.setupUi(self)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setMargin(0)
-        #--- Fonts ---#
-        self.categoryFont = QtGui.QFont()
-        self.categoryFont.setBold(True)
         #--- Refresh ---#
         self.buildTree()
 
@@ -60,40 +59,23 @@ class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
         #--- Add Category ---#
         self.log.debug("Building tree ...")
         for category in sorted(self.toolsDict.keys()):
-            catItem = self.new_categoryItem(category)
+            catItem = self.new_treeItem('category', category)
             self.tw_tools.addTopLevelItem(catItem)
+            self.tw_tools.setItemWidget(catItem, 0, catItem._widget)
             #--- Add Tool ---#
             for tool in sorted(self.toolsDict[category].keys()):
-                toolItem = self.new_toolItem(tool, self.toolsDict[category][tool])
+                toolItem = self.new_treeItem('tool', tool, tmFile=self.toolsDict[category][tool])
                 catItem.addChild(toolItem)
-                self.tw_tools.setItemWidget(toolItem, 0, toolItem.itemWidget)
+                self.tw_tools.setItemWidget(toolItem, 0, toolItem._widget)
         #--- Refresh ---#
         self.tw_tools.collapseAll()
 
-    def new_treeItem(self, **kwargs):
-        newItem = QtGui.QTreeWidgetItem()
-        return newItem
-
-    def new_categoryItem(self, itemName):
-        """
-        Create 'Category' tree item
-
-        :param itemName: Category name
-        :type itemName: str
-        :return: Category item
-        :rtype: QtGui.QTreeWidgetItem
-        """
-        newItem = QtGui.QTreeWidgetItem()
-        newItem.itemName = itemName
-        newItem.itemtype = 'category'
-        newItem.setText(0, '%s%s' % (itemName[0].upper(),itemName[1:]))
-        newItem.setFont(0, self.categoryFont)
-        return newItem
-
-    def new_toolItem(self, itemName, tmFile):
+    def new_treeItem(self, itemType, itemName, tmFile=None):
         """
         Create 'Tool' tree item
 
+        :param itemType: 'Category' or 'tool'
+        :type itemType: str
         :param itemName: Tool name
         :type itemName: str
         :param tmFile: __tm__.py file fullPath
@@ -102,10 +84,9 @@ class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
         :rtype: QtGui.QTreeWidgetItem
         """
         newItem = QtGui.QTreeWidgetItem()
+        newItem.itemType = itemType
         newItem.itemName = itemName
-        newItem.itemtype = 'tool'
-        newItem.itemWidget = toolMngrWgts.ToolNode(self, newItem)
-        newItem.tmFile = tmFile
+        newItem._widget = toolMngrWgts.TreeNode(self, newItem, tmFile=tmFile)
         return newItem
 
 

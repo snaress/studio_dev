@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\tools\mayaTools\util\toolManager\gui\_src\toolManager.ui'
 #
-# Created: Tue Feb 23 03:28:44 2016
+# Created: Thu Feb 25 00:32:15 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,6 +34,7 @@ class Ui_mw_toolManager(object):
         self.tw_tools = QtGui.QTreeWidget(self.centralwidget)
         self.tw_tools.setAlternatingRowColors(True)
         self.tw_tools.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        self.tw_tools.setIndentation(0)
         self.tw_tools.setObjectName(_fromUtf8("tw_tools"))
         self.tw_tools.headerItem().setText(0, _fromUtf8("1"))
         self.tw_tools.header().setVisible(False)
