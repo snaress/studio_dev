@@ -1,7 +1,8 @@
 import os, sys
-from PyQt4 import QtGui, QtCore
+import toolMngrCmds
 from coreSys import pFile
 from _ui import treeNodeUI
+from PyQt4 import QtGui, QtCore
 
 
 class TreeNode(QtGui.QWidget, treeNodeUI.Ui_wg_treeNode):
@@ -71,5 +72,4 @@ class TreeNode(QtGui.QWidget, treeNodeUI.Ui_wg_treeNode):
         """
         if self.tmFile is not None:
             self.log.info("Launch tool %s" % self.pItem.itemName)
-            sys.argv = [self.pItem.itemName, self.log.level]
-            execfile(self.tmFile)
+            toolMngrCmds.launchTools(self.pItem.itemName, self.tmFile, self.log.level)

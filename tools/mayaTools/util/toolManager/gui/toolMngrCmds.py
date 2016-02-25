@@ -1,4 +1,4 @@
-import os
+import os, sys
 from coreSys import pFile
 
 
@@ -26,3 +26,17 @@ def collecteTools(rootPath):
                 toolsDict[category][toolName] = os.path.join(root, f)
     #--- Result ---#
     return toolsDict
+
+def launchTools(toolName, toolFile, logLvl='info'):
+    """
+    launch maya tool
+
+    :param toolName: Maya tool name
+    :type toolName: str
+    :param toolFile: ToolManager file (__tm__.py)
+    :type toolFile: str
+    :param logLvl : Log level ('critical', 'error', 'warning', 'info', 'debug', 'detail')
+    :type logLvl: str
+    """
+    sys.argv = [toolName, logLvl]
+    execfile(toolFile)
