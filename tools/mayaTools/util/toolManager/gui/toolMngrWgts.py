@@ -1,4 +1,4 @@
-import os
+import os, sys
 from PyQt4 import QtGui, QtCore
 from coreSys import pFile
 from _ui import treeNodeUI
@@ -32,17 +32,17 @@ class TreeNode(QtGui.QWidget, treeNodeUI.Ui_wg_treeNode):
         #--- Fonts ---#
         self.categoryFont = QtGui.QFont()
         self.categoryFont.setBold(True)
-        self.categoryFont.setUnderline(True)
         self.categoryFont.setPixelSize(14)
         #--- Label ---#
-        self.l_toolName.setText(self.pItem.itemName)
-        #--- Setup ---#
         if self.pItem.itemType == 'category':
+            self.l_toolName.setText('#=== %s ===#' % self.pItem.itemName)
             self.l_toolName.setFont(self.categoryFont)
+            self.l_toolName.setStyleSheet("color: rgb(200, 150, 0)")
             self.pb_tool.setVisible(False)
             self.qf_info.setVisible(False)
         else:
             iconSize = 24
+            self.l_toolName.setText(self.pItem.itemName)
             self.pb_tool.setMaximumSize(iconSize, iconSize)
             if self.toolIcon is not None:
                 self.pb_tool.setIcon(QtGui.QIcon(self.toolIcon))
@@ -70,4 +70,6 @@ class TreeNode(QtGui.QWidget, treeNodeUI.Ui_wg_treeNode):
         Launch selected tool
         """
         if self.tmFile is not None:
-            self.log.info("Launch tool")
+            self.log.info("Launch tool %s" % self.pItem.itemName)
+            sys.argv = [self.pItem.itemName, self.log.level]
+            execfile(self.tmFile)

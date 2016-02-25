@@ -3,7 +3,7 @@ from _ui import toolManagerUI
 from coreSys import pFile, env
 from PyQt4 import QtGui, QtCore
 from mayaCore.cmds import pUtil
-from mayaTools.util.toolManager.gui import toolMngrWgts, toolMngrCmds
+import toolMngrWgts, toolMngrCmds
 
 
 class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
