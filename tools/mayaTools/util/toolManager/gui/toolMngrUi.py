@@ -1,4 +1,5 @@
 import os
+from functools import partial
 from _ui import toolManagerUI
 from coreSys import pFile, env
 from PyQt4 import QtGui, QtCore
@@ -35,8 +36,20 @@ class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
         self.setupUi(self)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setMargin(0)
+        self._setupMenu()
         #--- Refresh ---#
         self.buildTree()
+
+    def _setupMenu(self):
+        """
+        Setup toolManager menu
+        """
+        #--- Log Level ---#
+        for level in self.log.levels:
+            menuItem = self.m_logLevel.addAction(level)
+            menuItem.setCheckable(True)
+            menuItem.triggered.connect(partial(self.on_miLogLevel, level))
+        self.on_miLogLevel(self.log.level)
 
     def collecteTools(self):
         """
@@ -88,6 +101,25 @@ class ToolManager(QtGui.QMainWindow, toolManagerUI.Ui_mw_toolManager):
         newItem.itemName = itemName
         newItem._widget = toolMngrWgts.TreeNode(self, newItem, tmFile=tmFile)
         return newItem
+
+    def on_miLogLevel(self, logLevel):
+        """
+        Command launched when 'Log Level' QMenuItem is triggered
+
+        Set ui and core log level
+        :param logLevel : Log level ('critical', 'error', 'warning', 'info', 'debug', 'detail')
+        :type logLevel: str
+        """
+        #--- Uncheck All ---#
+        for menuItem in self.m_logLevel.children():
+            menuItem.setChecked(False)
+        #--- Check Given LogLvl ---#
+        for menuItem in self.m_logLevel.children():
+            if str(menuItem.text()) == logLevel:
+                menuItem.setChecked(True)
+                break
+        #--- Set Log Level ---#
+        self.log.level = logLevel
 
 
 

@@ -38,6 +38,33 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="m_menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>423</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="m_menu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <widget class="QMenu" name="m_logLevel">
+     <property name="title">
+      <string>Log Level</string>
+     </property>
+    </widget>
+    <addaction name="m_logLevel"/>
+   </widget>
+   <addaction name="m_menu"/>
+  </widget>
+  <action name="actionEmpty">
+   <property name="text">
+    <string>empty</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
