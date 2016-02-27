@@ -29,6 +29,9 @@ ffmpeg = f:\apps\ffmpeg\bin\ffmpeg.exe $*
 foundation = python F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
 fdn = python F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
 
-synchro = python F:\rnd\workspace\studio_dev\lib\system\synchro.py
+dialogs = python F:\rnd\workspace\studio_dev\libs\coreQt\dialogs\__usage__.py $*
+widgets = python F:\rnd\workspace\studio_dev\libs\coreQt\widgets\__usage__.py $*
+
+synchro = python F:\rnd\workspace\studio_dev\libs\coreSys\synchro.py
 my = "F:\rnd\workspace\studio_dev\libs\coreSys\alias.txt"
 aliasHelp = type C:%HOMEPATH%\alias.txt
