@@ -1,9 +1,9 @@
 import os
-import stg_userGroups
+import stg_userGroups, stg_contexts
 from coreQt import pQt
 from coreSys import pFile
 from PyQt4 import QtGui, QtCore
-from coreQt.dialogs import basicsUi, settingsUi
+from coreQt.dialogs import confirmUi, settingsUi
 from foundation.gui._ui import newProjectUI, loadProjectUI
 
 
@@ -189,7 +189,7 @@ class LoadProject(QtGui.QDialog, loadProjectUI.Ui_Dialog):
         newFont.setItalic(True)
         for n in range(twTree.columnCount()):
             newItem.setTextAlignment(n, 5)
-            if not self._fdn.__user__ in data['projectWatchers']:
+            if not self._fdn.__user__ in data['watchers']:
                 newItem.setFont(n, newFont)
                 newItem.setTextColor(n, QtGui.QColor(125, 125, 125))
         #--- Result ---#
@@ -257,7 +257,7 @@ class LoadProject(QtGui.QDialog, loadProjectUI.Ui_Dialog):
         #--- Load Project ---#
         if selItems:
             userName = self._fdn.__user__
-            if not self._fdn.__user__ in selItems[0].projectData['projectWatchers']:
+            if not self._fdn.__user__ in selItems[0].projectData['watchers']:
                 pQt.errorDialog("User %r is not set as projectUser in %s !" % (userName, selItems[0].project), self)
             else:
                 self.mainUi.loadProject(project=selItems[0].project)
@@ -404,8 +404,8 @@ class ToolSettings(settingsUi.Settings):
                        "Unsaved category detected:"]
             for item in editedItems:
                 message.append("---> %s" % item.itemLabel)
-            self.cd_close = basicsUi.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
-                                             btnCmds=[self._saveSettings, self._discardSettings])
+            self.cd_close = confirmUi.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
+                                              btnCmds=[self._saveSettings, self._discardSettings])
             self.cd_close.setStyleSheet(self.parent().styleSheet())
             self.cd_close.exec_()
         #--- Close Settings ---#
@@ -465,8 +465,9 @@ class ProjectSettings(settingsUi.Settings):
         self.setWindowTitle("%s | %s" % (self.log.title, self._fdn.__user__))
         #--- Project ---#
         self.wg_watchers = stg_userGroups.Users(self, settingsMode='project')
+        self.wg_contexts = stg_contexts.Contexts(self)
         #--- Refresh ---#
-        for widget in [self.wg_watchers]:
+        for widget in [self.wg_watchers, self.wg_contexts]:
             widget.setVisible(False)
             self.vl_settingsWidget.addWidget(widget)
 
@@ -493,7 +494,10 @@ class ProjectSettings(settingsUi.Settings):
                             'label': 'Project',
                             'subCat': {0: {'watchers': {'widget': self.wg_watchers,
                                                         'code': 'watchers',
-                                                        'label': 'Watchers'}}}}}
+                                                        'label': 'Watchers'}},
+                                       1: {'contexts': {'widget': self.wg_contexts,
+                                                        'code': 'contexts',
+                                                        'label': 'Contexts'}}}}}
 
     @property
     def entitiesCategory(self):
@@ -587,8 +591,8 @@ class ProjectSettings(settingsUi.Settings):
                        "Unsaved category detected:"]
             for item in editedItems:
                 message.append("---> %s" % item.itemLabel)
-            self.cd_close = basicsUi.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
-                                             btnCmds=[self._saveSettings, self._discardSettings])
+            self.cd_close = confirmUi.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
+                                              btnCmds=[self._saveSettings, self._discardSettings])
             self.cd_close.setStyleSheet(self.parent().styleSheet())
             self.cd_close.exec_()
         #--- Close Settings ---#

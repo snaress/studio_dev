@@ -144,7 +144,7 @@ class Storage(object):
         """
         Create new group
 
-        :param kwargs: Child datas (key must starts with self.__attrPrefix__)
+        :param kwargs: Child data (key must starts with self.__attrPrefix__)
         :type kwargs: dict
         :return: Group object
         :rtype: Group

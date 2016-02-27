@@ -241,7 +241,7 @@ class Groups(common.Storage):
         """
         Create new group
 
-        :param kwargs: Group datas (key must starts with 'grp')
+        :param kwargs: Group data (key must starts with 'grp')
         :type kwargs: dict
         :return: Group object
         :rtype: Group

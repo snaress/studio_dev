@@ -1,4 +1,5 @@
 import os, pprint
+import context
 from coreSys import pFile
 
 
@@ -10,16 +11,13 @@ class Project(object):
     :type fdnObject: foundation.Foundation
     """
 
-    __attrPrefix__ = 'project'
-
     def __init__(self, fdnObject):
         #--- Global ---#
         self._fdn = fdnObject
         #--- Data ---#
         self.project = None
-        self.projectWatchers = []
-        self.projectAssets = dict()
-        self.projectShots = dict()
+        self.watchers = []
+        self.contexts = []
         #--- Update ---#
         self._setup()
 
@@ -123,6 +121,19 @@ class Project(object):
             return pFile.conformPath(os.path.join(self.projectPath, '%s.py' % self.project))
 
     @property
+    def contextNames(self):
+        """
+        Get project contexts
+
+        :return: Context names
+        :rtype: list
+        """
+        ctxtNames = []
+        for ctxt in self.contexts:
+            ctxtNames.append(ctxt.contextName)
+        return ctxtNames
+
+    @property
     def attributes(self):
         """
         List class attributes
@@ -130,11 +141,7 @@ class Project(object):
         :return: Attributes
         :rtype: list
         """
-        attrs = []
-        for attr in self.__dict__.keys():
-            if attr.startswith(self.__attrPrefix__):
-                attrs.append(attr)
-        return attrs
+        return ['project', 'watchers', 'contexts']
 
     def getData(self):
         """
@@ -145,8 +152,26 @@ class Project(object):
         """
         data = dict()
         for attr in self.attributes:
-            data[attr] = getattr(self, attr)
+            if attr == 'contexts':
+                data[attr] = []
+                for ctxt in self.contexts:
+                    data[attr].append(ctxt.getData())
+            else:
+                data[attr] = getattr(self, attr)
         return data
+
+    def getContext(self, contextName):
+        """
+        Get context object considering given name
+
+        :param contextName: Context name
+        :type contextName: str
+        :return: Context object
+        :rtype: context.Context
+        """
+        for ctxtObj in self.contexts:
+            if ctxtObj.contextName == contextName:
+                return ctxtObj
 
     def update(self, **kwargs):
         """
@@ -157,31 +182,15 @@ class Project(object):
         """
         for k, v in kwargs.iteritems():
             if k in self.attributes:
-                setattr(self, k, v)
+                if k == 'contexts':
+                    for ctxtData in v:
+                        ctxtObj = self.newContext(ctxtData['contextName'])
+                        ctxtObj.update(ctxtData)
+                        self.addContext(ctxtObj)
+                else:
+                    setattr(self, k, v)
             else:
                 self.log.warning("!!! Unrecognized attribute: %s. Skip !!!" % k)
-
-    def addWatcher(self, userName):
-        """
-        Add project user (watcher)
-
-        :param userName: User name
-        :type userName: str
-        """
-        if not userName in self.projectWatchers:
-            self.projectWatchers.append(userName)
-            self.log.detail("User %r added to project %r" % (userName, self.project))
-
-    def delWatcher(self, userName):
-        """
-        Remove project user (watcher)
-
-        :param userName: User name
-        :type userName: str
-        """
-        if userName in self.projectWatchers:
-            self.projectWatchers.remove(userName)
-            self.log.detail("User %r removed from project %r" % (userName, self.project))
 
     def newProject(self, projectName, projectCode):
         """
@@ -208,7 +217,7 @@ class Project(object):
         pFile.createPath([newProjectPath], log=self.log)
         #--- Create Project File ---#
         projFile = pFile.conformPath(os.path.join(newProjectPath, '%s--%s.py' % (projectName, projectCode)))
-        projDict = dict(project="%s--%s" % (projectName, projectCode), projectWatchers=[self._fdn.__user__],
+        projDict = dict(project="%s--%s" % (projectName, projectCode), watchers=[self._fdn.__user__],
                         _assets=None, _shots=None)
         try:
             pFile.writeDictFile(projFile, projDict)
@@ -234,7 +243,7 @@ class Project(object):
         except:
             raise IOError("!!! Can not load project %r !!!" % project)
         #--- Load Project ---#
-        if self._fdn.__user__ in projectDict['projectWatchers']:
+        if self._fdn.__user__ in projectDict['watchers']:
             self.update(**projectDict)
             self.log.info("---> Project %r successfully loaded" % project)
         else:
@@ -250,6 +259,58 @@ class Project(object):
             self.log.debug("---> Project file successfully written: %s" % self.projectFile)
         except:
             raise IOError("!!! Can not write projectFile: %s !!!" % self.projectFile)
+
+    def addWatcher(self, userName):
+        """
+        Add project watcher
+
+        :param userName: User name
+        :type userName: str
+        """
+        if not userName in self.watchers:
+            self.watchers.append(userName)
+            self.log.detail("User %r added to project %r" % (userName, self.project))
+
+    def delWatcher(self, userName):
+        """
+        Remove project user (watcher)
+
+        :param userName: User name
+        :type userName: str
+        """
+        if userName in self.watchers:
+            self.watchers.remove(userName)
+            self.log.detail("User %r removed from project %r" % (userName, self.project))
+
+    def newContext(self, contextName):
+        """
+        New project context
+
+        :param contextName: Context name
+        :type contextName: str
+        :return: New context object
+        :rtype: entities.Context
+        """
+        #--- Check Context Name ---#
+        if contextName in self.contextNames:
+            raise ValueError("Context name %r already exists !!!" % contextName)
+        #--- Create Context ---#
+        ctxtObj = context.Context(self, contextName)
+        self.log.info("Context %r added to project %r" % (contextName, self.project))
+        return ctxtObj
+
+    def addContext(self, contextObject):
+        """
+        Add project context
+
+        :param contextObject: Context object
+        :type contextObject: entities.Context
+        """
+        #--- Check Context Name ---#
+        if contextObject.contextName in self.contextNames:
+            raise ValueError("Context name %r already exists !!!" % contextObject.contextName)
+        #--- Add Context ---#
+        self.contexts.append(contextObject)
 
     def __str__(self):
         """
