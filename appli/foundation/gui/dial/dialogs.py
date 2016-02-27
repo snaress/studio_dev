@@ -1,64 +1,10 @@
 import os
-import stg_userGroups, stg_contexts
 from coreQt import pQt
 from coreSys import pFile
+import userGroups, contexts
 from PyQt4 import QtGui, QtCore
+from foundation.gui._ui import loadProjectUI
 from coreQt.dialogs import confirmUi, settingsUi
-from foundation.gui._ui import newProjectUI, loadProjectUI
-
-
-class NewProject(QtGui.QDialog, newProjectUI.Ui_dial_newProject):
-    """
-    NewProject Dialog: Project creation, child of FoundationUi
-
-    :param mainUi: Parent Ui
-    :type mainUi: ..foundationUi.Foundation
-    """
-
-    def __init__(self, mainUi):
-        super(NewProject, self).__init__(mainUi)
-        self.mainUi = mainUi
-        #--- Core ---#
-        self.log = self.mainUi.log
-        self._fdn = self.mainUi._fdn
-        self._project = self._fdn._project
-        #--- Icons ---#
-        self.iconSave = QtGui.QIcon(pFile.conformPath(os.path.join(self.mainUi.__iconPath__, 'png', 'apply.png')))
-        self.iconCancel = QtGui.QIcon(pFile.conformPath(os.path.join(self.mainUi.__iconPath__, 'png', 'cancel.png')))
-        #--- Setup ---#
-        self._setupDial()
-
-    def _setupDial(self):
-        """
-        Setup NewProject dialog
-        """
-        self.setupUi(self)
-        self.gridLayout.setMargin(0)
-        self.gridLayout.setSpacing(0)
-        #--- Icons ---#
-        self.pb_save.setIcon(self.iconSave)
-        self.pb_cancel.setIcon(self.iconCancel)
-        #--- Connect ---#
-        self.pb_save.clicked.connect(self.on_save)
-        self.pb_cancel.clicked.connect(self.close)
-
-    def on_save(self):
-        """
-        Command launched when 'Save' QPushButton is clicked
-
-        Create New Project
-        """
-        self.log.detail(">>> Save New Project Dialog")
-        projectName = str(self.le_projectName.text())
-        projectCode = str(self.le_projectCode.text())
-        #--- Check Values ---#
-        exclusions = ['', ' ', 'None', None]
-        if projectName in exclusions or projectCode in exclusions:
-            pQt.errorDialog("Project Name or Project Code invalide: %s--%s" % (projectName, projectCode), self)
-        else:
-            #--- Create Project ---#
-            self._project.newProject(projectName, projectCode)
-            self.close()
 
 
 class LoadProject(QtGui.QDialog, loadProjectUI.Ui_Dialog):
@@ -297,8 +243,8 @@ class ToolSettings(settingsUi.Settings):
         super(ToolSettings, self)._initWidgets()
         self.setWindowTitle("%s | %s" % (self.log.title, self._fdn.__user__))
         #--- UserGroups ---#
-        self.wg_groups = stg_userGroups.Groups(self)
-        self.wg_users = stg_userGroups.Users(self, settingsMode='tool')
+        self.wg_groups = userGroups.Groups(self)
+        self.wg_users = userGroups.Users(self, settingsMode='tool')
         #--- Refresh ---#
         for widget in [self.wg_groups, self.wg_users]:
             widget.setVisible(False)
@@ -464,8 +410,8 @@ class ProjectSettings(settingsUi.Settings):
         super(ProjectSettings, self)._initWidgets()
         self.setWindowTitle("%s | %s" % (self.log.title, self._fdn.__user__))
         #--- Project ---#
-        self.wg_watchers = stg_userGroups.Users(self, settingsMode='project')
-        self.wg_contexts = stg_contexts.Contexts(self)
+        self.wg_watchers = userGroups.Users(self, settingsMode='project')
+        self.wg_contexts = contexts.Contexts(self)
         #--- Refresh ---#
         for widget in [self.wg_watchers, self.wg_contexts]:
             widget.setVisible(False)

@@ -4,6 +4,7 @@ from PyQt4 import QtGui
 from foundation import gui
 from functools import partial
 from coreSys import pFile, env
+from coreQt.dialogs import promptMultiUi
 
 #--- Compile Ui ---#
 gui.compileUi()
@@ -162,8 +163,32 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         Launch NewProject dialog
         """
         self.log.detail(">>> Launch 'New Project' ...")
-        dial_newProject = dialogs.NewProject(self)
-        dial_newProject.exec_()
+        #--- Get Prompts ---#
+        prompts = [dict(promptType='line', promptLabel='projectName'),
+                   dict(promptType='line', promptLabel='projectCode')]
+        #--- Launch Dialog ---#
+        self.dial_newProject = promptMultiUi.PromptMulti(title="New Project", prompts=prompts, parent=self,
+                                                         acceptCmd=self.on_dialNewProject)
+        self.dial_newProject.exec_()
+
+    def on_dialNewProject(self):
+        """
+        Command launched when 'Save' dialog QPushButton is clicked
+
+        Save newProject
+        """
+        self.log.detail(">>> Save 'New Project' ...")
+        result = self.dial_newProject.result()
+        projectName = result.get('projectName')
+        projectCode = result.get('projectCode')
+        #--- Check Values ---#
+        exclusions = ['', ' ', 'None', None]
+        if projectName in exclusions or projectCode in exclusions:
+            pQt.errorDialog("Project Name or Project Code invalide: %s--%s" % (projectName, projectCode), self)
+        else:
+            #--- Create Project ---#
+            self._fdn._project.newProject(projectName, projectCode)
+            self.dial_newProject.close()
 
     def on_miLoadProject(self):
         """
