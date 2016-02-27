@@ -3,9 +3,10 @@ from PyQt4 import QtGui
 from coreSys import env
 from coreQt import pQt, dialogs
 
-
 dialogs.compileUi('dial_settings.ui')
 from _ui import dial_settingsUI
+
+
 class Settings(QtGui.QDialog, dial_settingsUI.Ui_dial_settings):
     """
     Settings dialog Class: Edit settings ui

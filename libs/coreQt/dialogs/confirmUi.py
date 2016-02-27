@@ -1,9 +1,10 @@
 from PyQt4 import QtGui
 from coreQt import dialogs
 
-
 dialogs.compileUi('dial_confirm.ui')
 from _ui import dial_confirmUI
+
+
 class Confirm(QtGui.QDialog, dial_confirmUI.Ui_dial_confirm):
     """
     Confirm dialog ui class
@@ -68,11 +69,3 @@ class Confirm(QtGui.QDialog, dial_confirmUI.Ui_dial_confirm):
         return newButton
 
 
-
-if __name__ == '__main__':
-    import sys
-
-    app = QtGui.QApplication(sys.argv)
-    window = Confirm()
-    window.show()
-    sys.exit(app.exec_())

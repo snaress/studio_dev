@@ -1,7 +1,8 @@
 import optparse
 
 
-__dialogs__ = dict(Confirm='basicsUi',
+__dialogs__ = dict(Confirm='confirmUi',
+                   PromptMulti='promptMultiUi',
                    Settings='settingsUi')
 
 usage = "dialogs -n [DialogClassName]"
