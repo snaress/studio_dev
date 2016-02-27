@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\libs\coreQt\dialogs\_src\wg_promptLine.ui'
 #
-# Created: Sat Feb 27 17:31:01 2016
+# Created: Sat Feb 27 22:48:42 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -52,7 +52,7 @@ class Ui_wg_promptLine(object):
         self.le_prompt = QtGui.QLineEdit(wg_promptLine)
         self.le_prompt.setMouseTracking(False)
         self.le_prompt.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.le_prompt.setFrame(True)
+        self.le_prompt.setFrame(False)
         self.le_prompt.setEchoMode(QtGui.QLineEdit.Normal)
         self.le_prompt.setObjectName(_fromUtf8("le_prompt"))
         self.hl_prompt.addWidget(self.le_prompt)

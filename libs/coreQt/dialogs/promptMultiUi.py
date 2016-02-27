@@ -21,7 +21,7 @@ class PromptMulti(QtGui.QDialog, dial_promptUI.Ui_dial_prompt):
     :param acceptCmd: Command to launch when 'Save' QPushButton is clicked
     :type acceptCmd: method || function
     :param parent: Parent ui or widget
-    :type parent: QtGui
+    :type parent: QtGui.QWidget
     """
 
     __iconPath__ = env.iconsPath
@@ -90,6 +90,9 @@ class PromptMulti(QtGui.QDialog, dial_promptUI.Ui_dial_prompt):
         #--- create Prompt Combo ---#
         elif newItem.itemType == 'combo':
             newItem.itemWidget = PromptCombo(label=newItem.itemLabel, value=kwargs.get('promptValue'))
+            defaultValue = kwargs.get('defaultValue')
+            if defaultValue is not None:
+                newItem.itemWidget.cb_prompt.setCurrentIndex(newItem.itemWidget.cb_prompt.findText(str(defaultValue)))
         #--- Result ---#
         return newItem
 
