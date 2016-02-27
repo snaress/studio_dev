@@ -2,9 +2,10 @@ from PyQt4 import QtGui
 from coreQt import widgets
 from functools import partial
 
-
 widgets.compileUi('wg_range.ui')
 from _ui import wg_rangeUI
+
+
 class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
     """
     Range Class: Range selector Widget
@@ -154,12 +155,3 @@ class Range(QtGui.QWidget, wg_rangeUI.Ui_wg_range):
             self.le_max.setText(str(self.rangeMax))
             if self.rangeMax <= self.rangeMin:
                 self.hs_min.setValue(self.hs_max.value() - 1)
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QtGui.QApplication(sys.argv)
-    window = Range()
-    window.show()
-    sys.exit(app.exec_())

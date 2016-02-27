@@ -5,9 +5,10 @@ from coreQt import widgets
 from coreSys import env
 from functools import partial
 
-
 widgets.compileUi('wg_basicTree.ui')
 from _ui import wg_basicTreeUI
+
+
 class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
     """
     BasicTree common Class: Category tree widget
@@ -364,12 +365,3 @@ class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
             self.log.detail(">>> Launch 'Discard %s' ..." % self.treeTitle)
         self.__editedItems__ = dict(added=[], edited=[], deleted=[])
         self._initWidget()
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QtGui.QApplication(sys.argv)
-    window = BasicTree()
-    window.show()
-    sys.exit(app.exec_())
