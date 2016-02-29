@@ -183,14 +183,33 @@ class Project(object):
         for k, v in kwargs.iteritems():
             if k in self.attributes:
                 if k == 'contexts':
-                    for ctxtData in v:
-                        ctxtObj = self.newContext(ctxtData['contextName'])
-                        ctxtObj.update(ctxtData)
-                        self.addContext(ctxtObj)
+                    self.buildContexts(*v)
                 else:
                     setattr(self, k, v)
             else:
                 self.log.warning("!!! Unrecognized attribute: %s. Skip !!!" % k)
+
+    def buildContextsFromSettings(self):
+        """
+        Build Context object from project file
+        """
+        self.log.detail(">>> Build contexts from project file ...")
+        projectDict = pFile.readDictFile(self.projectFile)
+        self.buildContexts(*projectDict['contexts'])
+
+    def buildContexts(self, *args):
+        """
+        Build context object
+
+        :param args: Context data list
+        :type args: list
+        """
+        self.contexts = []
+        for ctxtData in args:
+            self.log.detail("Adding context %r ..." % ctxtData['contextName'])
+            ctxtObj = self.newContext(ctxtData['contextName'])
+            ctxtObj.update(**ctxtData)
+            self.addContext(ctxtObj)
 
     def newProject(self, projectName, projectCode):
         """
@@ -296,7 +315,7 @@ class Project(object):
             raise ValueError("Context name %r already exists !!!" % contextName)
         #--- Create Context ---#
         ctxtObj = context.Context(self, contextName)
-        self.log.info("Context %r added to project %r" % (contextName, self.project))
+        self.log.detail("Context %r successfully created" % contextName)
         return ctxtObj
 
     def addContext(self, contextObject):

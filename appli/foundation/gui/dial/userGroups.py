@@ -183,35 +183,6 @@ class Groups(basicTreeUi.BasicTree):
                 self.__editedItems__['edited'].append(item)
         self.rf_itemStyle()
 
-    def on_apply(self):
-        """
-        Command launched when 'Apply' QPushButton is clicked
-
-        Store datas to itemObject
-        """
-        super(Groups, self).on_apply()
-        ind = 0
-        #--- Parse Group Tree ---#
-        grpDict = dict()
-        treeDict = self.getData()
-        for n in sorted(treeDict.keys()):
-            if not treeDict[n]['grpCode'] in ['', ' ', 'None', None]:
-                item = self.getItemFromAttrValue('grpCode', treeDict[n]['grpCode'])
-                if not item in self.__editedItems__['deleted']:
-                    for k, v in treeDict[n].iteritems():
-                        if not k == 'childs':
-                            if not ind in grpDict.keys():
-                                grpDict[ind] = dict()
-                            grpDict[ind][k] = v
-                    ind += 1
-            else:
-                self.log.warning("!!! ERROR: Group 'code' value not valide, skipp %s !!!" % treeDict[n]['grpCode'])
-        #--- Store and refresh ---#
-        self.__editedItems__ = dict(added=[], edited=[], deleted=[])
-        self._groups.buildChilds(grpDict)
-        self.pWidget.rf_editedItemStyle()
-        self.buildTree()
-
     def on_dialogAccept(self, dialogMode='add', selItem=None):
         """
         Command launched when 'Save' dialog QPushButton is clicked
@@ -234,7 +205,7 @@ class Groups(basicTreeUi.BasicTree):
         #--- Check New Code ---#
         if dialogMode == 'add':
             grpData = self.getData()
-            for n in grpData.keys():
+            for n in sorted(grpData.keys()):
                 if result['grpCode'] == grpData[n]['grpCode']:
                     message = "!!! %s already exists !!!" % result['grpCode']
                     pQt.errorDialog(message, self)
@@ -260,6 +231,36 @@ class Groups(basicTreeUi.BasicTree):
         self.rf_treeColumns()
         self.rf_itemStyle()
         self.dial_groups.close()
+
+    def on_apply(self):
+        """
+        Command launched when 'Apply' QPushButton is clicked
+
+        Store datas to itemObject
+        """
+        super(Groups, self).on_apply()
+        ind = 0
+        #--- Parse Group Tree ---#
+        grpDict = dict()
+        treeDict = self.getData()
+        for n in sorted(treeDict.keys()):
+            if not treeDict[n]['grpCode'] in ['', ' ', 'None', None]:
+                item = self.getItemFromAttrValue('grpCode', treeDict[n]['grpCode'])
+                if not item in self.__editedItems__['deleted']:
+                    for k, v in treeDict[n].iteritems():
+                        if not k == 'childs':
+                            if not ind in grpDict.keys():
+                                grpDict[ind] = dict()
+                            grpDict[ind][k] = v
+                    ind += 1
+            else:
+                self.log.warning("!!! Group 'code' value not valide, skipp %s !!!" % treeDict[n]['grpCode'])
+        #--- Store and refresh ---#
+        self.__editedItems__ = dict(added=[], edited=[], deleted=[])
+        self._groups.buildChilds(grpDict)
+        self.pWidget.rf_editedItemStyle()
+        self.rf_itemStyle()
+        # self.buildTree()
 
     def on_save(self):
         """
@@ -590,35 +591,6 @@ class Users(basicTreeUi.BasicTree):
         self.rf_statusState(item.itemWidget)
         self.rf_itemStyle()
 
-    def on_apply(self):
-        """
-        Command launched when 'Apply' QPushButton is clicked
-
-        Store datas to itemObject
-        """
-        super(Users, self).on_apply()
-        #--- Added User ---#
-        for item in self.__editedItems__['added']:
-            if not item.itemObj.userName in self._users.users:
-                self._users.addChild(item.itemObj)
-                item.itemObj.userStatus = self.getStatus(item)
-        #--- Edited User ---#
-        for item in self.__editedItems__['edited']:
-            if self.settingsMode == 'tool':
-                item.itemObj.userStatus = self.getStatus(item)
-            elif self.settingsMode == 'project':
-                if self.getStatus(item):
-                    self._project.addWatcher(item.itemObj.userName)
-                else:
-                    self._project.delWatcher(item.itemObj.userName)
-        #--- Deleted User ---#
-        for item in self.__editedItems__['deleted']:
-            if item.itemObj.userName in self._users.users:
-                self._users.delUser(userObj=item.itemObj)
-        #--- Refresh ---#
-        self.pWidget.rf_editedItemStyle()
-        self.buildTree()
-
     def on_dialogAccept(self, dialogMode='add', selItem=None):
         """
         Command launched when 'Save' dialog QPushButton is clicked
@@ -671,6 +643,35 @@ class Users(basicTreeUi.BasicTree):
         self.rf_treeColumns()
         self.rf_itemStyle()
         self.dial_user.close()
+
+    def on_apply(self):
+        """
+        Command launched when 'Apply' QPushButton is clicked
+
+        Store datas to itemObject
+        """
+        super(Users, self).on_apply()
+        #--- Added User ---#
+        for item in self.__editedItems__['added']:
+            if not item.itemObj.userName in self._users.users:
+                self._users.addChild(item.itemObj)
+                item.itemObj.userStatus = self.getStatus(item)
+        #--- Edited User ---#
+        for item in self.__editedItems__['edited']:
+            if self.settingsMode == 'tool':
+                item.itemObj.userStatus = self.getStatus(item)
+            elif self.settingsMode == 'project':
+                if self.getStatus(item):
+                    self._project.addWatcher(item.itemObj.userName)
+                else:
+                    self._project.delWatcher(item.itemObj.userName)
+        #--- Deleted User ---#
+        for item in self.__editedItems__['deleted']:
+            if item.itemObj.userName in self._users.users:
+                self._users.delUser(userObj=item.itemObj)
+        #--- Refresh ---#
+        self.pWidget.rf_editedItemStyle()
+        self.buildTree()
 
     def on_save(self):
         """

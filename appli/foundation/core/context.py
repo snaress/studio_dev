@@ -79,9 +79,10 @@ class Context(common.Storage):
         data = dict(contextName=self.contextName, childs=childsData)
         return data
 
-    def update(self, childsData):
-        for child in childsData['childs']:
-            print child
+    def update(self, **kwargs):
+        if kwargs.get('childs') is not None:
+            for child in kwargs['childs']:
+                print child
 
     def newChild(self, **kwargs):
         """
