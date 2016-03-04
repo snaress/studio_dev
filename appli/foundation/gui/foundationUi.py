@@ -243,6 +243,8 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self._fdn._groups.log.level = logLevel
         self._fdn._users.log.level = logLevel
         self._fdn._project.log.level = logLevel
+        for ctxtObj in self._fdn._project.contexts:
+            ctxtObj.log.level = logLevel
 
     def on_miStyle(self, style):
         """

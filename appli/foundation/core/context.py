@@ -13,11 +13,33 @@ class CtxtEntity(common.Child):
 
     def __init__(self, parentObject=None):
         super(CtxtEntity, self).__init__(parentObject=parentObject)
+        self._childs = []
         #--- Data ---#
-        self.ctxtType = None
         self.ctxtCode = None
         self.ctxtLabel = None
         self.ctxtFolder = None
+
+    @property
+    def contextName(self):
+        """
+        Get context name
+
+        :return: Context Name
+        :rtype: str
+        """
+        return self._parent.contextName
+
+    @property
+    def contextType(self):
+        """
+        Get context type
+
+        :return: Context type ('mainType' or 'subType')
+        :rtype: str
+        """
+        if self._parent.__class__.__name__ == 'Context':
+            return 'mainType'
+        return 'subType'
 
 
 class Context(common.Storage):

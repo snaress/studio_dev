@@ -43,6 +43,7 @@ class Contexts(basicTreeUi.BasicTree):
         super(Contexts, self)._setupWidget()
         self.l_title.setText(self.__class__.__name__)
         self.cbb_filter.setVisible(False)
+        self.pb_template.setVisible(False)
         self.pb_edit1.setVisible(False)
         self.pb_edit2.setVisible(False)
         self.qf_treeEdit_R.setVisible(False)
@@ -55,8 +56,8 @@ class Contexts(basicTreeUi.BasicTree):
         Refresh widgets toolTips
         """
         if self.mainUi.showToolTips:
-            self.pb_itemUp.setToolTip("Move up selected group")
-            self.pb_itemDn.setToolTip("Move down selected group")
+            self.pb_itemUp.setToolTip("Move up selected context")
+            self.pb_itemDn.setToolTip("Move down selected context")
             self.pb_template.setToolTip("Open templates")
             self.pb_add.setToolTip("Create new context")
             self.pb_del.setToolTip("Delete selected context")
@@ -231,3 +232,64 @@ class ContextDialog(promptMultiUi.PromptMulti):
         result = str(ctxtItemName.le_prompt.text())
         ctxtItemLabel.le_prompt.setText('%s%s' % (result[0].upper(), result[1:]))
         ctxtItemFolder.le_prompt.setText('%ss' % result)
+
+
+class Entities(basicTreeUi.BasicTree):
+    """
+    Entities Class: Contains Entities settings, child of ToolSettings
+
+    :param pWidget: Parent widget
+    :type pWidget: dialogs.ToolSettings
+    """
+
+    def __init__(self, pWidget):
+        self.pWidget = pWidget
+        self.mainUi = self.pWidget.parent()
+        self._fdn = self.pWidget._fdn
+        self._project = self._fdn._project
+        self._users = self._fdn._users
+        super(Entities, self).__init__(pWidget)
+
+    def _initWidget(self):
+        """
+        Init widget core
+        """
+        self.log = self.pWidget.log
+        super(Entities, self)._initWidget()
+        #--- Edit Grade ---#
+        if not self._users._user.grade == 0:
+            self.pb_del.setEnabled(False)
+
+    def _setupWidget(self):
+        """
+        Setup Entities widget
+        """
+        super(Entities, self)._setupWidget()
+        self.l_title.setText(self.__class__.__name__)
+        self.cbb_filter.setVisible(False)
+        self.pb_template.setVisible(False)
+        self.pb_template.setVisible(False)
+        self.pb_edit1.setVisible(False)
+        self.pb_edit2.setVisible(False)
+        self.qf_treeEdit_R.setVisible(False)
+        self.tw_tree.header().setStretchLastSection(False)
+        self.rf_headers('Entity Type', 'Entity SubType')
+        self.rf_treeColumns()
+
+    def rf_toolTips(self):
+        """
+        Refresh widgets toolTips
+        """
+        if self.mainUi.showToolTips:
+            self.pb_itemUp.setToolTip("Move up selected Entity")
+            self.pb_itemDn.setToolTip("Move down selected Entity")
+            self.pb_template.setToolTip("Open templates")
+            self.pb_add.setToolTip("Create new Entity")
+            self.pb_del.setToolTip("Delete selected Entity")
+            self.pb_apply.setToolTip("Apply datas to Foundation object")
+            self.pb_cancel.setToolTip("Restore datas from Foundation object")
+            #--- Edit Grade ---#
+            if not self._users._user.grade == 0:
+                self.pb_del.setToolTip("Delete selected Entity (Disabled for your grade)")
+        else:
+            super(Entities, self).rf_toolTips()

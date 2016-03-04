@@ -412,8 +412,14 @@ class ProjectSettings(settingsUi.Settings):
         #--- Project ---#
         self.wg_watchers = userGroups.Users(self, settingsMode='project')
         self.wg_contexts = contexts.Contexts(self)
+        #--- Entities ---#
+        self.wg_entities = []
+        for ctxt in self._project.contextNames:
+            self.wg_entities.append(contexts.Entities(self))
         #--- Refresh ---#
-        for widget in [self.wg_watchers, self.wg_contexts]:
+        widgets = [self.wg_watchers, self.wg_contexts]
+        widgets.extend(self.wg_entities)
+        for widget in widgets:
             widget.setVisible(False)
             self.vl_settingsWidget.addWidget(widget)
 
@@ -453,14 +459,18 @@ class ProjectSettings(settingsUi.Settings):
         :return: Entities category
         :rtype: dict
         """
-        return {'entities': {'code': 'entities',
-                             'label': 'Entities',
-                             'subCat': {0: {'assets': {'widget': None,
-                                                       'code': 'assets',
-                                                       'label': 'Assets'}},
-                                        1: {'shots': {'widget': None,
-                                                      'code': 'shots',
-                                                      'label': 'Shots'}}}}}
+        #--- Main Category ---#
+        category = {'entities': {'code': 'entities',
+                                 'label': 'Entities',
+                                 'subCat': {}}}
+        #--- Sub Categories ---#
+        for n, subCat in enumerate(self._project.contextNames):
+            # noinspection PyTypeChecker
+            category['entities']['subCat'][n] = {subCat: {'widget': self.wg_entities[n],
+                                                          'code': subCat,
+                                                          'label': '%s%s' % (subCat[0].upper(), subCat[1:])}}
+        #--- Result ---#
+        return category
 
     def getEditedItems(self):
         """
