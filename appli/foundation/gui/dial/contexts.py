@@ -1,3 +1,4 @@
+import pprint
 from coreQt import pQt
 from PyQt4 import QtGui
 from coreQt.widgets import basicTreeUi
@@ -69,6 +70,22 @@ class Contexts(basicTreeUi.BasicTree):
                 self.pb_del.setToolTip("Delete selected context (Disabled for your grade)")
         else:
             super(Contexts, self).rf_toolTips()
+
+    def getData(self, asString=False):
+        """
+        Get tree datas
+
+        :param asString: Return string instead of dict
+        :type asString: bool
+        :return: Tree datas
+        :rtype: dict
+        """
+        data = dict()
+        for n, item in enumerate(pQt.getTopItems(self.tw_tree)):
+            data[n] = item.itemObj.getData()
+        if asString:
+            return pprint.pformat(data)
+        return data
 
     def buildTree(self):
         """
@@ -173,7 +190,7 @@ class Contexts(basicTreeUi.BasicTree):
             if not treeDict[n]['contextName'] in ['', ' ', 'None', None]:
                 item = self.getItemFromAttrValue('contextName', treeDict[n]['contextName'])
                 if not item in self.__editedItems__['deleted']:
-                    ctxtData.append(dict(contextName=treeDict[n]['contextName'], childs=treeDict[n]['childs']))
+                    ctxtData.insert(n, dict(contextName=treeDict[n]['contextName'], childs=treeDict[n]['childs']))
             else:
                 self.log.warning("!!! Context 'name' value not valide, skipp %s !!!" % treeDict[n]['contextName'])
         #--- Store and refresh ---#
