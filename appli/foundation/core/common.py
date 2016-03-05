@@ -134,10 +134,18 @@ class Storage(object):
         """
         childs = []
         for child in self.childs:
+            addChild = True
+            #--- Check Attributes ---#
             for k, v in kwargs.iteritems():
                 if hasattr(child, k):
-                    if getattr(child, k) == v:
-                        childs.append(child)
+                    if not getattr(child, k) == v:
+                        addChild = False
+                else:
+                    addChild = False
+            #--- Store Child ---#
+            if addChild:
+                childs.append(child)
+        #--- Result ---#
         return childs
 
     def newChild(self, **kwargs):

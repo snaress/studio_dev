@@ -1,20 +1,21 @@
 import common
+from coreSys import pFile
 
 
 class CtxtEntity(common.Child):
     """
     CtxtEntity Class: Contains entity context data, child of Context
 
-    :param parentObject: Storage object
-    :type parentObject: Context
+    :param parentObject: Storage object or Child object
+    :type parentObject: Context || CtxtEntity
     """
 
     __attrPrefix__ = 'ctxt'
 
     def __init__(self, parentObject=None):
         super(CtxtEntity, self).__init__(parentObject=parentObject)
-        self._childs = []
         #--- Data ---#
+        self.childs = []
         self.ctxtCode = None
         self.ctxtLabel = None
         self.ctxtFolder = None
@@ -40,6 +41,65 @@ class CtxtEntity(common.Child):
         if self._parent.__class__.__name__ == 'Context':
             return 'mainType'
         return 'subType'
+
+    def getData(self):
+        """
+        get class representation as dict
+
+        :return: Class data
+        :rtype: dict
+        """
+        data = dict(childs=dict())
+        for attr in self.attributes:
+            data[attr] = getattr(self, attr)
+        for n, child in enumerate(self.childs):
+            data['childs'][n] = child.getData()
+        return data
+
+    def update(self, **kwargs):
+        """
+        Update class data with given attributes
+
+        :param kwargs: child data (key must start with self.__attrPrefix__)
+        :type kwargs: dict
+        """
+        for k, v in kwargs.iteritems():
+            if k in self.attributes:
+                setattr(self, k, v)
+            elif k == 'childs':
+                for n in sorted(kwargs['childs']):
+                    newChild = self.newChild(**kwargs['childs'][n])
+                    self.addChild(newChild)
+            else:
+                self.log.warning("!!! Unrecognized attribute: %s. Skipp !!!" % k)
+
+    def newChild(self, **kwargs):
+        """
+        Create new context entity
+
+        :param kwargs: Context entity data (key must starts with 'ctxt')
+        :type kwargs: dict
+        :return: Context entity object
+        :rtype: CtxtEntity
+        """
+        childObj = CtxtEntity(parentObject=self)
+        childObj.update(**kwargs)
+        return childObj
+
+    def addChild(self, childObject):
+        """
+        Add context entity object to storage
+
+        :param childObject: Context entity object
+        :type childObject: CtxtEntity
+        """
+        #--- Check Context entity code ---#
+        for child in self.childs:
+            for attr in child.attributes:
+                if getattr(child, attr) == getattr(childObject, attr):
+                    raise AttributeError("!!! Context entity %r already exists !!!" % childObject.ctxtCode)
+        #--- Add Context entity Object ---#
+        self.childs.append(childObject)
 
 
 class Context(common.Storage):
@@ -101,16 +161,36 @@ class Context(common.Storage):
         data = dict(contextName=self.contextName, childs=childsData)
         return data
 
+    def buildFromSettings(self):
+        """
+        Populate _childs from settings file
+        """
+        projectDict = pFile.readDictFile(self._project.projectFile)
+        ctxtDict = dict()
+        for ctxt in projectDict['contexts']:
+            if ctxt['contextName'] == self.contextName:
+                ctxtDict = ctxt
+        self.update(**ctxtDict)
+
     def update(self, **kwargs):
+        """
+        Update childs list
+
+        :param kwargs: Context entities data
+        :type kwargs: dict
+        """
+        self.log.detail("Updating context %r ..." % self.contextName)
         if kwargs.get('childs') is not None:
-            for child in kwargs['childs']:
-                print child
+            self.clearChilds()
+            for n in sorted(kwargs['childs']):
+                newChild = self.newChild(**kwargs['childs'][n])
+                self.addChild(newChild)
 
     def newChild(self, **kwargs):
         """
         Create new context entity
 
-        :param kwargs: Context entity data (key must starts with 'grp')
+        :param kwargs: Context entity data (key must starts with 'ctxt')
         :type kwargs: dict
         :return: Context entity object
         :rtype: CtxtEntity
@@ -127,5 +207,9 @@ class Context(common.Storage):
         :type childObject: CtxtEntity
         """
         #--- Check Context entity code ---#
+        for child in self.childs:
+            for attr in child.attributes:
+                if getattr(child, attr) == getattr(childObject, attr):
+                    raise AttributeError("!!! Context entity %r already exists !!!" % childObject.ctxtCode)
         #--- Add Context entity Object ---#
         super(Context, self).addChild(childObject)

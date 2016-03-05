@@ -194,22 +194,9 @@ class Groups(basicTreeUi.BasicTree):
         :type selItem: QtGui.QTreeWidgetItem
         """
         #--- Get Datas ---#
-        excludes = ['', ' ', 'None', None]
         result = self.dial_groups.result()
         result['grpGrade'] = int(result['grpGrade'])
-        #--- Check Data ---#
-        if result['grpCode'] in excludes or result['grpName'] in excludes:
-            message = "!!! 'code' or 'name' invalid: %s -- %s !!!" % ( result['grpCode'], result['grpName'])
-            pQt.errorDialog(message, self)
-            raise AttributeError(message)
-        #--- Check New Code ---#
-        if dialogMode == 'add':
-            grpData = self.getData()
-            for n in sorted(grpData.keys()):
-                if result['grpCode'] == grpData[n]['grpCode']:
-                    message = "!!! %s already exists !!!" % result['grpCode']
-                    pQt.errorDialog(message, self)
-                    raise AttributeError(message)
+        self._checkDialogResult(result, dialogMode)
         #--- Added Goup ---#
         if dialogMode == 'add':
             self.log.detail("Adding new group: %s" % result['grpCode'])
@@ -231,6 +218,30 @@ class Groups(basicTreeUi.BasicTree):
         self.rf_treeColumns()
         self.rf_itemStyle()
         self.dial_groups.close()
+
+    def _checkDialogResult(self, result, dialogMode):
+        """
+        Check Dialog results
+
+        :param result: Dialog results
+        :type result: dict
+        :param dialogMode: 'add' or 'edit'
+        :type dialogMode: str
+        """
+        #--- Check Data ---#
+        excludes = ['', ' ', 'None', None]
+        if result['grpCode'] in excludes or result['grpName'] in excludes:
+            message = "!!! 'code' or 'name' invalid: %s -- %s !!!" % ( result['grpCode'], result['grpName'])
+            pQt.errorDialog(message, self)
+            raise AttributeError(message)
+        #--- Check New Code ---#
+        if dialogMode == 'add':
+            grpData = self.getData()
+            for n in sorted(grpData.keys()):
+                if result['grpCode'] == grpData[n]['grpCode']:
+                    message = "!!! %s already exists !!!" % result['grpCode']
+                    pQt.errorDialog(message, self)
+                    raise AttributeError(message)
 
     def on_apply(self):
         """
@@ -602,21 +613,8 @@ class Users(basicTreeUi.BasicTree):
         :type selItem: QtGui.QTreeWidgetItem
         """
         #--- Get Datas ---#
-        excludes = ['', ' ', 'None', None]
         result = self.dial_user.result()
-        #--- Check Data ---#
-        if result['userName'] in excludes:
-            message = "!!! 'userName' invalid: %s !!!" % result['userName']
-            pQt.errorDialog(message, self)
-            raise AttributeError(message)
-        #--- Check New User ---#
-        if dialogMode == 'add':
-            userData = self.getData()
-            for n in sorted(userData.keys()):
-                if result['userName'] == userData[n]['userName']:
-                    message = "!!! %s already exists !!!" % result['userName']
-                    pQt.errorDialog(message, self)
-                    raise AttributeError(message)
+        self._checkDialogResult(result, dialogMode)
         #--- Added User ---#
         if dialogMode == 'add':
             self.log.detail("Adding new user: %s" % result['userName'])
@@ -643,6 +641,30 @@ class Users(basicTreeUi.BasicTree):
         self.rf_treeColumns()
         self.rf_itemStyle()
         self.dial_user.close()
+
+    def _checkDialogResult(self, result, dialogMode):
+        """
+        Check Dialog results
+
+        :param result: Dialog results
+        :type result: dict
+        :param dialogMode: 'add' or 'edit'
+        :type dialogMode: str
+        """
+        #--- Check Data ---#
+        excludes = ['', ' ', 'None', None]
+        if result['userName'] in excludes:
+            message = "!!! 'userName' invalid: %s !!!" % result['userName']
+            pQt.errorDialog(message, self)
+            raise AttributeError(message)
+        #--- Check New User ---#
+        if dialogMode == 'add':
+            userData = self.getData()
+            for n in sorted(userData.keys()):
+                if result['userName'] == userData[n]['userName']:
+                    message = "!!! %s already exists !!!" % result['userName']
+                    pQt.errorDialog(message, self)
+                    raise AttributeError(message)
 
     def on_apply(self):
         """

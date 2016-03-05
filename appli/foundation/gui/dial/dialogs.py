@@ -414,8 +414,8 @@ class ProjectSettings(settingsUi.Settings):
         self.wg_contexts = contexts.Contexts(self)
         #--- Entities ---#
         self.wg_entities = []
-        for ctxt in self._project.contextNames:
-            self.wg_entities.append(contexts.Entities(self))
+        for ctxtObj in self._project.contexts:
+            self.wg_entities.append(contexts.Entities(self, ctxtObj))
         #--- Refresh ---#
         widgets = [self.wg_watchers, self.wg_contexts]
         widgets.extend(self.wg_entities)
