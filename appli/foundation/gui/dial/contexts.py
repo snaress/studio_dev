@@ -266,6 +266,8 @@ class Entities(basicTreeUi.BasicTree):
 
     :param pWidget: Parent widget
     :type pWidget: dialogs.ToolSettings
+    :param contextObject: Context object
+    :type contextObject: Context
     """
 
     def __init__(self, pWidget, contextObject):

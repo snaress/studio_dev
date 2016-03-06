@@ -9,6 +9,7 @@ from coreQt.dialogs import promptMultiUi
 #--- Compile Ui ---#
 gui.compileUi()
 from dial import dialogs
+from widgets import mainTree
 from _ui import foundationUI
 from foundation.core import foundation
 
@@ -43,6 +44,7 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.disableFont.setItalic(True)
         #--- Refresh ---#
         self._initMainUi()
+        self._initWidgets()
         self._initMenu()
         self.rf_menuVisibility()
 
@@ -56,6 +58,13 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.gridLayout.setSpacing(0)
         self.qf_left.setVisible(False)
         self.qf_datasDn.setVisible(False)
+
+    def _initWidgets(self):
+        """
+        Init main ui widgets
+        """
+        self.wg_mainTree = mainTree.MainTree(self)
+        self.vl_treeDn.addWidget(self.wg_mainTree)
 
     def _initMenu(self):
         """
@@ -155,6 +164,8 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.setWindowTitle("Foundation | %s | %s" % (self._fdn._project.project, self._fdn.__user__))
         self.rf_menuVisibility()
         self.qf_left.setVisible(True)
+        #--- Main Tree ---#
+        self.wg_mainTree._initWidget()
 
     def on_miNewProject(self):
         """
