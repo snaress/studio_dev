@@ -2,7 +2,7 @@ from PyQt4 import QtGui
 from coreQt import widgets
 from functools import partial
 
-widgets.compileUi('wg_range.ui')
+# widgets.compileUi('wg_range.ui')
 from _ui import wg_rangeUI
 
 

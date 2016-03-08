@@ -5,7 +5,7 @@ from coreQt import widgets
 from coreSys import env
 from functools import partial
 
-widgets.compileUi('wg_basicTree.ui')
+# widgets.compileUi('wg_basicTree.ui')
 from _ui import wg_basicTreeUI
 
 

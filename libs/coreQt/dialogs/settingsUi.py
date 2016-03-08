@@ -3,7 +3,7 @@ from PyQt4 import QtGui
 from coreSys import env
 from coreQt import pQt, dialogs
 
-dialogs.compileUi('dial_settings.ui')
+# dialogs.compileUi('dial_settings.ui')
 from _ui import dial_settingsUI
 
 

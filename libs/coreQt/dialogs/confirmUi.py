@@ -1,7 +1,7 @@
 from PyQt4 import QtGui
 from coreQt import dialogs
 
-dialogs.compileUi('dial_confirm.ui')
+# dialogs.compileUi('dial_confirm.ui')
 from _ui import dial_confirmUI
 
 

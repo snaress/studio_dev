@@ -3,7 +3,7 @@ from PyQt4 import QtGui
 from coreSys import env
 from coreQt import dialogs, pQt
 
-dialogs.compileUi(['dial_prompt.ui', 'wg_promptLine.ui', 'wg_promptColor.ui', 'wg_promptCombo.ui'])
+# dialogs.compileUi(['dial_prompt.ui', 'wg_promptLine.ui', 'wg_promptColor.ui', 'wg_promptCombo.ui'])
 from _ui import dial_promptUI, wg_promptLineUI, wg_promptColorUI, wg_promptComboUI
 
 
