@@ -150,11 +150,15 @@
     <property name="title">
      <string>Project</string>
     </property>
+    <widget class="QMenu" name="m_newEntity">
+     <property name="title">
+      <string>New Entity</string>
+     </property>
+    </widget>
     <addaction name="mi_newProject"/>
     <addaction name="mi_loadProject"/>
     <addaction name="separator"/>
-    <addaction name="mi_newAsset"/>
-    <addaction name="mi_newShot"/>
+    <addaction name="m_newEntity"/>
    </widget>
    <widget class="QMenu" name="m_help">
     <property name="title">
@@ -252,6 +256,11 @@
   <action name="mi_toolSettings">
    <property name="text">
     <string>Tool Settings</string>
+   </property>
+  </action>
+  <action name="actionTmp">
+   <property name="text">
+    <string>tmp</string>
    </property>
   </action>
  </widget>

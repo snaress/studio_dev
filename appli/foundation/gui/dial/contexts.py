@@ -392,7 +392,8 @@ class Entities(basicTreeUi.BasicTree):
         #--- Get Tool Tips ---#
         toolTip = ["Type   = %s" % item.itemType,
                    "Code   = %s" % item.itemObj.ctxtCode,
-                   "Label  = %s" % item.itemObj.ctxtLabel,
+                   "Name   = %s" % item.itemObj.ctxtName,
+                   "Label  = %s" % item.itemObj.contextLabel,
                    "Folder = %s" % item.itemObj.ctxtFolder]
         #--- Clear Item ---#
         for n in range(2):
@@ -400,10 +401,10 @@ class Entities(basicTreeUi.BasicTree):
             item.setToolTip(n, '')
         #--- Edit Item ---#
         if item.itemType == 'mainType':
-            item.setText(0, item.itemObj.ctxtLabel)
+            item.setText(0, item.itemObj.contextLabel)
             item.setToolTip(0, '\n'.join(toolTip))
         else:
-            item.setText(1, item.itemObj.ctxtLabel)
+            item.setText(1, item.itemObj.contextLabel)
             item.setToolTip(1, '\n'.join(toolTip))
 
     def on_addItem(self):
@@ -415,7 +416,7 @@ class Entities(basicTreeUi.BasicTree):
         super(Entities, self).on_addItem()
         #--- Get Prompts ---#
         prompts = [dict(promptType='line', promptLabel='ctxtCode'),
-                   dict(promptType='line', promptLabel='ctxtLabel'),
+                   dict(promptType='line', promptLabel='ctxtName'),
                    dict(promptType='line', promptLabel='ctxtFolder')]
         #--- Launch Dialog ---#
         self.dial_CtxtEntity = promptMultiUi.PromptMulti(title="New Entity", prompts=prompts, parent=self,
@@ -438,7 +439,7 @@ class Entities(basicTreeUi.BasicTree):
                 selItems = [selItems[0].parent()]
         #--- Add Context Entity ---#
         self.log.detail("Adding new Context Entity: %s" % result['ctxtCode'])
-        itemObj = self._context.newChild(ctxtCode=result['ctxtCode'], ctxtLabel=result['ctxtLabel'],
+        itemObj = self._context.newChild(ctxtCode=result['ctxtCode'], ctxtName=result['ctxtName'],
                                          ctxtFolder=result['ctxtFolder'])
         newItem = self.new_treeItem(itemObj)
         if not selItems:
@@ -461,8 +462,8 @@ class Entities(basicTreeUi.BasicTree):
         """
         #--- Check Data ---#
         excludes = ['', ' ', 'None', None]
-        if result['ctxtCode'] in excludes or result['ctxtLabel'] in excludes or result['ctxtFolder'] in excludes:
-            message = "!!! Entity invalid: %s -- %s -- %s !!!" % (result['ctxtCode'], result['ctxtLabel'],
+        if result['ctxtCode'] in excludes or result['ctxtName'] in excludes or result['ctxtFolder'] in excludes:
+            message = "!!! Entity invalid: %s -- %s -- %s !!!" % (result['ctxtCode'], result['ctxtName'],
                                                                   result['ctxtFolder'])
             pQt.errorDialog(message, self.dial_CtxtEntity)
             raise AttributeError(message)
@@ -475,8 +476,8 @@ class Entities(basicTreeUi.BasicTree):
             if not selItems:
                 if treeDict[n]['ctxtCode'] == result['ctxtCode']:
                     message = "!!! EntityCode %r already exists !!!" % result['ctxtCode']
-                elif treeDict[n]['ctxtLabel'] == result['ctxtLabel']:
-                    message = "!!! EntityLabel %r already exists !!!" % result['ctxtLabel']
+                elif treeDict[n]['ctxtName'] == result['ctxtName']:
+                    message = "!!! EntityName %r already exists !!!" % result['ctxtName']
                 elif treeDict[n]['ctxtFolder'] == result['ctxtFolder']:
                     message = "!!! EntityFolder %r already exists !!!" % result['ctxtFolder']
             #--- Check Sub Type ---#
@@ -485,8 +486,8 @@ class Entities(basicTreeUi.BasicTree):
                     for m in sorted(treeDict[n]['childs'].keys()):
                         if treeDict[n]['childs'][m]['ctxtCode'] == result['ctxtCode']:
                             message = "!!! EntityCode %r already exists !!!" % result['ctxtCode']
-                        elif treeDict[n]['childs'][m]['ctxtLabel'] == result['ctxtLabel']:
-                            message = "!!! EntityLabel %r already exists !!!" % result['ctxtLabel']
+                        elif treeDict[n]['childs'][m]['ctxtName'] == result['ctxtName']:
+                            message = "!!! EntityName %r already exists !!!" % result['ctxtName']
                         elif treeDict[n]['childs'][m]['ctxtFolder'] == result['ctxtFolder']:
                             message = "!!! EntityFolder %r already exists !!!" % result['ctxtFolder']
             #--- Result ---#

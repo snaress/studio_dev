@@ -1,5 +1,7 @@
 import os
 from PyQt4 import QtGui
+from functools import partial
+from coreQt.dialogs import promptMultiUi
 from foundation.gui._ui import fdnMainTreeUI
 
 
@@ -16,8 +18,12 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         self.mainUi = mainUi
         self._fdn = self.mainUi._fdn
         self._project = self._fdn._project
+        #--- Icons ---#
+        self.iconFilter = QtGui.QIcon(os.path.join(self.mainUi.__iconPath__, 'svg', 'listView.svg'))
+        self.iconFolder = QtGui.QIcon(os.path.join(self.mainUi.__iconPath__, 'svg', 'folder.svg'))
+        #--- Setup ---#
         self._setupWidget()
-        self._initIcons()
+        self._setupFonts()
 
     def _setupWidget(self):
         """
@@ -28,23 +34,28 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         self.gridLayout.setMargin(0)
         self.gridLayout.setSpacing(0)
         self.pb_filters.filters = []
+        self.pb_filters.setIcon(self.iconFilter)
         #--- Refresh ---#
         self.buildContexts()
 
-    def _initIcons(self):
+    def _setupFonts(self):
         """
-        Init widget icons
+        Setup widget fonts
         """
-        self.iconFolder = QtGui.QIcon(os.path.join(self.mainUi.__iconPath__, 'svg', 'listView.svg'))
-        self.pb_filters.setIcon(self.iconFolder)
+        #--- CtxtEntity Font ---#
+        self.ctxtFont = QtGui.QFont()
+        self.ctxtFont.setBold(True)
+        self.ctxtFont.setPixelSize(12)
 
     def _initWidget(self):
         """
         Init widget
         """
+        self.buildContextMenu()
         self.buildContexts()
         self.buildTree()
 
+    @property
     def currentContext(self):
         """
         Get current context
@@ -56,11 +67,24 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
             if cbContext.isChecked():
                 return cbContext.ctxtObj
 
+    def buildContextMenu(self):
+        """
+        Build 'New Entity' mainUi menu
+        """
+        self.mainUi.m_newEntity.clear()
+        for context in self._project.contexts:
+            menuItem = self.mainUi.m_newEntity.addAction(context.contextLabel)
+            menuItem.triggered.connect(partial(self.on_newEntity, context.contextName))
+
     def buildContexts(self):
         """
         Build context filters
         """
+        #--- Clear ---#
+        for ctxtFilter in self.pb_filters.filters:
+            self.hl_contexts.removeWidget(ctxtFilter)
         self.pb_filters.filters = []
+        #--- Build ---#
         for n, ctxtObj in enumerate(self._project.contexts):
             if n == 0:
                 newCb = self.new_contextCheckBox(ctxtObj, state=True)
@@ -76,32 +100,115 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         Build tree
         """
         self.tw_tree.clear()
-        ctxtObj = self.currentContext()
-        for mainEntity in ctxtObj.childs:
-            newMainItem = QtGui.QTreeWidgetItem()
-            newMainItem.setText(0, mainEntity.ctxtLabel)
-            self.tw_tree.addTopLevelItem(newMainItem)
-            for subEntity in mainEntity.childs:
-                newSubEntity = QtGui.QTreeWidgetItem()
-                newSubEntity.setText(0, subEntity.ctxtLabel)
-                newMainItem.addChild(newSubEntity)
+        if self.currentContext is not None:
+            contextObj = self.currentContext
+            for mainEntity in contextObj.childs:
+                newMainItem = self.new_ctxtEntityItem(mainEntity)
+                self.tw_tree.addTopLevelItem(newMainItem)
+                for subEntity in mainEntity.childs:
+                    newSubEntity = self.new_ctxtEntityItem(subEntity)
+                    newMainItem.addChild(newSubEntity)
 
-    def new_contextCheckBox(self, ctxtObj, state=False):
+    def new_contextCheckBox(self, contexttObj, state=False):
         """
         New 'Context' QCheckBox
 
-        :param ctxtObj: Context tree object
-        :type ctxtObj: Context
+        :param contexttObj: Context tree object
+        :type contexttObj: Context
         :param state: CheckBox state
         :type state: bool
         :return: Context checkBox
         :rtype: Context
         """
         newCb = QtGui.QCheckBox()
-        newCb.setText(ctxtObj.contextName)
-        newCb.ctxtObj = ctxtObj
+        newCb.setText(contexttObj.contextLabel)
+        newCb.ctxtObj = contexttObj
         newCb.setChecked(state)
         newCb.setAutoExclusive(True)
         # noinspection PyUnresolvedReferences
         newCb.clicked.connect(self.buildTree)
         return newCb
+
+    def new_ctxtEntityItem(self, ctxtObj):
+        """
+        New 'Context Entity' QTreeWidgetItem
+
+        :param ctxtObj: Context entity object
+        :type ctxtObj: CtxtEntity
+        :return: Context entity item
+        :rtype: CtxtEntity
+        """
+        newItem = QtGui.QTreeWidgetItem()
+        newItem.setFont(0, self.ctxtFont)
+        newItem.setText(0, ctxtObj.contextLabel)
+        newItem.setIcon(0, self.iconFolder)
+        return newItem
+
+    def on_newEntity(self, contextName):
+        """
+        Command launched when 'Add New Entity' QMenuItem is triggered
+
+        Launch new entity dialog
+        :param contextName: New entity context
+        :type contextName: str
+        """
+        #--- Get Main Types ---#
+        ctxtObj = self._project.getContext(contextName)
+        mainTypes = ctxtObj.getCtxtEntityLabels()
+        #--- Get Prompts ---#
+        prompts = [dict(promptType='combo', promptLabel='entityMainType', promptValue=mainTypes),
+                   dict(promptType='combo', promptLabel='entitySubType', promptValue=[]),
+                   dict(promptType='line', promptLabel='entityCode', promptValue=''),
+                   dict(promptType='line', promptLabel='entityName', promptValue='')]
+        #--- Launch Dialog ---#
+        self.dial_newEntity = NewEntityDialog(title="New Entity", prompts=prompts,  acceptCmd=self._newEntity,
+                                              ctxtObj=ctxtObj, parent=self)
+        self.dial_newEntity.exec_()
+
+    def _newEntity(self):
+        results = self.dial_newEntity.result()
+
+
+class NewEntityDialog(promptMultiUi.PromptMulti):
+    """
+    Prompt dialog ui class
+
+    :param title: Dialog title
+    :type title: str
+    :param prompts: Prompts dict list
+                    [dict(promptType='line', promptLabel='name', promptValue='test'),
+                     dict(promptType='color', promptLabel='style', promptValue=(175, 80, 120)),
+                     dict(promptType='combo', promptLabel='lists', promptValue=['item1', 'item2', 'item3'])]
+    :type prompts: list
+    :param acceptCmd: Command to launch when 'Save' QPushButton is clicked
+    :type acceptCmd: method || function
+    :param ctxtObj: Context object
+    :type ctxtObj: Context
+    :param parent: Parent ui or widget
+    :type parent: QtGui.QWidget
+    """
+
+    def __init__(self, title='Prompt Dialog', prompts=[], acceptCmd=None, ctxtObj=None, parent=None):
+        self.ctxtObj = ctxtObj
+        super(NewEntityDialog, self).__init__(title=title, prompts=prompts, acceptCmd=acceptCmd, parent=parent)
+
+    def _initDialog(self):
+        """
+        Init dialog window
+        """
+        super(NewEntityDialog, self)._initDialog()
+        entityMainType = self.tw_prompts.topLevelItem(0).itemWidget
+        entityMainType.cb_prompt.currentIndexChanged.connect(self.on_mainType)
+        self.on_mainType()
+
+    def on_mainType(self):
+        """
+        Command launched when 'Entity Main Type' QComboBox is clicked
+
+        Build 'Entity Sub Type' QComboBox
+        """
+        entityMainType = self.tw_prompts.topLevelItem(0).itemWidget
+        entitySubType = self.tw_prompts.topLevelItem(1).itemWidget
+        entitySubType.cb_prompt.clear()
+        subTypes = self.ctxtObj.getCtxtEntityLabels(mainType=entityMainType.result())
+        entitySubType.cb_prompt.addItems(subTypes)
