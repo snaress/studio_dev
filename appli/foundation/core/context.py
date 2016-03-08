@@ -166,8 +166,36 @@ class Entity(common.Child):
         :return: Entity path
         :rtype: str
         """
-        return os.path.join(self._project.projectPath, self._parent.contextFolder,
-                            self.entityMainType, self.entitySubType, self.entityName)
+        if self.entityMainType is not None and self.entitySubType is not None and self.entityName is not None:
+            return pFile.conformPath(os.path.join(self._project.projectPath, self._parent.contextFolder,
+                                                  self.entityMainType, self.entitySubType, self.entityName))
+
+    @property
+    def entityFile(self):
+        """
+        Get entity file full path
+
+        :return: Entity file
+        :rtype: str
+        """
+        if self.entityPath is not None:
+            return pFile.conformPath(os.path.join(self.entityPath, '%s.py' % self.entityName))
+
+    def writeFile(self):
+        """
+        Write entity file
+        """
+        self.log.debug("#---- Write Entity File: %s ----#" % self.entityName)
+        #--- Check Path ---#
+        self.log.detail("Check entity path ...")
+        pFile.createPath(self.entityPath, recursive=True, root=self._project.projectPath, log=self.log)
+        #--- Write File ---#
+        self.log.detail("Write entity file ...")
+        try:
+            pFile.writeDictFile(self.entityFile, self.getData())
+            self.log.debug("---> User file successfully written: %s" % self.entityFile)
+        except:
+            raise IOError("!!! Can not write user file: %s !!!" % self.entityName)
 
 
 class Context(common.Storage):
@@ -218,6 +246,32 @@ class Context(common.Storage):
         """
         if self.contextName is not None:
             return '%ss' % self.contextName
+
+    @property
+    def entityNames(self):
+        """
+        Get all entity names
+
+        :return: Entity names
+        :rtype: list
+        """
+        names = []
+        for entity in self.entities:
+            names.append(entity.entityName)
+        return names
+
+    @property
+    def entityCodes(self):
+        """
+        Get all entity codes
+
+        :return: Entity codes
+        :rtype: list
+        """
+        codes = []
+        for entity in self.entities:
+            codes.append(entity.entityCode)
+        return codes
 
     def getData(self):
         """
@@ -354,10 +408,12 @@ class Context(common.Storage):
         #--- Add Context entity Object ---#
         super(Context, self).addChild(childObject)
 
-    def newEntity(self, **kwargs):
+    def newEntity(self, create=False,  **kwargs):
         """
         Create new entity
 
+        :param create: Enable entity file creation
+        :type create: bool
         :param kwargs: Entity data (key must starts with 'entity')
         :type kwargs: dict
         :return: Entity object
@@ -365,6 +421,12 @@ class Context(common.Storage):
         """
         entityChild = Entity(parentObject=self)
         entityChild.update(**kwargs)
+        #--- Create Entity File ---#
+        if create:
+            if os.path.exists(entityChild.entityFile):
+                raise IOError("!!! Entity File already exists: %s !!!" % entityChild.entityFile)
+            entityChild.writeFile()
+        #--- Result ---#
         return entityChild
 
     def addEntity(self, entityObject):
@@ -375,8 +437,8 @@ class Context(common.Storage):
         :type entityObject: Entity
         """
         #--- Check Entity ---#
-        for entity in self.entities:
-            if entity.entityCode == entityObject.entityCode or entity.entityName == entityObject.entityName:
-                raise AttributeError("!!! Entity %r already exists !!!" % entityObject.entityName)
+        if entityObject.entityCode in self.entityCodes or entityObject.entityName in self.entityNames:
+            raise AttributeError("!!! Entity %r (%r) already exists !!!" % (entityObject.entityName,
+                                                                            entityObject.entityCode))
         #--- Add Entity Object ---#
         self.entities.append(entityObject)

@@ -1,4 +1,5 @@
 import os
+from coreQt import pQt
 from PyQt4 import QtGui
 from functools import partial
 from coreQt.dialogs import promptMultiUi
@@ -16,6 +17,7 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
     def __init__(self, mainUi):
         super(MainTree, self).__init__()
         self.mainUi = mainUi
+        self.log = self.mainUi.log
         self._fdn = self.mainUi._fdn
         self._project = self._fdn._project
         #--- Icons ---#
@@ -161,12 +163,46 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
                    dict(promptType='line', promptLabel='entityCode', promptValue=''),
                    dict(promptType='line', promptLabel='entityName', promptValue='')]
         #--- Launch Dialog ---#
-        self.dial_newEntity = NewEntityDialog(title="New Entity", prompts=prompts,  acceptCmd=self._newEntity,
+        self.dial_newEntity = NewEntityDialog(title="New Entity", prompts=prompts,
+                                              acceptCmd=partial(self._newEntity, ctxtObj),
                                               ctxtObj=ctxtObj, parent=self)
         self.dial_newEntity.exec_()
 
-    def _newEntity(self):
+    def _newEntity(self, ctxtObj):
+        """
+        Create entity when dialog is accepted
+
+        :param ctxtObj: Context object
+        :type ctxtObj: Context
+        """
+        self.log.info("Creating new entity ...")
         results = self.dial_newEntity.result()
+        self._checkDialogResult(results, ctxtObj)
+        newEntity = ctxtObj.newEntity(create=True,entityMainType=results['entityMainType'],
+                                      entitySubType=results['entitySubType'], entityCode=results['entityCode'],
+                                      entityName=results['entityName'])
+        ctxtObj.addEntity(newEntity)
+
+    def _checkDialogResult(self, result, ctxtObj):
+        """
+        Check Dialog results
+
+        :param result: Dialog results
+        :type result: dict
+        """
+        #--- Check Data ---#
+        excludes = ['', ' ', 'None', None]
+        if (result['entityMainType'] in excludes or result['entitySubType'] in excludes
+            or result['entityCode'] in excludes or result['entityName'] in excludes):
+            message = "!!! Entity invalid: %s -- %s -- %s -- %s !!!" % (result['entityMainType'], result['entitySubType'],
+                                                                        result['entityCode'], result['entityName'])
+            pQt.errorDialog(message, self.dial_newEntity)
+            raise AttributeError(message)
+        #--- Check New Entity ---#
+        if result['entityCode'] in ctxtObj.entityCodes or result['entityName'] in ctxtObj.entityNames:
+            message = "!!! Entity %r (%r) already exists !!!" % (result['entityName'], result['entityCode'])
+            pQt.errorDialog(message, self.dial_newEntity)
+            raise AttributeError(message)
 
 
 class NewEntityDialog(promptMultiUi.PromptMulti):
