@@ -28,6 +28,7 @@ class PromptMulti(QtGui.QDialog, dial_promptUI.Ui_dial_prompt):
 
     def __init__(self, title='Prompt Dialog', prompts=[], acceptCmd=None, parent=None):
         super(PromptMulti, self).__init__(parent)
+        self._parent = parent
         self.title = title
         self.prompts = prompts
         self.accetpCmd = acceptCmd
