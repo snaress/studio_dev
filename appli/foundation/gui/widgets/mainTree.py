@@ -176,12 +176,19 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         :type ctxtObj: Context
         """
         self.log.info("Creating new entity ...")
+        #--- Check Result ---#
         results = self.dial_newEntity.result()
         self._checkDialogResult(results, ctxtObj)
-        newEntity = ctxtObj.newEntity(create=True,entityMainType=results['entityMainType'],
-                                      entitySubType=results['entitySubType'], entityCode=results['entityCode'],
-                                      entityName=results['entityName'])
-        ctxtObj.addEntity(newEntity)
+        #--- Create Entity ---#
+        newEntity = ctxtObj.newEntity(create=True,
+                                      entityMainType='%s%s' % (results['entityMainType'][0].lower(),
+                                                               results['entityMainType'][1:]),
+                                      entitySubType='%s%s' % (results['entitySubType'][0].lower(),
+                                                              results['entitySubType'][1:]),
+                                      entityCode=results['entityCode'], entityName=results['entityName'])
+        ctxtObj.addEntity(newEntity, create=True)
+        #--- Quit ---#
+        self.dial_newEntity.close()
 
     def _checkDialogResult(self, result, ctxtObj):
         """

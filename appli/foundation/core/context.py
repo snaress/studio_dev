@@ -181,6 +181,12 @@ class Entity(common.Child):
         if self.entityPath is not None:
             return pFile.conformPath(os.path.join(self.entityPath, '%s.py' % self.entityName))
 
+    def updateFromFile(self):
+        if self.entityFile is not None:
+            if os.path.exists(self.entityFile):
+                entityData = pFile.readDictFile(self.entityFile)
+                self.update(**entityData)
+
     def writeFile(self):
         """
         Write entity file
@@ -281,7 +287,12 @@ class Context(common.Storage):
         :rtype: dict
         """
         childsData = super(Context, self).getData()
-        data = dict(contextName=self.contextName, childs=childsData)
+        #--- Get Entities Data ---#
+        entitiesData = []
+        for entity in self.entities:
+            entitiesData.append('%s/%s/%s' % (entity.entityMainType, entity.entitySubType, entity.entityName))
+        #--- Result ---#
+        data = dict(contextName=self.contextName, childs=childsData, entities=entitiesData)
         return data
 
     def getCtxtEntityNames(self, mainType=None):
@@ -379,6 +390,8 @@ class Context(common.Storage):
             for n in sorted(kwargs['childs']):
                 newChild = self.newChild(**kwargs['childs'][n])
                 self.addChild(newChild)
+        if kwargs.get('entities') is not None:
+            self.buildEntities(*kwargs.get('entities'))
 
     def newChild(self, **kwargs):
         """
@@ -408,7 +421,15 @@ class Context(common.Storage):
         #--- Add Context entity Object ---#
         super(Context, self).addChild(childObject)
 
-    def newEntity(self, create=False,  **kwargs):
+    def buildEntities(self, *args):
+        self.entities = []
+        for entityInfo in args:
+            params = entityInfo.split('/')
+            newEntity = self.newEntity(entityMainType=params[0], entitySubType=params[1], entityName=params[2])
+            newEntity.updateFromFile()
+            self.addEntity(newEntity)
+
+    def newEntity(self, create=False, **kwargs):
         """
         Create new entity
 
@@ -429,12 +450,14 @@ class Context(common.Storage):
         #--- Result ---#
         return entityChild
 
-    def addEntity(self, entityObject):
+    def addEntity(self, entityObject, create=False):
         """
         Add entity object to storage
 
         :param entityObject: Entity object
         :type entityObject: Entity
+        :param create: Enable entity file creation
+        :type create: bool
         """
         #--- Check Entity ---#
         if entityObject.entityCode in self.entityCodes or entityObject.entityName in self.entityNames:
@@ -442,3 +465,5 @@ class Context(common.Storage):
                                                                             entityObject.entityCode))
         #--- Add Entity Object ---#
         self.entities.append(entityObject)
+        if create:
+            self._project.writeProject()
