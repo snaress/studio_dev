@@ -37,13 +37,3 @@ class Foundation(object):
 
 if __name__ == '__main__':
     fdn = Foundation(logLvl='detail')
-    # child = fdn._groups.newChild()
-    # child.update(grpCode='test')
-    # fdn._project.loadProject('animTest--ANT')
-    # ctxtObj = fdn._project.newContext('asset')
-    # fdn._project.addContext(ctxtObj)
-    # ctxt = fdn._project.getContext('asset')
-    # print fdn._project.getData()
-    # fdn._project.writeProject()
-    # print ctxt.contextLabel
-    # print ctxt.__class__.__name__

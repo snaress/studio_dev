@@ -191,13 +191,15 @@ class Contexts(basicTreeUi.BasicTree):
                 item = self.getItemFromAttrValue('contextName', treeDict[n]['contextName'])
                 if not item in self.__editedItems__['deleted']:
                     ctxtData.insert(n, dict(contextName=treeDict[n]['contextName'], childs=treeDict[n]['childs']))
+                else:
+                    self._project.delContext(treeDict[n]['contextName'])
             else:
                 self.log.warning("!!! Context 'name' value not valide, skipp %s !!!" % treeDict[n]['contextName'])
         #--- Store and refresh ---#
         self.__editedItems__ = dict(added=[], edited=[], deleted=[])
         self._project.buildContexts(*ctxtData)
+        self.buildTree()
         self.pWidget.rf_editedItemStyle()
-        self.rf_itemStyle()
 
     def on_save(self):
         """
@@ -520,6 +522,8 @@ class Entities(basicTreeUi.BasicTree):
             if not item in self.__editedItems__['deleted']:
                 ctxtData['childs'][ind] = treeDict[n]
                 ind += 1
+            else:
+                pass
         #--- Store and refresh ---#
         self.__editedItems__ = dict(added=[], edited=[], deleted=[])
         self.pWidget.rf_editedItemStyle()

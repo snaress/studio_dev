@@ -329,7 +329,18 @@ class Project(object):
         if contextObject.contextName in self.contextNames:
             raise ValueError("Context name %r already exists !!!" % contextObject.contextName)
         #--- Add Context ---#
+        self.log.detail("Adding Context %r to storage" % contextObject.contextName)
         self.contexts.append(contextObject)
+
+    def delContext(self, contextName):
+        """
+        Delete project conext
+
+        :param contextName: Context name
+        :type contextName: str
+        """
+        self.log.detail("Deleting Context %r from storage" % contextName)
+        self.contexts.remove(self.getContext(contextName))
 
     def __str__(self):
         """
