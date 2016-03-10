@@ -223,6 +223,11 @@ class BasicTree(QtGui.QWidget, wg_basicTreeUI.Ui_wg_basicTree):
         :param kwargs: Item datas
         :type kwargs: dict
         """
+        #--- Clean Dict ---#
+        for key in kwargs.keys():
+            if key.startswith('item'):
+                kwargs.pop(key)
+        #--- Update ---#
         item.itemObj.update(**kwargs)
 
     def on_moveItem(self, side):
