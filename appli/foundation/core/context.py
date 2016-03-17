@@ -172,6 +172,25 @@ class Context(common.Storage):
         data = dict(contextName=self.contextName, childs=childsData)
         return data
 
+    def getCtxtEntity(self, mainType, subType=None):
+        """
+        Get context entity object
+
+        :param mainType: Entity main type
+        :type mainType: str
+        :param subType: Entity sub type
+        :type subType: str
+        :return: Context entity object
+        :rtype: CtxtEntity
+        """
+        for child in self.childs:
+            if child.ctxtCode == mainType:
+                if subType is None:
+                    return child
+                for subChild in child.childs:
+                    if subChild.ctxtCode == subType:
+                        return subChild
+
     def getCtxtEntityNames(self, mainType=None):
         """
         Get Context entity names
@@ -221,16 +240,19 @@ class Context(common.Storage):
                 ctxtDict = ctxt
         self.update(**ctxtDict)
 
-    def update(self, **kwargs):
+    def update(self, clearChilds=True, **kwargs):
         """
         Update childs list
 
+        :param clearChilds: Clear childs storage
+        :type clearChilds: bool
         :param kwargs: Context entities data
         :type kwargs: dict
         """
         self.log.detail("Updating context %r ..." % self.contextName)
         if kwargs.get('childs') is not None:
-            self.clearChilds()
+            if clearChilds:
+                self.clearChilds()
             for n in sorted(kwargs['childs']):
                 newChild = self.newChild(**kwargs['childs'][n])
                 self.addChild(newChild)
@@ -262,3 +284,23 @@ class Context(common.Storage):
                     raise AttributeError("!!! Context entity %r already exists !!!" % childObject.ctxtCode)
         #--- Add Context entity Object ---#
         super(Context, self).addChild(childObject)
+
+    def delChild(self, mainTypeCode, subTypeCode=None):
+        """
+        Delete context entity object from storage
+
+        :param mainTypeCode: Context entity code
+        :type mainTypeCode: str
+        :param subTypeCode: Parent context entity code
+        :type subTypeCode: str
+        """
+        entityMainType = self.getCtxtEntity(mainTypeCode)
+        if entityMainType is not None:
+            if subTypeCode is None:
+                self.log.debug("Removing context entity %r" % entityMainType.ctxtName)
+                self.childs.remove(entityMainType)
+            else:
+                entitySubType = self.getCtxtEntity(mainTypeCode, subType=subTypeCode)
+                if entitySubType is not None:
+                    self.log.debug("Removing context entity %r" % entitySubType.ctxtName)
+                    entityMainType.childs.remove(entitySubType)

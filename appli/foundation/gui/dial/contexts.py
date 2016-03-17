@@ -318,6 +318,26 @@ class Entities(basicTreeUi.BasicTree):
         self.rf_headers('Entity Type', 'Entity SubType')
         self.rf_treeColumns()
 
+    def getItemFromCtxtCode(self, ctxtCode, parentCode=None):
+        """
+        Get item from given CtxtCode
+
+        :param ctxtCode: Context entity code
+        :type ctxtCode: str
+        :param parentCode: Parent context entity code
+        :type parentCode: str
+        :return: CtxtEntity item
+        :rtype: QtGui.QTreeWidgetItem
+        """
+        for item in pQt.getAllItems(self.tw_tree):
+            if parentCode is None:
+                if item.itemObj.ctxtCode == ctxtCode and item.itemObj.contextType == 'mainType':
+                    return item
+            else:
+                if item.itemObj.ctxtCode == ctxtCode and item.itemObj.contextType == 'subType':
+                    if item.parent().itemObj.ctxtCode == parentCode:
+                        return item
+
     def rf_toolTips(self):
         """
         Refresh widgets toolTips
@@ -513,6 +533,14 @@ class Entities(basicTreeUi.BasicTree):
         Store datas to itemObject
         """
         super(Entities, self).on_apply()
+        #--- Remove Deleted Items ---#
+        for item in self.__editedItems__['deleted']:
+            if item.itemObj.contextType == 'mainType':
+                self._context.delChild(item.itemObj.ctxtCode)
+                self.tw_tree.takeTopLevelItem(self.tw_tree.indexOfTopLevelItem(item))
+            else:
+                self._context.delChild(item.itemObj._parent.ctxtCode, item.itemObj.ctxtCode)
+                item.parent().removeChild(item)
         #--- Parse Entities Tree ---#
         ind = 0
         ctxtData = dict(childs=dict())
@@ -522,8 +550,6 @@ class Entities(basicTreeUi.BasicTree):
             if not item in self.__editedItems__['deleted']:
                 ctxtData['childs'][ind] = treeDict[n]
                 ind += 1
-            else:
-                pass
         #--- Store and refresh ---#
         self.__editedItems__ = dict(added=[], edited=[], deleted=[])
         self.pWidget.rf_editedItemStyle()
