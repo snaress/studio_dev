@@ -318,3 +318,59 @@ def findTypeInHistory(obj, objType, future=False, past=False):
             objs = mc.ls(hist, type=objType)
             if objs:
                 return objs
+
+def getColorFromIndex(index):
+    """
+    Get rgb color from given index
+
+    :param index: Override color index
+    :type index: int
+    :return: rgb color
+    :rtype: list
+    """
+    if index >= 32:
+        mayaWarning("Color index out-of-range (must be less than 32)")
+    return mc.colorIndex(int(index), q=True)
+
+def overrideDisplayColor(index, objects=None):
+    """
+    Override display color
+
+    :param index: Color index (maxIndex = 31)
+    :type index: int
+    :param objects: Objects to override
+    :type objects: list
+    """
+    #--- Get Selected Objects ---#
+    if objects is None:
+        objects = mc.ls(sl=True)
+    #--- Override Display Color ---#
+    if objects:
+        for obj in objects:
+            shapeNodes = mc.listRelatives(obj, shapes=True, ni=True)
+            for shape in shapeNodes:
+                try:
+                    mc.setAttr('%s.overrideEnabled' % shape, True)
+                    mc.setAttr('%s.overrideColor' % shape, index)
+                except:
+                    mayaWarning("Failed to override color: %s" % shape)
+
+def defaultDisplayColor(objects=None):
+    """
+    Restore default display color
+
+    :param objects: Objects to override
+    :type objects: list
+    """
+    #--- Get Selected Objects ---#
+    if objects is None:
+        objects = mc.ls(sl=True)
+    #--- Override Display Color ---#
+    if objects:
+        for obj in objects:
+            shapeNodes = mc.listRelatives(obj, shapes=True, ni=True)
+            for shape in shapeNodes:
+                try:
+                    mc.setAttr('%s.overrideEnabled' % shape, False)
+                except:
+                    mayaWarning("Failed to restore defaults: %s" % shape)
