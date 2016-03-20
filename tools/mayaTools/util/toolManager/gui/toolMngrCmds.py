@@ -1,5 +1,6 @@
 import os, sys
 from coreSys import pFile
+from mayaCore.cmds import pUtil
 
 
 def collecteTools(rootPath):
@@ -38,5 +39,5 @@ def launchTools(toolName, toolFile, logLvl='info'):
     :param logLvl : Log level ('critical', 'error', 'warning', 'info', 'debug', 'detail')
     :type logLvl: str
     """
-    sys.argv = [toolName, logLvl]
+    sys.argv = [toolName, logLvl, pUtil.getMayaMainWindow()]
     execfile(toolFile)
