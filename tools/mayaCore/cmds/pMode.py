@@ -114,6 +114,9 @@ def duplicateGeom(selObjects=None, name=None):
 def decoupeMesh():
     """
     Extract selected faces via duplicate
+
+    :return: New mesh name
+    :rtype: str
     """
     #--- Check Selection ---#
     selObject = mc.ls(sl=True, o=True)
@@ -135,6 +138,7 @@ def decoupeMesh():
     mc.delete()
     #--- Add Info ---#
     pUtil.setNodeAttr(dup[0], 'baseObject', tForm, lock=True)
+    return dup[0]
 
 def symmetrizePose(baseObj, srcObj, dstObj, axe=(-1, 1, 1), delta=0.01):
     """
