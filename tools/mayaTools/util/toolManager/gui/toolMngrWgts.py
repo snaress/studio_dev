@@ -1,4 +1,4 @@
-import os, sys
+import os
 import toolMngrCmds
 from coreSys import pFile
 from _ui import treeNodeUI
