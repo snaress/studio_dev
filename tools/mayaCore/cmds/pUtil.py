@@ -219,7 +219,7 @@ def getAttr(nodeName, nodeAttr):
     if mc.objExists("%s.%s" % (nodeName, nodeAttr)):
         return mc.getAttr("%s.%s" % (nodeName, nodeAttr))
 
-def setNodeAttr(nodeName, attrName, attrValue, dataType='string', lock=False):
+def setNodeAttr(nodeName, attrName, attrValue, dataType='string', lock=False, useLock=True):
     """
     Add or set given attribute on given nodeName with given value
 
@@ -233,6 +233,8 @@ def setNodeAttr(nodeName, attrName, attrValue, dataType='string', lock=False):
     :type dataType: str
     :param lock: Lock state
     :type lock: bool
+    :param useLock: Use lock attribute
+    :type useLock: bool
     """
     #--- Add Attribute ---#
     if not mc.objExists('%s.%s' % (nodeName, attrName)):
@@ -250,13 +252,22 @@ def setNodeAttr(nodeName, attrName, attrValue, dataType='string', lock=False):
             mc.addAttr(nodeName, ln=attrName, at='message')
     #--- Set Attribute ---#
     if dataType == 'double3':
-        mc.setAttr('%s.%s' % (nodeName, attrName), attrValue[0], attrValue[1], attrValue[2], l=lock)
+        if useLock:
+            mc.setAttr('%s.%s' % (nodeName, attrName), attrValue[0], attrValue[1], attrValue[2], l=lock)
+        else:
+            mc.setAttr('%s.%s' % (nodeName, attrName), attrValue[0], attrValue[1], attrValue[2])
     elif dataType == 'string':
-        mc.setAttr('%s.%s' % (nodeName, attrName), attrValue, type='string', l=lock)
+        if useLock:
+            mc.setAttr('%s.%s' % (nodeName, attrName), attrValue, type='string', l=lock)
+        else:
+            mc.setAttr('%s.%s' % (nodeName, attrName), attrValue, type='string')
     elif dataType == 'message':
         pass
     else:
-        mc.setAttr('%s.%s' % (nodeName, attrName), attrValue, l=lock)
+        if useLock:
+            mc.setAttr('%s.%s' % (nodeName, attrName), attrValue, l=lock)
+        else:
+            mc.setAttr('%s.%s' % (nodeName, attrName), attrValue)
 
 def listTransforms(mesh):
     """

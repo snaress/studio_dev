@@ -138,6 +138,7 @@ def decoupeMesh():
     mc.delete()
     #--- Add Info ---#
     pUtil.setNodeAttr(dup[0], 'baseObject', tForm, lock=True)
+    mc.select(cl=True)
     return dup[0]
 
 def symmetrizePose(baseObj, srcObj, dstObj, axe=(-1, 1, 1), delta=0.01):
