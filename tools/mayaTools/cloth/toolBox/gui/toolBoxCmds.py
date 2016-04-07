@@ -1,3 +1,4 @@
+import sys
 from mayaCore.cmds import pMode
 try:
     import maya.cmds as mc
@@ -106,3 +107,10 @@ def updateOutMesh(srcMesh=None, outMesh=None, force=True):
     :type force: True
     """
     pMode.updateOutMesh(srcMesh=srcMesh, outMesh=outMesh, force=force)
+
+#============================== CLOTH RIGG ==============================#
+
+def launchRiggerUi():
+    from mayaTools.cloth.rigger import __tm__
+    reload(__tm__)
+    print sys.argv

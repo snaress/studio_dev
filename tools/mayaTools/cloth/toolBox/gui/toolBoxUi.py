@@ -32,8 +32,8 @@ class ToolBox(QtGui.QMainWindow, toolBoxUI.Ui_mw_toolBox):
         #-- Widgets --#
         self.wgModeBox = toolBoxWgts.ModeBox(self)
         self.vl_mode.addWidget(self.wgModeBox)
-        # self.wgRiggBox = toolBoxWgts.RiggBox(self)
-        # self.vl_setup.addWidget(self.wgRiggBox)
+        self.wgRiggBox = toolBoxWgts.RiggBox(self)
+        self.vl_setup.addWidget(self.wgRiggBox)
         # self.wgSimuBox = toolBoxWgts.SimuBox(self)
         # self.vl_simu.addWidget(self.wgSimuBox)
 

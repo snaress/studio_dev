@@ -1,7 +1,7 @@
 import os
 import toolBoxCmds
 from PyQt4 import QtGui
-from _ui import wgModeBoxUI
+from _ui import wgModeBoxUI, wgRiggBoxUI
 
 
 class ModeBox(QtGui.QWidget, wgModeBoxUI.Ui_wg_modeBox):
@@ -107,3 +107,37 @@ class ModeBox(QtGui.QWidget, wgModeBoxUI.Ui_wg_modeBox):
         Update given outMesh, then remove connection
         """
         toolBoxCmds.updateOutMesh()
+
+
+class RiggBox(QtGui.QWidget, wgRiggBoxUI.Ui_wg_riggBox):
+    """
+    Widget ModeBox, child of mainUi. Contains all modeling tools
+
+    :param mainUi: Cloth toolBox mainUi
+    :type mainUi: toolBoxUi.ToolBox()
+    """
+
+    def __init__(self, mainUi):
+        self.mainUi = mainUi
+        self.log = self.mainUi.log
+        self.log.debug("---> Init Rigg Tools ...")
+        self.iconPath = self.mainUi.__iconPath__
+        super(RiggBox, self).__init__()
+        self._setupWidget()
+
+    # noinspection PyUnresolvedReferences
+    def _setupWidget(self):
+        """
+        Setup widget
+        """
+        self.setupUi(self)
+        self.gridLayout.setMargin(0)
+        self.gridLayout.setSpacing(0)
+        #--- Icons ---#
+        self.pb_riggerUi.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'tool', 'riggerCloth.png')))
+        #--- Connect ---#
+        self.pb_riggerUi.clicked.connect(self.on_riggerUi)
+
+    @staticmethod
+    def on_riggerUi():
+        toolBoxCmds.launchRiggerUi()

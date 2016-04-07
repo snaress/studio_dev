@@ -21,9 +21,9 @@ class Rigger(QtGui.QMainWindow, riggerUI.Ui_mw_rigger):
         self.log = pFile.Logger(title=self.__class__.__name__, level=logLvl)
         self.log.info("########## Launching %s Ui ##########" % self.__class__.__name__, newLinesBefore=1)
         super(Rigger, self).__init__(parent)
-        self.iconCloth = QtGui.QIcon(pFile.conformPath(os.path.join(self.__iconPath__, 'maya', 'nCloth.png')))
-        self.iconRigid = QtGui.QIcon(pFile.conformPath(os.path.join(self.__iconPath__, 'maya', 'nRigid.png')))
-        self.iconConst = QtGui.QIcon(pFile.conformPath(os.path.join(self.__iconPath__, 'maya', 'nConstraint.png')))
+        self.iconCloth = QtGui.QIcon(os.path.join(self.__iconPath__, 'maya', 'nCloth.png'))
+        self.iconRigid = QtGui.QIcon(os.path.join(self.__iconPath__, 'maya', 'nRigid.png'))
+        self.iconConst = QtGui.QIcon(os.path.join(self.__iconPath__, 'maya', 'nConstraint.png'))
         self._setupUi()
 
     def _setupUi(self):
