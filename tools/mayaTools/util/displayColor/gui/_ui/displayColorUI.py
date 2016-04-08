@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\tools\mayaTools\util\displayColor\gui\_src\displayColor.ui'
 #
-# Created: Fri Apr 08 02:08:48 2016
+# Created: Fri Apr 08 04:30:21 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,9 +26,9 @@ except AttributeError:
 class Ui_mw_displayColor(object):
     def setupUi(self, mw_displayColor):
         mw_displayColor.setObjectName(_fromUtf8("mw_displayColor"))
-        mw_displayColor.resize(324, 76)
-        mw_displayColor.setMinimumSize(QtCore.QSize(324, 76))
-        mw_displayColor.setMaximumSize(QtCore.QSize(324, 76))
+        mw_displayColor.resize(324, 73)
+        mw_displayColor.setMinimumSize(QtCore.QSize(324, 73))
+        mw_displayColor.setMaximumSize(QtCore.QSize(324, 73))
         self.centralwidget = QtGui.QWidget(mw_displayColor)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
@@ -64,10 +64,14 @@ class Ui_mw_displayColor(object):
         self.cb_shader.setObjectName(_fromUtf8("cb_shader"))
         self.hl_options.addWidget(self.cb_shader)
         self.hl_buttons.addWidget(self.qf_options)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.hl_buttons.addItem(spacerItem)
         self.pb_default = QtGui.QPushButton(self.centralwidget)
+        self.pb_default.setMaximumSize(QtCore.QSize(60, 20))
         self.pb_default.setObjectName(_fromUtf8("pb_default"))
         self.hl_buttons.addWidget(self.pb_default)
         self.pb_override = QtGui.QPushButton(self.centralwidget)
+        self.pb_override.setMaximumSize(QtCore.QSize(60, 20))
         self.pb_override.setObjectName(_fromUtf8("pb_override"))
         self.hl_buttons.addWidget(self.pb_override)
         self.gridLayout.addLayout(self.hl_buttons, 5, 0, 1, 1)

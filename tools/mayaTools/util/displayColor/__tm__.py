@@ -16,6 +16,7 @@ gui.compileUi()
 requires = [dict(libs=['coreSys.pFile',
                        'coreQt.pQt']),
             dict(mayaCore=['mayaCore.cmds.pUtil',
+                           'mayaCore.cmds.pScene',
                            'mayaCore.cmds.pShading']),
             dict(toolUi=['mayaTools.util.displayColor.gui._ui.displayColorUI']),
             dict(toolGui=['mayaTools.util.displayColor.gui.displayColorUi'])]

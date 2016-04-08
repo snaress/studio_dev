@@ -1,9 +1,9 @@
 from coreQt import pQt
 from coreSys import pFile
 from functools import partial
-from PyQt4 import QtGui, QtCore
-from mayaCore.cmds import pUtil, pShading
 from _ui import displayColorUI
+from PyQt4 import QtGui, QtCore
+from mayaCore.cmds import pUtil, pScene, pShading
 
 
 class DisplayColor(QtGui.QMainWindow, displayColorUI.Ui_mw_displayColor):
@@ -56,11 +56,17 @@ class DisplayColor(QtGui.QMainWindow, displayColorUI.Ui_mw_displayColor):
 
         Restore selected objects color
         """
+        #--- Get Data ---#
         wire, shader = self.overrideMode
+        sceneSel = pScene.getSceneSelection()
+        #--- Override ---#
         if wire:
             pUtil.defaultDisplayColor()
         if shader:
             pShading.defaultShader()
+        #--- Reselect ---#
+        if sceneSel:
+            pScene.selectObjects(sceneSel)
 
     def on_overrideColor(self):
         """
@@ -68,12 +74,18 @@ class DisplayColor(QtGui.QMainWindow, displayColorUI.Ui_mw_displayColor):
 
         Override selected objects color
         """
+        #--- Get Data ---#
         cIndex = self.tw_tree.selectedColorIndex
         wire, shader = self.overrideMode
+        sceneSel = pScene.getSceneSelection()
+        #--- Override ---#
         if wire:
             pUtil.overrideDisplayColor(cIndex)
         if shader:
-            pShading.overrideShader(cIndex)
+            pShading.overrideShader(cIndex, useExisting=False)
+        #--- Reselect ---#
+        if sceneSel:
+            pScene.selectObjects(sceneSel)
 
 
 class ColorTree(QtGui.QTreeWidget):
