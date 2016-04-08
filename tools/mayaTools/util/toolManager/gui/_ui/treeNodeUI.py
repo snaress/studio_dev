@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\tools\mayaTools\util\toolManager\gui\_src\treeNode.ui'
 #
-# Created: Tue Feb 23 04:07:26 2016
+# Created: Thu Apr 07 02:39:17 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,11 +90,11 @@ class Ui_wg_treeNode(object):
         self.line_5.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_5.setObjectName(_fromUtf8("line_5"))
         self.hl_info.addWidget(self.line_5)
-        self.pb_doc = QtGui.QPushButton(self.qf_info)
-        self.pb_doc.setMaximumSize(QtCore.QSize(40, 20))
-        self.pb_doc.setFlat(True)
-        self.pb_doc.setObjectName(_fromUtf8("pb_doc"))
-        self.hl_info.addWidget(self.pb_doc)
+        self.pb_api = QtGui.QPushButton(self.qf_info)
+        self.pb_api.setMaximumSize(QtCore.QSize(40, 20))
+        self.pb_api.setFlat(True)
+        self.pb_api.setObjectName(_fromUtf8("pb_api"))
+        self.hl_info.addWidget(self.pb_api)
         self.hl_tool.addWidget(self.qf_info)
         self.line_4 = QtGui.QFrame(wg_treeNode)
         self.line_4.setMaximumSize(QtCore.QSize(16777215, 20))
@@ -116,5 +116,5 @@ class Ui_wg_treeNode(object):
         wg_treeNode.setWindowTitle(_translate("wg_treeNode", "Tool Node", None))
         self.l_toolName.setText(_translate("wg_treeNode", "Tool Name", None))
         self.pb_wiki.setText(_translate("wg_treeNode", "Wiki", None))
-        self.pb_doc.setText(_translate("wg_treeNode", "Doc", None))
+        self.pb_api.setText(_translate("wg_treeNode", "Api", None))
 
