@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\tools\mayaTools\util\displayColor\gui\_src\displayColor.ui'
 #
-# Created: Sun Mar 20 22:07:14 2016
+# Created: Fri Apr 08 02:08:48 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,25 +26,15 @@ except AttributeError:
 class Ui_mw_displayColor(object):
     def setupUi(self, mw_displayColor):
         mw_displayColor.setObjectName(_fromUtf8("mw_displayColor"))
-        mw_displayColor.resize(324, 75)
-        mw_displayColor.setMinimumSize(QtCore.QSize(324, 75))
-        mw_displayColor.setMaximumSize(QtCore.QSize(324, 75))
+        mw_displayColor.resize(324, 76)
+        mw_displayColor.setMinimumSize(QtCore.QSize(324, 76))
+        mw_displayColor.setMaximumSize(QtCore.QSize(324, 76))
         self.centralwidget = QtGui.QWidget(mw_displayColor)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setMargin(0)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.hl_buttons = QtGui.QHBoxLayout()
-        self.hl_buttons.setSpacing(0)
-        self.hl_buttons.setObjectName(_fromUtf8("hl_buttons"))
-        self.pb_default = QtGui.QPushButton(self.centralwidget)
-        self.pb_default.setObjectName(_fromUtf8("pb_default"))
-        self.hl_buttons.addWidget(self.pb_default)
-        self.pb_override = QtGui.QPushButton(self.centralwidget)
-        self.pb_override.setObjectName(_fromUtf8("pb_override"))
-        self.hl_buttons.addWidget(self.pb_override)
-        self.gridLayout.addLayout(self.hl_buttons, 3, 0, 1, 1)
         self.vf_tree = QtGui.QFrame(self.centralwidget)
         self.vf_tree.setObjectName(_fromUtf8("vf_tree"))
         self.vl_tree = QtGui.QVBoxLayout(self.vf_tree)
@@ -52,6 +42,35 @@ class Ui_mw_displayColor(object):
         self.vl_tree.setMargin(0)
         self.vl_tree.setObjectName(_fromUtf8("vl_tree"))
         self.gridLayout.addWidget(self.vf_tree, 1, 0, 1, 1)
+        self.hl_buttons = QtGui.QHBoxLayout()
+        self.hl_buttons.setSpacing(0)
+        self.hl_buttons.setObjectName(_fromUtf8("hl_buttons"))
+        self.qf_options = QtGui.QFrame(self.centralwidget)
+        self.qf_options.setObjectName(_fromUtf8("qf_options"))
+        self.hl_options = QtGui.QHBoxLayout(self.qf_options)
+        self.hl_options.setSpacing(8)
+        self.hl_options.setContentsMargins(6, 0, 0, 0)
+        self.hl_options.setObjectName(_fromUtf8("hl_options"))
+        self.l_override = QtGui.QLabel(self.qf_options)
+        self.l_override.setMinimumSize(QtCore.QSize(0, 0))
+        self.l_override.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.l_override.setObjectName(_fromUtf8("l_override"))
+        self.hl_options.addWidget(self.l_override)
+        self.cb_wire = QtGui.QCheckBox(self.qf_options)
+        self.cb_wire.setChecked(True)
+        self.cb_wire.setObjectName(_fromUtf8("cb_wire"))
+        self.hl_options.addWidget(self.cb_wire)
+        self.cb_shader = QtGui.QCheckBox(self.qf_options)
+        self.cb_shader.setObjectName(_fromUtf8("cb_shader"))
+        self.hl_options.addWidget(self.cb_shader)
+        self.hl_buttons.addWidget(self.qf_options)
+        self.pb_default = QtGui.QPushButton(self.centralwidget)
+        self.pb_default.setObjectName(_fromUtf8("pb_default"))
+        self.hl_buttons.addWidget(self.pb_default)
+        self.pb_override = QtGui.QPushButton(self.centralwidget)
+        self.pb_override.setObjectName(_fromUtf8("pb_override"))
+        self.hl_buttons.addWidget(self.pb_override)
+        self.gridLayout.addLayout(self.hl_buttons, 5, 0, 1, 1)
         self.line = QtGui.QFrame(self.centralwidget)
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
@@ -64,6 +83,9 @@ class Ui_mw_displayColor(object):
 
     def retranslateUi(self, mw_displayColor):
         mw_displayColor.setWindowTitle(_translate("mw_displayColor", "Display Color", None))
+        self.l_override.setText(_translate("mw_displayColor", "Override:", None))
+        self.cb_wire.setText(_translate("mw_displayColor", "Wire", None))
+        self.cb_shader.setText(_translate("mw_displayColor", "Shader", None))
         self.pb_default.setText(_translate("mw_displayColor", "Default", None))
         self.pb_override.setText(_translate("mw_displayColor", "Override", None))
 

@@ -1,4 +1,5 @@
-import sys
+import os
+from coreSys import pFile
 from mayaCore.cmds import pMode
 try:
     import maya.cmds as mc
@@ -111,6 +112,9 @@ def updateOutMesh(srcMesh=None, outMesh=None, force=True):
 #============================== CLOTH RIGG ==============================#
 
 def launchRiggerUi():
-    from mayaTools.cloth.rigger import __tm__
-    reload(__tm__)
-    print sys.argv
+    """
+    Launch RiggerUi
+    """
+    from mayaTools.cloth import rigger
+    tmFile = pFile.conformPath(os.path.join(os.path.dirname(rigger.__file__), '__tm__.py'))
+    execfile(tmFile)

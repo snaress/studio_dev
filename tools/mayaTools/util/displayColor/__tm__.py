@@ -15,10 +15,10 @@ gui.compileUi()
 ########## Init Requires ##########
 requires = [dict(libs=['coreSys.pFile',
                        'coreQt.pQt']),
-            dict(mayaCore=['mayaCore.cmds.pUtil']),
+            dict(mayaCore=['mayaCore.cmds.pUtil',
+                           'mayaCore.cmds.pShading']),
             dict(toolUi=['mayaTools.util.displayColor.gui._ui.displayColorUI']),
-            dict(toolGui=['mayaTools.util.displayColor.gui.displayColorWgts',
-                          'mayaTools.util.displayColor.gui.displayColorUi'])]
+            dict(toolGui=['mayaTools.util.displayColor.gui.displayColorUi'])]
 
 
 ########## Reload Requires ##########
