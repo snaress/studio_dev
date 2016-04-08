@@ -90,16 +90,16 @@ def overrideShader(colorIndex, objects=None, matName=None, useExisting=True):
     if useExisting:
         if mc.objExists(matName):
             mat = matName
-            sg = getShadingEngine(mat)
+            sg = getShadingEngine(mat)[0]
         else:
             mat, sg = newMat('lambert', matName)
             pUtil.setNodeAttr(mat, 'color', color, dataType='double3')
-        assignMat(sg[0], objects)
+        assignMat(sg, objects)
     else:
         for obj in objects:
             mat, sg = newMat('lambert', matName)
             pUtil.setNodeAttr(mat, 'color', color, dataType='double3')
-            assignMat(sg[0], [obj])
+            assignMat(sg, [obj])
 
 def defaultShader(objects=None):
     """
