@@ -1,5 +1,105 @@
+import os
 import common
 from coreSys import pFile
+
+
+class Entity(common.Child):
+    """
+    Entity Class: Contains entity data, child of Context
+
+    :param parentObject: Storage object
+    :type parentObject: Entities
+    """
+
+    __attrPrefix__ = 'entity'
+
+    def __init__(self, parentObject=None):
+        super(Entity, self).__init__(parentObject=parentObject)
+        self._project = self._fdn._project
+        #--- Data ---#
+        self.entityMainType = None
+        self.entitySubType = None
+        self.entityCode = None
+        self.entityName = None
+        self.entityThumb = None
+        self.entityStatus = None
+        self.entityExtraAttrs = dict()
+
+    @property
+    def entityType(self):
+        """
+        Get Entity type
+
+        :return: Entity type
+        :rtype: str
+        """
+        if self._parent is not None:
+            return self._parent.contextName
+
+    @property
+    def entityLabel(self):
+        """
+        Get Entity label
+
+        :return: Entity label
+        :rtype: str
+        """
+        if self.entityName is not None:
+            return '%s%s' % (self.entityName[0].upper(), self.entityName[1:])
+
+    @property
+    def contextPath(self):
+        """
+        Get context path
+
+        :return: Context path
+        :rtype: str
+        """
+        return self._parent.contextPath
+
+    @property
+    def entityPath(self):
+        """
+        Get entity path
+
+        :return: Entity path
+        :rtype: str
+        """
+        if self.contextPath is not None and self.entityName is not None:
+            return pFile.conformPath(os.path.join(self.contextPath, self.entityName))
+
+    @property
+    def entityFile(self):
+        """
+        Get entity file full path
+
+        :return: Entity file
+        :rtype: str
+        """
+        if self.entityPath is not None:
+            return pFile.conformPath(os.path.join(self.entityPath, '%s.py' % self.entityName))
+
+    def updateFromFile(self):
+        if self.entityFile is not None:
+            if os.path.exists(self.entityFile):
+                entityData = pFile.readDictFile(self.entityFile)
+                self.update(**entityData)
+
+    def writeFile(self):
+        """
+        Write entity file
+        """
+        self.log.debug("#---- Write Entity File: %s ----#" % self.entityName)
+        #--- Check Path ---#
+        self.log.detail("Check entity path ...")
+        pFile.createPath(self.entityPath, recursive=True, root=self._project.projectPath, log=self.log)
+        #--- Write File ---#
+        self.log.detail("Write entity file ...")
+        try:
+            pFile.writeDictFile(self.entityFile, self.getData())
+            self.log.debug("---> User file successfully written: %s" % self.entityFile)
+        except:
+            raise IOError("!!! Can not write user file: %s !!!" % self.entityName)
 
 
 class CtxtEntity(common.Child):
@@ -16,6 +116,7 @@ class CtxtEntity(common.Child):
         super(CtxtEntity, self).__init__(parentObject=parentObject)
         #--- Data ---#
         self.childs = []
+        self.entities = []
         self.ctxtCode = None
         self.ctxtName = None
         self.ctxtFolder = None
@@ -29,6 +130,16 @@ class CtxtEntity(common.Child):
         :rtype: str
         """
         return self._parent.contextName
+
+    @property
+    def contextObj(self):
+        """
+        Get Context object
+
+        :return: Context object
+        :rtype: Context
+        """
+        return self._parent.contextObj
 
     @property
     def contextType(self):
@@ -52,6 +163,43 @@ class CtxtEntity(common.Child):
         """
         if self.ctxtName is not None:
             return '%s%s' % (self.ctxtName[0].upper(), self.ctxtName[1:])
+
+    @property
+    def contextPath(self):
+        """
+        Get context entity path
+
+        :return: Context entity path
+        :rtype: str
+        """
+        if self._parent.contextPath is not None and self.ctxtFolder is not None:
+            return pFile.conformPath(os.path.join(self._parent.contextPath, self.ctxtFolder))
+
+    @property
+    def entityNames(self):
+        """
+        Get all entity names
+
+        :return: Entity names
+        :rtype: list
+        """
+        names = []
+        for entity in self.entities:
+            names.append(entity.entityName)
+        return names
+
+    @property
+    def entityCodes(self):
+        """
+        Get all entity codes
+
+        :return: Entity codes
+        :rtype: list
+        """
+        codes = []
+        for entity in self.entities:
+            codes.append(entity.entityCode)
+        return codes
 
     def getData(self):
         """
@@ -112,6 +260,55 @@ class CtxtEntity(common.Child):
         #--- Add Context entity Object ---#
         self.childs.append(childObject)
 
+    def buildEntities(self):
+        """
+        Build all entities from disk
+        """
+        self.entities = []
+        if self.contextPath is not None:
+            if os.path.exists(self.contextPath):
+                contents = os.listdir(self.contextPath) or []
+                for fld in contents:
+                    if not fld.startswith('_') and not fld.startswith('.'):
+                        path = pFile.conformPath(os.path.join(self.contextPath, fld))
+                        entityFile = pFile.conformPath(os.path.join(path, '%s.py' % fld))
+                        if os.path.exists(entityFile):
+                            self.log.detail(">>> Build entity from file %s ..." % entityFile)
+                            data = pFile.readDictFile(entityFile)
+                            self.addEntity(self.newEntity(**data))
+
+    def newEntity(self, **kwargs):
+        """
+        Create new entity
+
+        :param kwargs: Entity data (key must starts with 'entity')
+        :type kwargs: dict
+        :return: Entity object
+        :rtype: Entity
+        """
+        entityObj = Entity(parentObject=self)
+        entityObj.update(**kwargs)
+        return entityObj
+
+    def addEntity(self, entityObject):
+        """
+        Add entity object to storage
+
+        :param entityObject: Entity object
+        :type entityObject: Entity
+        """
+        #--- Check Entity ---#
+        if (entityObject.entityCode in self.contextObj.entityCodes
+            or entityObject.entityName in self.contextObj.entityNames):
+            raise AttributeError("!!! Entity %r (%r) already exists !!!" % (entityObject.entityName,
+                                                                            entityObject.entityCode))
+        #--- Create Entity File ---#
+        if not os.path.exists(entityObject.entityFile):
+            entityObject.writeFile()
+        #--- Result ---#
+        self.entities.append(entityObject)
+        self.log.detail("Entity %s successfully added." % entityObject.entityName)
+
 
 class Context(common.Storage):
     """
@@ -140,6 +337,16 @@ class Context(common.Storage):
         self.log.title = self.__class__.__name__
 
     @property
+    def contextObj(self):
+        """
+        Get Context object
+
+        :return: Context object
+        :rtype: Context
+        """
+        return self
+
+    @property
     def contextLabel(self):
         """
         Get context label
@@ -160,6 +367,58 @@ class Context(common.Storage):
         """
         if self.contextName is not None:
             return '%ss' % self.contextName
+
+    @property
+    def contextPath(self):
+        """
+        Get context path
+
+        :return: Context path
+        :rtype: str
+        """
+        if self.contextFolder is not None:
+            return pFile.conformPath(os.path.join(self._project.projectPath, self.contextFolder))
+
+    @property
+    def allContextEntities(self):
+        """
+        Get all context entites
+
+        :return: Context entities
+        :rtype: list
+        """
+        ctxtEntities = []
+        for mainTypeObj in self.childs:
+            ctxtEntities.append(mainTypeObj)
+            for subTypeObj in mainTypeObj.childs:
+                ctxtEntities.append(subTypeObj)
+        return ctxtEntities
+
+    @property
+    def entityNames(self):
+        """
+        Get entitys names
+
+        :return: Entity names
+        :rtype: list
+        """
+        names = []
+        for ctxtEntityObj in self.allContextEntities:
+            names.extend(ctxtEntityObj.entityNames)
+        return names
+
+    @property
+    def entityCodes(self):
+        """
+        Get entitys codes
+
+        :return: Entity codes
+        :rtype: list
+        """
+        codes = []
+        for ctxtEntityObj in self.allContextEntities:
+            codes.extend(ctxtEntityObj.entityCodes)
+        return codes
 
     def getData(self):
         """
@@ -184,11 +443,11 @@ class Context(common.Storage):
         :rtype: CtxtEntity
         """
         for child in self.childs:
-            if child.ctxtCode == mainType:
+            if child.ctxtName == mainType:
                 if subType is None:
                     return child
                 for subChild in child.childs:
-                    if subChild.ctxtCode == subType:
+                    if subChild.ctxtName == subType:
                         return subChild
 
     def getCtxtEntityNames(self, mainType=None):
@@ -205,7 +464,7 @@ class Context(common.Storage):
             if mainType is None:
                 ctxtEntities.append(child.ctxtName)
             else:
-                if child.contextLabel == mainType:
+                if child.ctxtName == mainType:
                     for subChild in child.childs:
                         ctxtEntities.append(subChild.ctxtName)
         return ctxtEntities
@@ -304,3 +563,50 @@ class Context(common.Storage):
                 if entitySubType is not None:
                     self.log.debug("Removing context entity %r" % entitySubType.ctxtName)
                     entityMainType.childs.remove(entitySubType)
+
+    def buildEntities(self):
+        """
+        Build entities from disk
+        """
+        self.log.detail("Build %s entities ..." % self.contextName)
+        for ctxtEntityObj in self.allContextEntities:
+            ctxtEntityObj.buildEntities()
+
+    def newEntity(self, **kwargs):
+        """
+        Create new entity
+
+        :param kwargs: Entity data (key must starts with 'entity')
+                       Requires: 'entityMainType', 'entitySubType', 'entityCode' and 'entityName'
+        :type kwargs: dict
+        :return: Entity object
+        :rtype: Entity
+        """
+        #--- Get Params ---#
+        mainType = kwargs.get('entityMainType')
+        subType = kwargs.get('entitySubType')
+        entityName = kwargs.get('entityName')
+        entityCode = kwargs.get('entityCode')
+        #--- Check Data ---#
+        excludes = ['', ' ', 'None', None]
+        if mainType in excludes or subType in excludes or entityName in excludes or entityCode in excludes:
+            raise AttributeError("!!! Entity invalid: %s -- %s -- %s -- %s !!!" % (mainType, subType,
+                                                                                   entityName, entityCode))
+        #--- Check Context Entity ---#
+        if not mainType in self.getCtxtEntityNames() or not subType in self.getCtxtEntityNames(mainType=mainType):
+            raise AttributeError("Context entity not found: %s--%s" % (mainType, subType))
+        #--- Create Entity Object ---#
+        ctxtEntityObj = self.getCtxtEntity(mainType, subType)
+        entityObj = ctxtEntityObj.newEntity(**kwargs)
+        #--- Result ---#
+        return entityObj
+
+    def addEntity(self, entityObject):
+        """
+        Add given new entity to storage
+
+        :param entityObject: Entity object
+        :type entityObject: Entity
+        """
+        self.log.debug("Adding Entity %s" % entityObject.entityName)
+        entityObject._parent.addEntity(entityObject)

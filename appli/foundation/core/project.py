@@ -180,6 +180,7 @@ class Project(object):
         :param kwargs: Project data (key must start with 'project')
         :type kwargs: dict
         """
+        self.project = kwargs.get('project')
         for k, v in kwargs.iteritems():
             if k in self.attributes:
                 if k == 'contexts':
@@ -264,6 +265,8 @@ class Project(object):
         #--- Load Project ---#
         if self._fdn.__user__ in projectDict['watchers']:
             self.update(**projectDict)
+            for ctxtObj in self.contexts:
+                ctxtObj.buildEntities()
             self.log.info("---> Project %r successfully loaded" % project)
         else:
             raise ValueError("User %r is not set as projectUser in %s !" % (self._fdn.__user__, project))

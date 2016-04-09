@@ -23,6 +23,7 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         #--- Icons ---#
         self.iconFilter = QtGui.QIcon(os.path.join(self.mainUi.__iconPath__, 'svg', 'listView.svg'))
         self.iconFolder = QtGui.QIcon(os.path.join(self.mainUi.__iconPath__, 'svg', 'folder.svg'))
+        self.iconAsset = QtGui.QIcon(os.path.join(self.mainUi.__iconPath__, 'katana', 'actor.png'))
         #--- Setup ---#
         self._setupWidget()
         self._setupFonts()
@@ -107,9 +108,23 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
             for mainEntity in contextObj.childs:
                 newMainItem = self.new_ctxtEntityItem(mainEntity)
                 self.tw_tree.addTopLevelItem(newMainItem)
+                self.buildEntities(newMainItem)
                 for subEntity in mainEntity.childs:
-                    newSubEntity = self.new_ctxtEntityItem(subEntity)
-                    newMainItem.addChild(newSubEntity)
+                    newSubItem = self.new_ctxtEntityItem(subEntity)
+                    newMainItem.addChild(newSubItem)
+                    self.buildEntities(newSubItem)
+
+    def buildEntities(self, ctxtEntityItem):
+        """
+        Build entities
+
+        :param ctxtEntityItem: Context entity item
+        :type ctxtEntityItem: QtGui.QTreeWidgetItem
+        """
+        # noinspection PyUnresolvedReferences
+        for entityObj in ctxtEntityItem.itemObj.entities:
+            newEntityItem = self.new_entityItem(entityObj)
+            ctxtEntityItem.addChild(newEntityItem)
 
     def new_contextCheckBox(self, contexttObj, state=False):
         """
@@ -138,12 +153,19 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         :param ctxtObj: Context entity object
         :type ctxtObj: CtxtEntity
         :return: Context entity item
-        :rtype: CtxtEntity
+        :rtype: QtGui.QTreeWidgetItem
         """
         newItem = QtGui.QTreeWidgetItem()
         newItem.setFont(0, self.ctxtFont)
         newItem.setText(0, ctxtObj.contextLabel)
         newItem.setIcon(0, self.iconFolder)
+        newItem.itemObj = ctxtObj
+        return newItem
+
+    def new_entityItem(self, entityObj):
+        newItem = QtGui.QTreeWidgetItem()
+        newItem.setText(0, entityObj.entityName)
+        newItem.setIcon(0, self.iconAsset)
         return newItem
 
     def on_newEntity(self, contextName):
@@ -186,9 +208,10 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
                                       entitySubType='%s%s' % (results['entitySubType'][0].lower(),
                                                               results['entitySubType'][1:]),
                                       entityCode=results['entityCode'], entityName=results['entityName'])
-        ctxtObj.addEntity(newEntity, create=True)
+        ctxtObj.addEntity(newEntity)
         #--- Quit ---#
         self.dial_newEntity.close()
+        self.buildTree()
 
     def _checkDialogResult(self, result, ctxtObj):
         """
@@ -201,11 +224,12 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         excludes = ['', ' ', 'None', None]
         if (result['entityMainType'] in excludes or result['entitySubType'] in excludes
             or result['entityCode'] in excludes or result['entityName'] in excludes):
-            message = "!!! Entity invalid: %s -- %s -- %s -- %s !!!" % (result['entityMainType'], result['entitySubType'],
-                                                                        result['entityCode'], result['entityName'])
+            message = "!!! Entity invalid: %s--%s--%s--%s !!!" % (result['entityMainType'], result['entitySubType'],
+                                                                  result['entityCode'], result['entityName'])
             pQt.errorDialog(message, self.dial_newEntity)
             raise AttributeError(message)
         #--- Check New Entity ---#
+        print ctxtObj.entityCodes
         if result['entityCode'] in ctxtObj.entityCodes or result['entityName'] in ctxtObj.entityNames:
             message = "!!! Entity %r (%r) already exists !!!" % (result['entityName'], result['entityCode'])
             pQt.errorDialog(message, self.dial_newEntity)
