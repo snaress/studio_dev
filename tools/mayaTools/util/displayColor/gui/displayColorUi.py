@@ -94,6 +94,8 @@ class ColorTree(QtGui.QTreeWidget):
 
     :param mainUi: DisplayColor main ui
     :type mainUi: DisplayColor
+    :param showIndex: Show color index
+    :type showIndex: bool
     :param parent: Parent Qt ui
     :type parent: QtGui.QWidget
     """
@@ -102,9 +104,10 @@ class ColorTree(QtGui.QTreeWidget):
     maxColors = 32
     cellSize = 20
 
-    def __init__(self, mainUi, parent=None):
+    def __init__(self, mainUi, showIndex=True, parent=None):
         super(ColorTree, self).__init__(parent)
         self.mainUi = mainUi
+        self.showIndex = showIndex
         self.setupWidget()
 
     def setupWidget(self):
@@ -172,7 +175,8 @@ class ColorTree(QtGui.QTreeWidget):
         :rtype: QtGui.QPushButton
         """
         newButton = QtGui.QPushButton()
-        newButton.setText(str(index))
+        if self.showIndex:
+            newButton.setText(str(index))
         newButton.setCheckable(True)
         newButton.setAutoExclusive(True)
         newButton.column = i
