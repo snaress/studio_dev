@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\tools\mayaTools\cloth\toolBox\gui\_src\wgModeBox.ui'
 #
-# Created: Fri Mar 25 02:27:04 2016
+# Created: Sat Apr 09 05:52:03 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,13 +31,6 @@ class Ui_wg_modeBox(object):
         self.gridLayout.setMargin(0)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.line_2 = QtGui.QFrame(wg_modeBox)
-        self.line_2.setFrameShape(QtGui.QFrame.HLine)
-        self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
-        self.line_2.setObjectName(_fromUtf8("line_2"))
-        self.gridLayout.addWidget(self.line_2, 0, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 3, 0, 1, 1)
         self.gl_modeCmds = QtGui.QGridLayout()
         self.gl_modeCmds.setMargin(2)
         self.gl_modeCmds.setSpacing(2)
@@ -80,12 +73,40 @@ class Ui_wg_modeBox(object):
         self.pb_decoupeMesh.setFlat(False)
         self.pb_decoupeMesh.setObjectName(_fromUtf8("pb_decoupeMesh"))
         self.gl_modeCmds.addWidget(self.pb_decoupeMesh, 1, 0, 1, 1)
-        self.gridLayout.addLayout(self.gl_modeCmds, 1, 0, 1, 1)
+        self.gridLayout.addLayout(self.gl_modeCmds, 3, 0, 1, 1)
         self.line = QtGui.QFrame(wg_modeBox)
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
-        self.gridLayout.addWidget(self.line, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.line, 4, 0, 1, 1)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 5, 0, 1, 1)
+        self.line_2 = QtGui.QFrame(wg_modeBox)
+        self.line_2.setFrameShape(QtGui.QFrame.HLine)
+        self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_2.setObjectName(_fromUtf8("line_2"))
+        self.gridLayout.addWidget(self.line_2, 2, 0, 1, 1)
+        self.gl_modeTools = QtGui.QGridLayout()
+        self.gl_modeTools.setMargin(2)
+        self.gl_modeTools.setSpacing(2)
+        self.gl_modeTools.setObjectName(_fromUtf8("gl_modeTools"))
+        self.pb_displayColorUi = QtGui.QPushButton(wg_modeBox)
+        self.pb_displayColorUi.setIconSize(QtCore.QSize(24, 24))
+        self.pb_displayColorUi.setFlat(False)
+        self.pb_displayColorUi.setObjectName(_fromUtf8("pb_displayColorUi"))
+        self.gl_modeTools.addWidget(self.pb_displayColorUi, 0, 0, 1, 1)
+        self.pb_empty = QtGui.QPushButton(wg_modeBox)
+        self.pb_empty.setEnabled(False)
+        self.pb_empty.setIconSize(QtCore.QSize(24, 24))
+        self.pb_empty.setFlat(False)
+        self.pb_empty.setObjectName(_fromUtf8("pb_empty"))
+        self.gl_modeTools.addWidget(self.pb_empty, 0, 1, 1, 1)
+        self.gridLayout.addLayout(self.gl_modeTools, 1, 0, 1, 1)
+        self.line_3 = QtGui.QFrame(wg_modeBox)
+        self.line_3.setFrameShape(QtGui.QFrame.HLine)
+        self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_3.setObjectName(_fromUtf8("line_3"))
+        self.gridLayout.addWidget(self.line_3, 0, 0, 1, 1)
 
         self.retranslateUi(wg_modeBox)
         QtCore.QMetaObject.connectSlotsByName(wg_modeBox)
@@ -99,4 +120,6 @@ class Ui_wg_modeBox(object):
         self.pb_duplicateGeom.setText(_translate("wg_modeBox", "Duplicate Geom", None))
         self.pb_connectOutMesh.setText(_translate("wg_modeBox", "Connect OutMesh", None))
         self.pb_decoupeMesh.setText(_translate("wg_modeBox", "Decoupe Mesh", None))
+        self.pb_displayColorUi.setText(_translate("wg_modeBox", "Display Color UI", None))
+        self.pb_empty.setText(_translate("wg_modeBox", "Empty", None))
 

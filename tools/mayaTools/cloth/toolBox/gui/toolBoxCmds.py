@@ -8,6 +8,14 @@ except:
 
 #============================== CLOTH MODE ==============================#
 
+def launchDisplayColorUi():
+    """
+    Launch DisplayColorUi
+    """
+    from mayaTools.util import displayColor as toolModul
+    tmFile = pFile.conformPath(os.path.join(os.path.dirname(toolModul.__file__), '__tm__.py'))
+    execfile(tmFile)
+
 def duplicateSelected(selObjects=None, name=None, worldParent=True):
     """
     Duplicate and parent to world selected objects
@@ -115,6 +123,6 @@ def launchRiggerUi():
     """
     Launch RiggerUi
     """
-    from mayaTools.cloth import rigger
-    tmFile = pFile.conformPath(os.path.join(os.path.dirname(rigger.__file__), '__tm__.py'))
+    from mayaTools.cloth import rigger as toolModul
+    tmFile = pFile.conformPath(os.path.join(os.path.dirname(toolModul.__file__), '__tm__.py'))
     execfile(tmFile)

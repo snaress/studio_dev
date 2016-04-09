@@ -29,6 +29,7 @@ class ModeBox(QtGui.QWidget, wgModeBoxUI.Ui_wg_modeBox):
         self.gridLayout.setMargin(0)
         self.gridLayout.setSpacing(0)
         #--- Icons ---#
+        self.pb_displayColorUi.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'tool', 'displayColor.png')))
         self.pb_duplicateSelected.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'maya', 'duplicateSelected.png')))
         self.pb_duplicateGeom.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'maya', 'duplicateGeom.png')))
         self.pb_decoupeMesh.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'maya', 'decoupe.png')))
@@ -37,6 +38,7 @@ class ModeBox(QtGui.QWidget, wgModeBoxUI.Ui_wg_modeBox):
         self.pb_connectOutMesh.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'maya', 'outMeshConnect.png')))
         self.pb_updateOutMesh.setIcon(QtGui.QIcon(os.path.join(self.iconPath, 'maya', 'outMeshUpdate.png')))
         #--- Connect ---#
+        self.pb_displayColorUi.clicked.connect(self.on_displayColorUi)
         self.pb_duplicateSelected.clicked.connect(self.on_duplicateSelected)
         self.pb_duplicateGeom.clicked.connect(self.on_duplicateGeom)
         self.pb_decoupeMesh.clicked.connect(self.on_decoupeMesh)
@@ -44,6 +46,15 @@ class ModeBox(QtGui.QWidget, wgModeBoxUI.Ui_wg_modeBox):
         self.pb_createOutMesh.clicked.connect(self.on_createOutMesh)
         self.pb_connectOutMesh.clicked.connect(self.on_connectOutMesh)
         self.pb_updateOutMesh.clicked.connect(self.on_updateOutMesh)
+
+    @staticmethod
+    def on_displayColorUi():
+        """
+        Command launched when 'Display Color Ui' QPushButton is clicked
+
+        Launch tool DisplayColor
+        """
+        toolBoxCmds.launchDisplayColorUi()
 
     @staticmethod
     def on_duplicateSelected():
@@ -140,4 +151,9 @@ class RiggBox(QtGui.QWidget, wgRiggBoxUI.Ui_wg_riggBox):
 
     @staticmethod
     def on_riggerUi():
+        """
+        Command launched when 'Rigger Ui' QPushButton is clicked
+
+        Launch tool Rigger
+        """
         toolBoxCmds.launchRiggerUi()
