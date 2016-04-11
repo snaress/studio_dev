@@ -342,6 +342,7 @@ class Context(common.Storage):
         self._project = projectObject
         #--- Data ---#
         self.contextName = contextName
+        self.contextTasks = dict()
         #--- Update ---#
         super(Context, self).__init__(self._fdn)
 
@@ -444,7 +445,7 @@ class Context(common.Storage):
         :rtype: dict
         """
         childsData = super(Context, self).getData()
-        data = dict(contextName=self.contextName, childs=childsData)
+        data = dict(contextName=self.contextName, contextTasks=self.contextTasks, childs=childsData)
         return data
 
     def getCtxtEntity(self, mainType, subType=None):

@@ -432,7 +432,8 @@ class ProjectSettings(settingsUi.Settings):
         :rtype: dict
         """
         return {0: self.projectCategory,
-                1: self.entitiesCategory}
+                1: self.entitiesCategory,
+                2: self.tasksCategory}
 
     @property
     def projectCategory(self):
@@ -469,6 +470,27 @@ class ProjectSettings(settingsUi.Settings):
             category['entities']['subCat'][n] = {subCat: {'widget': self.wg_entities[n],
                                                           'code': subCat,
                                                           'label': '%s%s' % (subCat[0].upper(), subCat[1:])}}
+        #--- Result ---#
+        return category
+
+    @property
+    def tasksCategory(self):
+        """
+        Get Tasks category
+
+        :return: Tasks category
+        :rtype: dict
+        """
+        #--- Main Category ---#
+        category = {'tasks': {'code': 'tasks',
+                              'label': 'Tasks',
+                              'subCat': {}}}
+        #--- Sub Categories ---#
+        for n, subCat in enumerate(self._project.contextNames):
+            # noinspection PyTypeChecker
+            category['tasks']['subCat'][n] = {subCat: {'widget': None,
+                                                       'code': subCat,
+                                                       'label': '%s%s' % (subCat[0].upper(), subCat[1:])}}
         #--- Result ---#
         return category
 
