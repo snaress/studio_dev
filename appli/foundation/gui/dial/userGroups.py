@@ -229,8 +229,7 @@ class Groups(basicTreeUi.BasicTree):
         :type dialogMode: str
         """
         #--- Check Data ---#
-        excludes = ['', ' ', 'None', None]
-        if result['grpCode'] in excludes or result['grpName'] in excludes:
+        if result['grpCode'] in self._fdn.typoExclusion or result['grpName'] in self._fdn.typoExclusion:
             message = "!!! 'code' or 'name' invalid: %s -- %s !!!" % ( result['grpCode'], result['grpName'])
             pQt.errorDialog(message, self)
             raise AttributeError(message)
@@ -652,8 +651,7 @@ class Users(basicTreeUi.BasicTree):
         :type dialogMode: str
         """
         #--- Check Data ---#
-        excludes = ['', ' ', 'None', None]
-        if result['userName'] in excludes:
+        if result['userName'] in self._fdn.typoExclusion:
             message = "!!! 'userName' invalid: %s !!!" % result['userName']
             pQt.errorDialog(message, self)
             raise AttributeError(message)

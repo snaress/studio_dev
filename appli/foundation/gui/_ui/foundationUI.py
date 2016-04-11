@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\rnd\workspace\studio_dev\appli\foundation\gui\_src\foundation.ui'
 #
-# Created: Sun Mar 06 03:03:39 2016
+# Created: Sun Apr 10 16:39:37 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -71,22 +71,22 @@ class Ui_mw_foundation(object):
         self.vl_right.setSpacing(0)
         self.vl_right.setMargin(0)
         self.vl_right.setObjectName(_fromUtf8("vl_right"))
-        self.qf_datasUp = QtGui.QFrame(self.qf_right)
-        self.qf_datasUp.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.qf_datasUp.setObjectName(_fromUtf8("qf_datasUp"))
-        self.vl_datas = QtGui.QVBoxLayout(self.qf_datasUp)
-        self.vl_datas.setSpacing(0)
-        self.vl_datas.setMargin(0)
-        self.vl_datas.setObjectName(_fromUtf8("vl_datas"))
-        self.vl_right.addWidget(self.qf_datasUp)
-        self.qf_datasDn = QtGui.QFrame(self.qf_right)
-        self.qf_datasDn.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.qf_datasDn.setObjectName(_fromUtf8("qf_datasDn"))
-        self.vl_log = QtGui.QVBoxLayout(self.qf_datasDn)
+        self.qf_dataUp = QtGui.QFrame(self.qf_right)
+        self.qf_dataUp.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.qf_dataUp.setObjectName(_fromUtf8("qf_dataUp"))
+        self.vl_data = QtGui.QVBoxLayout(self.qf_dataUp)
+        self.vl_data.setSpacing(0)
+        self.vl_data.setMargin(0)
+        self.vl_data.setObjectName(_fromUtf8("vl_data"))
+        self.vl_right.addWidget(self.qf_dataUp)
+        self.qf_dataDn = QtGui.QFrame(self.qf_right)
+        self.qf_dataDn.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.qf_dataDn.setObjectName(_fromUtf8("qf_dataDn"))
+        self.vl_log = QtGui.QVBoxLayout(self.qf_dataDn)
         self.vl_log.setSpacing(0)
         self.vl_log.setMargin(0)
         self.vl_log.setObjectName(_fromUtf8("vl_log"))
-        self.vl_right.addWidget(self.qf_datasDn)
+        self.vl_right.addWidget(self.qf_dataDn)
         self.gridLayout.addWidget(self.qf_right, 0, 1, 1, 1)
         mw_foundation.setCentralWidget(self.centralwidget)
         self.menuBar = QtGui.QMenuBar(mw_foundation)
@@ -134,9 +134,12 @@ class Ui_mw_foundation(object):
         self.mi_toolSettings.setObjectName(_fromUtf8("mi_toolSettings"))
         self.actionTmp = QtGui.QAction(mw_foundation)
         self.actionTmp.setObjectName(_fromUtf8("actionTmp"))
+        self.mi_refresh = QtGui.QAction(mw_foundation)
+        self.mi_refresh.setObjectName(_fromUtf8("mi_refresh"))
         self.m_project.addAction(self.mi_newProject)
         self.m_project.addAction(self.mi_loadProject)
         self.m_project.addSeparator()
+        self.m_project.addAction(self.mi_refresh)
         self.m_project.addAction(self.m_newEntity.menuAction())
         self.m_help.addAction(self.mi_toolTips)
         self.m_help.addAction(self.m_logLevel.menuAction())
@@ -171,4 +174,5 @@ class Ui_mw_foundation(object):
         self.mi_darkGreyStyle.setText(_translate("mw_foundation", "DarkGrey", None))
         self.mi_toolSettings.setText(_translate("mw_foundation", "Tool Settings", None))
         self.actionTmp.setText(_translate("mw_foundation", "tmp", None))
+        self.mi_refresh.setText(_translate("mw_foundation", "Refresh", None))
 

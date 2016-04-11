@@ -9,8 +9,8 @@ from coreQt.dialogs import promptMultiUi
 #--- Compile Ui ---#
 gui.compileUi()
 from dial import dialogs
-from widgets import mainTree
 from _ui import foundationUI
+from widgets import mainTree, infoView
 from foundation.core import foundation
 
 
@@ -57,7 +57,7 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.gridLayout.setMargin(0)
         self.gridLayout.setSpacing(0)
         self.qf_left.setVisible(False)
-        self.qf_datasDn.setVisible(False)
+        self.qf_dataDn.setVisible(False)
 
     def _initWidgets(self):
         """
@@ -65,6 +65,8 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         """
         self.wg_mainTree = mainTree.MainTree(self)
         self.vl_treeDn.addWidget(self.wg_mainTree)
+        self.wg_infoView = infoView.InfoView(self)
+        self.vl_data.addWidget(self.wg_infoView)
 
     def _initMenu(self):
         """
@@ -75,6 +77,8 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.mi_newProject.triggered.connect(self.on_miNewProject)
         self.mi_loadProject.setShortcut("Ctrl+Shift+L")
         self.mi_loadProject.triggered.connect(self.on_miLoadProject)
+        self.mi_refresh.setShortcut("F5")
+        self.mi_refresh.triggered.connect(partial(self.on_miRefresh, selItem=None))
         #--- Menu Settings ---#
         self.mi_toolSettings.setShortcut("Ctrl+Shift+T")
         self.mi_toolSettings.triggered.connect(self.on_miToolSettings)
@@ -95,6 +99,16 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.on_miStyle('darkGrey')
 
     @property
+    def typoExclusion(self):
+        """
+        Typo results that must not be found
+
+        :return: Typo exclusion
+        :rtype: list
+        """
+        return self._fdn.typoExclusion
+
+    @property
     def showToolTips(self):
         """
         Get 'Tool Tips' menuItem status
@@ -103,6 +117,30 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         :rtype: bool
         """
         return self.mi_toolTips.isChecked()
+
+    @property
+    def currentStyle(self):
+        """
+        Get current ui style
+
+        :return: Current style
+        :rtype: str
+        """
+        style = 'default'
+        for menuItem in self.m_style.children():
+            if menuItem.isChecked():
+                style = str(menuItem.text())
+        return style
+
+    @property
+    def currentInfoTab(self):
+        """
+        Get info view active tab
+
+        :return: Active tab
+        :rtype: str
+        """
+        return self.wg_infoView.tab_infoView.tabText(self.wg_infoView.tab_infoView.currentIndex())
 
     def rf_menuVisibility(self):
         """
@@ -193,8 +231,7 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         projectName = result.get('projectName')
         projectCode = result.get('projectCode')
         #--- Check Values ---#
-        exclusions = ['', ' ', 'None', None]
-        if projectName in exclusions or projectCode in exclusions:
+        if projectName in self.typoExclusion or projectCode in self.typoExclusion:
             pQt.errorDialog("Project Name or Project Code invalide: %s--%s" % (projectName, projectCode), self)
         else:
             #--- Create Project ---#
@@ -210,6 +247,15 @@ class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):
         self.log.detail(">>> Launch 'Load Project' ...")
         dial_loadProject = dialogs.LoadProject(self)
         dial_loadProject.exec_()
+
+    def on_miRefresh(self, selItem=None):
+        """
+        Command launched when 'Refresh' QMenuItem is clicked
+
+        Refresh ui
+        """
+        self.wg_mainTree._initWidget()
+        self.wg_infoView.refresh()
 
     def on_miToolSettings(self):
         """

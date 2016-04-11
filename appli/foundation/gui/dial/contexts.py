@@ -163,8 +163,7 @@ class Contexts(basicTreeUi.BasicTree):
         :type result: dict
         """
         #--- Check Data ---#
-        excludes = ['', ' ', 'None', None]
-        if result['contextName'] in excludes :
+        if result['contextName'] in self._fdn.typoExclusion :
             message = "!!! 'contextName' invalid: %s !!!" % result['contextName']
             pQt.errorDialog(message, self.dial_context)
             raise AttributeError(message)
@@ -483,8 +482,8 @@ class Entities(basicTreeUi.BasicTree):
         :type result: dict
         """
         #--- Check Data ---#
-        excludes = ['', ' ', 'None', None]
-        if result['ctxtCode'] in excludes or result['ctxtName'] in excludes or result['ctxtFolder'] in excludes:
+        if (result['ctxtCode'] in self._fdn.typoExclusion or result['ctxtName'] in self._fdn.typoExclusion
+            or result['ctxtFolder'] in self._fdn.typoExclusion):
             message = "!!! Entity invalid: %s -- %s -- %s !!!" % (result['ctxtCode'], result['ctxtName'],
                                                                   result['ctxtFolder'])
             pQt.errorDialog(message, self.dial_CtxtEntity)

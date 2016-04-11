@@ -201,6 +201,22 @@ class CtxtEntity(common.Child):
             codes.append(entity.entityCode)
         return codes
 
+    def getChildrenEntities(self, keepParentEntities=False):
+        """
+        Get entities recursively
+
+        :param keepParentEntities: Keep parent entities in result
+        :type keepParentEntities: bool
+        :return: Child entities
+        :rtype: list
+        """
+        entities = []
+        if keepParentEntities:
+            entities.extend(self.entities)
+        for child in self.childs:
+            entities.extend(child.entities)
+        return entities
+
     def getData(self):
         """
         get class representation as dict
@@ -588,8 +604,8 @@ class Context(common.Storage):
         entityName = kwargs.get('entityName')
         entityCode = kwargs.get('entityCode')
         #--- Check Data ---#
-        excludes = ['', ' ', 'None', None]
-        if mainType in excludes or subType in excludes or entityName in excludes or entityCode in excludes:
+        if (mainType in self._fdn.typoExclusion or subType in self._fdn.typoExclusion or
+            entityName in self._fdn.typoExclusion or entityCode in self._fdn.typoExclusion):
             raise AttributeError("!!! Entity invalid: %s -- %s -- %s -- %s !!!" % (mainType, subType,
                                                                                    entityName, entityCode))
         #--- Check Context Entity ---#

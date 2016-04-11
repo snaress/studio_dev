@@ -1,7 +1,7 @@
 import os
 from coreQt import pQt
-from PyQt4 import QtGui
 from functools import partial
+from PyQt4 import QtGui, QtCore
 from coreQt.dialogs import promptMultiUi
 from foundation.gui._ui import fdnMainTreeUI
 
@@ -38,6 +38,8 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         self.gridLayout.setSpacing(0)
         self.pb_filters.filters = []
         self.pb_filters.setIcon(self.iconFilter)
+        #--- Connect ---#
+        self.tw_tree.itemClicked.connect(self.on_treeItem)
         #--- Refresh ---#
         self.buildContexts()
 
@@ -54,8 +56,9 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         """
         Init widget
         """
-        self.buildContextMenu()
+        self.buildContextMenu(self.mainUi.m_newEntity, autoUpdate=False)
         self.buildContexts()
+        self.buildPopupMenu()
         self.buildTree()
 
     @property
@@ -70,14 +73,43 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
             if cbContext.isChecked():
                 return cbContext.ctxtObj
 
-    def buildContextMenu(self):
+    @property
+    def currentSelection(self):
+        """
+        Get Selected items
+
+        :return: Selected items
+        :rtype: list
+        """
+        return self.tw_tree.selectedItems() or []
+
+    def buildContextMenu(self, QMenu, autoUpdate=False):
         """
         Build 'New Entity' mainUi menu
+
+        :param QMenu: Menu object
+        :type QMenu: QtGui.QMenu
+        :param autoUpdate: Enable dialog QComboBox update
+        :type autoUpdate: bool
         """
-        self.mainUi.m_newEntity.clear()
+        QMenu.clear()
         for context in self._project.contexts:
-            menuItem = self.mainUi.m_newEntity.addAction(context.contextLabel)
-            menuItem.triggered.connect(partial(self.on_newEntity, context.contextName))
+            menuItem = QMenu.addAction(context.contextLabel)
+            menuItem.triggered.connect(partial(self.on_newEntity, context.contextName, autoUpdate=autoUpdate))
+
+    def buildPopupMenu(self):
+        """
+        Build main tree popup menu
+        """
+        self.m_popMenu = QtGui.QMenu()
+        self.m_popMenu.setStyleSheet(pQt.Style().getStyle(self.mainUi.currentStyle))
+        self.mi_refresh = self.m_popMenu.addAction('Refresh')
+        self.m_newEntity = self.m_popMenu.addMenu('New Entity')
+        self.buildContextMenu(self.m_newEntity, autoUpdate=True)
+        self.tw_tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.tw_tree.connect(self.tw_tree,
+                             QtCore.SIGNAL('customContextMenuRequested(const QPoint&)'),
+                             self.on_popupMenu)
 
     def buildContexts(self):
         """
@@ -160,21 +192,52 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
         newItem.setText(0, ctxtObj.contextLabel)
         newItem.setIcon(0, self.iconFolder)
         newItem.itemObj = ctxtObj
+        newItem.itemType = 'ctxtEntity'
         return newItem
 
     def new_entityItem(self, entityObj):
+        """
+        New 'Entity' QTreeWidgetItem
+
+        :param entityObj: Entity object
+        :type entityObj: Entity
+        :return: Entity item
+        :rtype: QtGui.QTreeWidgetItem
+        """
         newItem = QtGui.QTreeWidgetItem()
         newItem.setText(0, entityObj.entityName)
         newItem.setIcon(0, self.iconAsset)
+        newItem.itemObj = entityObj
+        newItem.itemType = 'entity'
         return newItem
 
-    def on_newEntity(self, contextName):
+    def on_treeItem(self):
+        """
+        Command launched when QTreeWidgetItem is clicked
+
+        Refresh info view
+        """
+        self.mainUi.wg_infoView.refresh()
+
+    def on_popupMenu(self):
+        """
+        Command launched when QTreeWidget is right clicked
+
+        Launch popup menu
+        """
+        # noinspection PyArgumentList
+        self.m_popMenu.popup(QtGui.QCursor.pos())
+        self.m_popMenu.exec_()
+
+    def on_newEntity(self, contextName, autoUpdate=False):
         """
         Command launched when 'Add New Entity' QMenuItem is triggered
 
         Launch new entity dialog
         :param contextName: New entity context
         :type contextName: str
+        :param autoUpdate: Enable dialog QComboBox update
+        :type autoUpdate: bool
         """
         #--- Get Main Types ---#
         ctxtObj = self._project.getContext(contextName)
@@ -184,10 +247,34 @@ class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):
                    dict(promptType='combo', promptLabel='entitySubType', promptValue=[]),
                    dict(promptType='line', promptLabel='entityCode', promptValue=''),
                    dict(promptType='line', promptLabel='entityName', promptValue='')]
-        #--- Launch Dialog ---#
+        #--- Init Dialog ---#
         self.dial_newEntity = NewEntityDialog(title="New Entity", prompts=prompts,
                                               acceptCmd=partial(self._newEntity, ctxtObj),
                                               ctxtObj=ctxtObj, parent=self)
+        #--- Auto Update ---#
+        if autoUpdate:
+            currentSel = self.currentSelection
+            if currentSel:
+                #--- Get Context Entity Params ---#
+                itemObj = currentSel[0].itemObj
+                wgMainType = self.dial_newEntity.tw_prompts.topLevelItem(0).itemWidget
+                wgSubType = self.dial_newEntity.tw_prompts.topLevelItem(1).itemWidget
+                if itemObj.__class__.__name__ == 'Entity':
+                    mainType = '%s%s' % (itemObj.entityMainType[0].upper(), itemObj.entityMainType[1:])
+                    subType = '%s%s' % (itemObj.entitySubType[0].upper(), itemObj.entitySubType[1:])
+                else:
+                    if itemObj.contextType == 'subType':
+                        mainType = itemObj._parent.contextLabel
+                        subType = itemObj.contextLabel
+                    else:
+                        mainType = itemObj.contextLabel
+                        subType = None
+                #--- Update Dialog ---#
+                wgMainType.cb_prompt.setCurrentIndex(wgMainType.cb_prompt.findText(mainType))
+                self.dial_newEntity.on_mainType()
+                if subType is not None:
+                    wgSubType.cb_prompt.setCurrentIndex(wgSubType.cb_prompt.findText(subType))
+        #--- Launch Dialog ---#
         self.dial_newEntity.exec_()
 
     def _newEntity(self, ctxtObj):

@@ -34,6 +34,18 @@ class Foundation(object):
         paths = [self.__rootPath__, self.__projectsPath__, self.__settingsPath__]
         pFile.createPath(paths, log=self.log)
 
+    @property
+    def typoExclusion(self):
+        """
+        Typo results that must not be found
+
+        :return: Typo exclusion
+        :rtype: list
+        """
+        return ['', ' ', 'None', None]
+
 
 if __name__ == '__main__':
     fdn = Foundation(logLvl='detail')
+    # fdn._project.loadProject('animTest--ANT')
+    # print fdn._project.__str__()

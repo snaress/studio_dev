@@ -103,11 +103,11 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="qf_datasUp">
+        <widget class="QFrame" name="qf_dataUp">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <layout class="QVBoxLayout" name="vl_datas">
+         <layout class="QVBoxLayout" name="vl_data">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -118,7 +118,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="qf_datasDn">
+        <widget class="QFrame" name="qf_dataDn">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -158,6 +158,7 @@
     <addaction name="mi_newProject"/>
     <addaction name="mi_loadProject"/>
     <addaction name="separator"/>
+    <addaction name="mi_refresh"/>
     <addaction name="m_newEntity"/>
    </widget>
    <widget class="QMenu" name="m_help">
@@ -261,6 +262,11 @@
   <action name="actionTmp">
    <property name="text">
     <string>tmp</string>
+   </property>
+  </action>
+  <action name="mi_refresh">
+   <property name="text">
+    <string>Refresh</string>
    </property>
   </action>
  </widget>
