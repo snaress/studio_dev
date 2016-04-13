@@ -146,7 +146,8 @@ class Settings(QtGui.QDialog, dial_settingsUI.Ui_dial_settings):
                     if hasattr(item, 'itemWidget'):
                         if item.itemWidget is not None:
                             if item.itemLabel == selItems[0].itemLabel:
-                                item.itemWidget.setVisible(True)
+                                if item.parent().itemLabel == selItems[0].parent().itemLabel:
+                                    item.itemWidget.setVisible(True)
 
     def on_save(self):
         """
