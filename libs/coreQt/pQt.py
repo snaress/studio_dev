@@ -253,7 +253,7 @@ def getComboBoxItems(QComboBox):
 
 #============================================ DIALOGS ============================================#
 
-def errorDialog(message, parent):
+def errorDialog(message, parent, raiseError=False):
     """
     Launch default error dialog
     
@@ -261,12 +261,16 @@ def errorDialog(message, parent):
     :type message: str | list
     :param parent: Parent ui
     :type parent: QtGui.QMainWindow | QtGui.QWidget
+    :param raiseError: Raise error state
+    :type raiseError: bool
     """
     errorDial = QtGui.QErrorMessage(parent)
     if isinstance(message, list):
         errorDial.showMessage('\n'.join(message))
     else:
         errorDial.showMessage(message)
+    if raiseError:
+        raise AttributeError(message)
 
 def fileDialog(fdMode='open', fdFileMode='AnyFile', fdRoot=None, fdRoots=None, fdFilters=None, fdCmd=None):
     """
