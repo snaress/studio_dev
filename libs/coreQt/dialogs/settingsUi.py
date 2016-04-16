@@ -94,8 +94,6 @@ class Settings(QtGui.QDialog, dial_settingsUI.Ui_dial_settings):
                 subCat = catDict['subCat'][nn].keys()[0]
                 subCatItem = self.new_categoryItem('subCategory', **catDict['subCat'][nn][subCat])
                 catItem.addChild(subCatItem)
-        #--- Refresh ---#
-        self.tw_category.expandAll()
 
     def new_categoryItem(self, itemType, **kwargs):
         """
