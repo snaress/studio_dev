@@ -1,7 +1,7 @@
 import sys
 from coreQt import pQt
 from PyQt4 import QtGui
-from foundation import gui
+from foundation_old import gui
 from functools import partial
 from coreSys import pFile, env
 from coreQt.dialogs import promptMultiUi
@@ -11,7 +11,7 @@ gui.compileUi()
 from dial import dialogs
 from _ui import foundationUI
 from widgets import mainTree, infoView
-from foundation.core import foundation
+from foundation_old.core import foundation
 
 
 class FoundationUi(QtGui.QMainWindow, foundationUI.Ui_mw_foundation):

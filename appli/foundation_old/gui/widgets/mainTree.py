@@ -3,7 +3,7 @@ from coreQt import pQt
 from functools import partial
 from PyQt4 import QtGui, QtCore
 from coreQt.dialogs import promptMultiUi
-from foundation.gui._ui import fdnMainTreeUI
+from foundation_old.gui._ui import fdnMainTreeUI
 
 
 class MainTree(QtGui.QWidget, fdnMainTreeUI.Ui_wg_fdnMainTree):

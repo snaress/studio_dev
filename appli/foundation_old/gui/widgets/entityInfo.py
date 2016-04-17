@@ -1,5 +1,5 @@
 from PyQt4 import QtGui
-from foundation.gui._ui import wg_entityInfoUI, wi_entityInfoUI
+from foundation_old.gui._ui import wg_entityInfoUI, wi_entityInfoUI
 
 
 class EntityInfo(QtGui.QWidget, wg_entityInfoUI.Ui_wg_tabInfo):

@@ -21,5 +21,5 @@ if __name__ == '__main__':
         for project in fdn.project.projects:
             print project
     else:
-        from foundation.gui import foundationUi
+        from foundation_old.gui import foundationUi
         foundationUi.launch(project=options['project'], logLvl=options['logLvl'])

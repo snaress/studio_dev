@@ -3,7 +3,7 @@ from coreQt import pQt
 from coreSys import pFile
 import userGroups, contexts
 from PyQt4 import QtGui, QtCore
-from foundation.gui._ui import loadProjectUI
+from foundation_old.gui._ui import loadProjectUI
 from coreQt.dialogs import confirmUi, settingsUi
 
 

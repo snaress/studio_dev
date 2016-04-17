@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
-from foundation.gui._ui import fdnInfoViewUI
-from foundation.gui.widgets import entityInfo
+from foundation_old.gui._ui import fdnInfoViewUI
+from foundation_old.gui.widgets import entityInfo
 
 
 class InfoView(QtGui.QWidget, fdnInfoViewUI.Ui_wg_infoView):
