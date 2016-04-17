@@ -63,8 +63,8 @@ class Contexts(basicTreeUi.BasicTree):
             self.pb_template.setToolTip("Open templates")
             self.pb_add.setToolTip("Create new context")
             self.pb_del.setToolTip("Delete selected context")
-            self.pb_apply.setToolTip("Apply datas to Foundation object")
-            self.pb_cancel.setToolTip("Restore datas from Foundation object")
+            self.pb_apply.setToolTip("Apply data to Foundation object")
+            self.pb_cancel.setToolTip("Restore data from Foundation object")
             #--- Edit Grade ---#
             if not self._users._user.grade == 0:
                 self.pb_del.setToolTip("Delete selected context (Disabled for your grade)")
@@ -164,16 +164,14 @@ class Contexts(basicTreeUi.BasicTree):
         """
         #--- Check Data ---#
         if result['contextName'] in self._fdn.typoExclusion :
-            message = "!!! 'contextName' invalid: %s !!!" % result['contextName']
-            pQt.errorDialog(message, self.dial_context)
-            raise AttributeError(message)
+            pQt.errorDialog("!!! 'contextName' invalid: %s !!!" % result['contextName'],
+                            self.dial_context, raiseError=True)
         #--- Check New Name ---#
         ctxtData = self.getData()
         for n in sorted(ctxtData.keys()):
             if ctxtData[n]['contextName'] == result['contextName']:
-                message = "!!! %s already exists !!!" % result['contextName']
-                pQt.errorDialog(message, self.dial_context)
-                raise AttributeError(message)
+                pQt.errorDialog("!!! %s already exists !!!" % result['contextName'],
+                                self.dial_context, raiseError=True)
 
     def on_apply(self):
         """
@@ -290,7 +288,7 @@ class Entities(basicTreeUi.BasicTree):
 
     def _setupIcons(self):
         """
-        Setup Context entity icons
+        Setup Entity icons
         """
         self.log = self.pWidget.log
         super(Entities, self)._setupIcons()
@@ -348,8 +346,8 @@ class Entities(basicTreeUi.BasicTree):
             self.pb_add.setToolTip("Create new Entity")
             self.pb_del.setToolTip("Delete selected Entity")
             self.pb_edit1.setToolTip("Clear selection")
-            self.pb_apply.setToolTip("Apply datas to Foundation object")
-            self.pb_cancel.setToolTip("Restore datas from Foundation object")
+            self.pb_apply.setToolTip("Apply data to Foundation object")
+            self.pb_cancel.setToolTip("Restore data from Foundation object")
             #--- Edit Grade ---#
             if not self._users._user.grade == 0:
                 self.pb_del.setToolTip("Delete selected Entity (Disabled for your grade)")
@@ -484,10 +482,9 @@ class Entities(basicTreeUi.BasicTree):
         #--- Check Data ---#
         if (result['ctxtCode'] in self._fdn.typoExclusion or result['ctxtName'] in self._fdn.typoExclusion
             or result['ctxtFolder'] in self._fdn.typoExclusion):
-            message = "!!! Entity invalid: %s -- %s -- %s !!!" % (result['ctxtCode'], result['ctxtName'],
-                                                                  result['ctxtFolder'])
-            pQt.errorDialog(message, self.dial_CtxtEntity)
-            raise AttributeError(message)
+            pQt.errorDialog("!!! Entity invalid: %s -- %s -- %s !!!" % (result['ctxtCode'], result['ctxtName'],
+                                                                        result['ctxtFolder']),
+                            self.dial_CtxtEntity, raiseError=True)
         #--- Check New Entity ---#
         treeDict = self.getData()
         selItems = self.tw_tree.selectedItems() or []
@@ -513,8 +510,7 @@ class Entities(basicTreeUi.BasicTree):
                             message = "!!! EntityFolder %r already exists !!!" % result['ctxtFolder']
             #--- Result ---#
             if message is not None:
-                pQt.errorDialog(message, self.dial_CtxtEntity)
-                raise AttributeError(message)
+                pQt.errorDialog(message, self.dial_CtxtEntity, raiseError=True)
 
     def on_editItem1(self):
         """
@@ -572,3 +568,245 @@ class Entities(basicTreeUi.BasicTree):
         """
         super(Entities, self).on_cancel()
         self.pWidget.rf_editedItemStyle()
+
+
+class Tasks(basicTreeUi.BasicTree):
+    """
+    Entities Class: Contains Entities settings, child of ToolSettings
+
+    :param pWidget: Parent widget
+    :type pWidget: dialogs.ToolSettings
+    :param contextObject: Context object
+    :type contextObject: Context
+    """
+
+    def __init__(self, pWidget, contextObject):
+        self.pWidget = pWidget
+        self.mainUi = self.pWidget.parent()
+        self._fdn = self.pWidget._fdn
+        self._users = self._fdn._users
+        self._context = contextObject
+        super(Tasks, self).__init__(pWidget)
+
+    def _initWidget(self):
+        """
+        Init widget core
+        """
+        self.log = self.pWidget.log
+        super(Tasks, self)._initWidget()
+
+    def _setupIcons(self):
+        """
+        Setup Task icons
+        """
+        self.log = self.pWidget.log
+        super(Tasks, self)._setupIcons()
+        #--- Edit Label ---#
+        self.pb_edit1.setText('Clear')
+        self.pb_edit1.setIcon(self.iconClear)
+        #--- Edit Grade ---#
+        if not self._users._user.grade == 0:
+            self.pb_del.setEnabled(False)
+
+    def _setupWidget(self):
+        """
+        Setup Entities widget
+        """
+        super(Tasks, self)._setupWidget()
+        self.l_title.setText(self.__class__.__name__)
+        self.cbb_filter.setVisible(False)
+        self.pb_template.setVisible(False)
+        self.pb_template.setVisible(False)
+        self.pb_edit2.setVisible(False)
+        self.qf_treeEdit_R.setVisible(False)
+        self.tw_tree.setIndentation(12)
+        self.tw_tree.header().setStretchLastSection(False)
+        self.rf_headers('%s Step' % self._context.contextLabel, '%s Task' % self._context.contextLabel)
+        self.rf_treeColumns()
+
+    def rf_toolTips(self):
+        """
+        Refresh widgets toolTips
+        """
+        if self.mainUi.showToolTips:
+            self.pb_itemUp.setToolTip("Move up selected Step/Task")
+            self.pb_itemDn.setToolTip("Move down selected Step/Task")
+            self.pb_template.setToolTip("Open templates")
+            self.pb_add.setToolTip("Create new Step/Task")
+            self.pb_del.setToolTip("Delete selected Step/Task")
+            self.pb_edit1.setToolTip("Clear selection")
+            self.pb_apply.setToolTip("Apply data to Foundation object")
+            self.pb_cancel.setToolTip("Restore data from Foundation object")
+            #--- Edit Grade ---#
+            if not self._users._user.grade == 0:
+                self.pb_del.setToolTip("Delete selected Step/Task (Disabled for your grade)")
+        else:
+            super(Tasks, self).rf_toolTips()
+
+    def buildTree(self):
+        """
+        Build Context entities tree widget
+        """
+        super(Tasks, self).buildTree()
+
+    def new_treeItem(self, itemObj):
+        """
+        Create or update tree item widget
+
+        :param itemObj: Core object
+        :type itemObj: Group | User
+        :return: New tree item
+        :rtype: QtGui.QTreeWidgetItem
+        """
+        newItem = QtGui.QTreeWidgetItem()
+        newItem.itemObj = itemObj
+        self.ud_treeItem(newItem)
+        for n in range(self.tw_tree.columnCount()):
+            newItem.setTextAlignment(n, 5)
+        return newItem
+
+    def ud_treeItem(self, item, **kwargs):
+        """
+        Update item data and settings
+
+        :param item: Entities tree item
+        :type item: newItem
+        :param kwargs: Context entity item data (key must starts with 'ctxt')
+        :type kwargs: dict
+        """
+        super(Tasks, self).ud_treeItem(item, **kwargs)
+        #--- Get Type ---#
+        selItems = self.tw_tree.selectedItems() or []
+        if kwargs.get('itemType') is None:
+            if not selItems:
+                item.itemType = 'step'
+            else:
+                item.itemType = 'task'
+        else:
+            item.itemType = kwargs['itemType']
+        #--- Get Tool Tips ---#
+        toolTip = ["Type   = %s" % item.itemType,
+                   "Code   = %s" % item.itemObj.pipeCode,
+                   "Name   = %s" % item.itemObj.pipeName]
+        #--- Clear Item ---#
+        for n in range(2):
+            item.setText(n, '')
+            item.setToolTip(n, '')
+        #--- Edit Item ---#
+        if item.itemType == 'step':
+            item.setText(0, item.itemObj.pipeName)
+            item.setToolTip(0, '\n'.join(toolTip))
+        else:
+            item.setText(1, item.itemObj.pipeName)
+            item.setToolTip(1, '\n'.join(toolTip))
+
+    def on_addItem(self):
+        """
+        Command launched when 'Add' QPushButton is clicked
+
+        Add new group to tree
+        """
+        super(Tasks, self).on_addItem()
+        #--- Get Prompts ---#
+        prompts = [dict(promptType='line', promptLabel='pipeCode'),
+                   dict(promptType='line', promptLabel='pipeName')]
+        #--- Launch Dialog ---#
+        selItems = self.tw_tree.selectedItems() or []
+        if selItems:
+            title = "New Task"
+        else:
+            title = "New Step"
+        self.dial_pipeLine = promptMultiUi.PromptMulti(title=title, prompts=prompts, parent=self,
+                                                       acceptCmd=self.on_dialogAccept)
+        self.dial_pipeLine.exec_()
+
+    def on_dialogAccept(self):
+        """
+        Command launched when 'Save' QPushButton is clicked
+
+        Save context datas
+        """
+        #--- Check Datas ---#
+        result = self.dial_pipeLine.result()
+        self._checkDialogResult(result)
+        #--- Get Datas ---#
+        selItems = self.tw_tree.selectedItems() or []
+        if selItems:
+            result['pipeType'] = 'task'
+            if selItems[0].itemObj.pipeType == 'task':
+                selItems = [selItems[0].parent()]
+            itemObj = selItems[0].itemObj.newChild(**result)
+        else:
+            result['pipeType'] = 'step'
+            itemObj = self._context.newPipeChild(**result)
+        #--- Add Task ---#
+        self.log.detail("Adding new %s: %s" % (result['pipeType'], result['pipeName']))
+        newItem = self.new_treeItem(itemObj)
+        if not selItems:
+            self.tw_tree.addTopLevelItem(newItem)
+        else:
+            selItems[0].addChild(newItem)
+        #--- Store Edition ---#
+        self.__editedItems__['added'].append(newItem)
+        #--- Quit ---#
+        self.rf_treeColumns()
+        self.rf_itemStyle()
+        self.dial_pipeLine.close()
+
+    def _checkDialogResult(self, result):
+        """
+        Check Dialog results
+
+        :param result: Dialog results
+        :type result: dict
+        """
+        #--- Check Data ---#
+        if result['pipeCode'] in self._fdn.typoExclusion or result['pipeName'] in self._fdn.typoExclusion:
+            pQt.errorDialog("!!! Pipe invalid: %s -- %s !!!" % (result['pipeCode'], result['pipeName']),
+                            self.dial_CtxtEntity, raiseError=True)
+        #--- Check New Pipe ---#
+        treeDict = self.getData()
+        selItems = self.tw_tree.selectedIndexes() or []
+        pprint.pprint(treeDict)
+        if treeDict.keys():
+            for n, stepDict in sorted(treeDict.iteritems()):
+                print stepDict['pipeName'],
+                if stepDict['pipeName'] == result['pipeName'] or stepDict['pipeCode'] == result['pipeCode']:
+                    pQt.errorDialog("!!! Step already exists: %s -- %s !!!" % (result['pipeName'],
+                                                                               result['pipeCode']),
+                                    self.dial_pipeLine, raiseError=True)
+                if selItems:
+                    for c, taskDict in sorted(stepDict['childs']):
+                        if taskDict['pipeName'] == result['pipeName'] or taskDict['pipeCode'] == result['pipeCode']:
+                            pQt.errorDialog("!!! Task already exists: %s -- %s !!!" % (result['pipeName'],
+                                                                                       result['pipeCode']),
+                                            self.dial_pipeLine, raiseError=True)
+
+    def on_editItem1(self):
+        """
+        Command launched when 'Edit1' QPushButton is clicked
+
+        Clear selection
+        """
+        super(Tasks, self).on_editItem1()
+        self.tw_tree.clearSelection()
+
+    def on_apply(self):
+        """
+        Command launched when 'Apply' QPushButton is clicked
+
+        Store datas to itemObject
+        """
+        super(Tasks, self).on_apply()
+        #--- Remove Deleted Items ---#
+        for item in self.__editedItems__['deleted']:
+            if item.itemObj.pipeType == 'step':
+                self._context.delPipeChild(item.itemObj.pipeName)
+                self.tw_tree.takeTopLevelItem(self.tw_tree.indexOfTopLevelItem(item))
+            else:
+                self._context.delPipeChild(item.parent().itemObj.pipeName, taskName=item.itemObj.pipeName)
+                item.parent().removeChild(item)
+        #--- Parse Entities Tree ---#
+        ind = 0
+        pipeData = dict(childs=dict())
+        treeDict = self.getData()

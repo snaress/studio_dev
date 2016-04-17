@@ -326,6 +326,37 @@ class CtxtEntity(common.Child):
         self.log.detail("Entity %s successfully added." % entityObject.entityName)
 
 
+class CtxtPipe(common.Child):
+    """
+    CtxtStep Class: Contains pipeLine steps and tasks, child of Context
+
+    :param parentObject: Storage object or Child object
+    :type parentObject: Context || CtxtEntity
+    """
+
+    __attrPrefix__ = 'pipe'
+
+    def __init__(self, parentObject=None):
+        super(CtxtPipe, self).__init__(parentObject=parentObject)
+        #--- Data ---#
+        self.childs = []
+        self.pipeType = None
+        self.pipeName = None
+        self.pipeCode = None
+
+    def newChild(self, **kwargs):
+        #--- Check New Pipe Data ---#
+        for taskObj in self.childs:
+            if kwargs.get('pipeName') == taskObj.pipeName or kwargs.get('pipeCode') == taskObj.pipeCode:
+                raise AttributeError("!!! Context pipe %s--%s already exists !!!" % (taskObj.pipeName,
+                                                                                     taskObj.pipeCode))
+        #--- Create Context Pipe Object ---#
+        pipeObj = CtxtPipe(parentObject=self)
+        pipeObj.update(**kwargs)
+        return pipeObj
+
+
+
 class Context(common.Storage):
     """
     Context Class: Contains context data, child of Project
@@ -342,7 +373,7 @@ class Context(common.Storage):
         self._project = projectObject
         #--- Data ---#
         self.contextName = contextName
-        self.contextTasks = dict()
+        self.contextPipe = []
         #--- Update ---#
         super(Context, self).__init__(self._fdn)
 
@@ -445,7 +476,8 @@ class Context(common.Storage):
         :rtype: dict
         """
         childsData = super(Context, self).getData()
-        data = dict(contextName=self.contextName, contextTasks=self.contextTasks, childs=childsData)
+        pipeData = dict()
+        data = dict(contextName=self.contextName, contextPipe=pipeData, childs=childsData)
         return data
 
     def getCtxtEntity(self, mainType, subType=None):
@@ -504,6 +536,25 @@ class Context(common.Storage):
                     for subChild in child.childs:
                         ctxtEntities.append(subChild.contextLabel)
         return ctxtEntities
+
+    def getCtxtPipe(self, stepName, taskName=None):
+        """
+        Get context pipe object
+
+        :param stepName: Context step name
+        :type stepName: str
+        :param taskName: Context task name
+        :type taskName: str
+        :return: Context pipe object
+        :rtype: CtxtPipe
+        """
+        for stepObj in self.contextPipe:
+            if stepObj.pipeName == stepName:
+                if taskName is None:
+                    return stepObj
+                for taskObj in stepObj.childs:
+                    if taskObj.pipeName == taskName:
+                        return taskObj
 
     def buildFromSettings(self):
         """
@@ -580,6 +631,46 @@ class Context(common.Storage):
                 if entitySubType is not None:
                     self.log.debug("Removing context entity %r" % entitySubType.ctxtName)
                     entityMainType.childs.remove(entitySubType)
+
+    def newPipeChild(self, **kwargs):
+        """
+        Create context pipe object
+
+        :param kwargs: Context pipe data (key must star with ('pipe')
+        :type kwargs: dict
+        :return: Context pipe object
+        :rtype: CtxtPipe
+        """
+        if kwargs.get('pipeType') == 'step':
+            #--- Check New Pipe Data ---#
+            for stepObj in self.contextPipe:
+                if kwargs.get('pipeName') == stepObj.pipeName or kwargs.get('pipeCode') == stepObj.pipeCode:
+                    raise AttributeError("!!! Context pipe %s--%s already exists !!!" % (stepObj.pipeName,
+                                                                                         stepObj.pipeCode))
+            #--- Create Context Pipe Object ---#
+            pipeObj = CtxtPipe(parentObject=self)
+            pipeObj.update(**kwargs)
+            return pipeObj
+
+    def delPipeChild(self, stepName, taskName=None):
+        """
+        Delete context pipe object from storage
+
+        :param stepName: Context pipe name
+        :type stepName: str
+        :param taskName: Parent context pipe name
+        :type taskName: str
+        """
+        stepObj = self.getCtxtPipe(stepName)
+        if stepObj is not None:
+            if taskName is None:
+                self.log.debug("Removing step %r" % stepObj.pipeName)
+                self.contextPipe.remove(stepObj)
+            else:
+                taskObj = self.getCtxtPipe(stepName, taskName=taskName)
+                if taskObj is not None:
+                    self.log.debug("Removing task %r" % taskObj.pipeName)
+                    stepObj.childs.remove(taskObj)
 
     def buildEntities(self):
         """

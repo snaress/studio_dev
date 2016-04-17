@@ -416,9 +416,14 @@ class ProjectSettings(settingsUi.Settings):
         self.wg_entities = []
         for ctxtObj in self._project.contexts:
             self.wg_entities.append(contexts.Entities(self, ctxtObj))
+        #--- Tasks ---#
+        self.wg_pipes = []
+        for ctxtObj in self._project.contexts:
+            self.wg_pipes.append(contexts.Tasks(self, ctxtObj))
         #--- Refresh ---#
         widgets = [self.wg_watchers, self.wg_contexts]
         widgets.extend(self.wg_entities)
+        widgets.extend(self.wg_pipes)
         for widget in widgets:
             widget.setVisible(False)
             self.vl_settingsWidget.addWidget(widget)
@@ -433,7 +438,7 @@ class ProjectSettings(settingsUi.Settings):
         """
         return {0: self.projectCategory,
                 1: self.entitiesCategory,
-                2: self.tasksCategory}
+                2: self.pipeCategory}
 
     @property
     def projectCategory(self):
@@ -474,7 +479,7 @@ class ProjectSettings(settingsUi.Settings):
         return category
 
     @property
-    def tasksCategory(self):
+    def pipeCategory(self):
         """
         Get Tasks category
 
@@ -482,15 +487,15 @@ class ProjectSettings(settingsUi.Settings):
         :rtype: dict
         """
         #--- Main Category ---#
-        category = {'tasks': {'code': 'tasks',
-                              'label': 'Tasks',
-                              'subCat': {}}}
+        category = {'PipeLine': {'code': 'pipe',
+                                 'label': 'Pipe Line',
+                                 'subCat': {}}}
         #--- Sub Categories ---#
         for n, subCat in enumerate(self._project.contextNames):
             # noinspection PyTypeChecker
-            category['tasks']['subCat'][n] = {subCat: {'widget': None,
-                                                       'code': subCat,
-                                                       'label': '%s%s' % (subCat[0].upper(), subCat[1:])}}
+            category['PipeLine']['subCat'][n] = {subCat: {'widget': self.wg_pipes[n],
+                                                          'code': subCat,
+                                                          'label': '%s%s' % (subCat[0].upper(), subCat[1:])}}
         #--- Result ---#
         return category
 
