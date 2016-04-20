@@ -26,8 +26,8 @@ nConvert = F:\apps\nConvert\nconvert.exe $*
 ffmpeg = f:\apps\ffmpeg\bin\ffmpeg.exe $*
 
 
-foundation = python F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
-fdn = python F:\rnd\workspace\studio_dev\appli\foundation\__exe__.py $*
+fondation = python F:\rnd\workspace\studio_dev\appli\fondation\__exe__.py $*
+fdn = python F:\rnd\workspace\studio_dev\appli\fondation\__exe__.py $*
 
 dialogs = python F:\rnd\workspace\studio_dev\libs\coreQt\dialogs\__usage__.py $*
 widgets = python F:\rnd\workspace\studio_dev\libs\coreQt\widgets\__usage__.py $*
