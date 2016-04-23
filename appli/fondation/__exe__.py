@@ -18,7 +18,7 @@ if __name__ == '__main__':
     if options['listProjects']:
         from fondation.core import fondation
         fdn = fondation.Fondation(logLvl='critical')
-        for project in fdn.project.projects:
+        for project in fdn._project.projects:
             print project
     else:
         from fondation.gui import fondationUi
