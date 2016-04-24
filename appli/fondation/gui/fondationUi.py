@@ -4,12 +4,14 @@ from PyQt4 import QtGui
 from fondation import gui
 from functools import partial
 from coreSys import pFile, env
+from coreQt.dialogs import promptMultiUi
 
 #--- Compile Ui ---#
 gui.compileUi()
-from _ui import fondationUI
-from fondation.core import fondation
 import toolSettings
+from _ui import fondationUI
+from dialogs import loadProject
+from fondation.core import fondation
 
 
 class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
@@ -44,6 +46,7 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         #--- Refresh ---#
         self._initMainUi()
         self._initMenu()
+        self.rf_menuVisibility()
 
     def _initMainUi(self):
         """
@@ -60,6 +63,11 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         """
         Init main ui menus
         """
+        #--- Menu Project ---#
+        self.mi_newProject.setShortcut("Ctrl+Shift+N")
+        self.mi_newProject.triggered.connect(self.on_miNewProject)
+        self.mi_loadProject.setShortcut("Ctrl+Shift+L")
+        self.mi_loadProject.triggered.connect(self.on_miLoadProject)
         #--- Menu Settings ---#
         self.mi_toolSettings.setShortcut("Ctrl+Shift+T")
         self.mi_toolSettings.triggered.connect(self.on_miToolSettings)
@@ -86,6 +94,128 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         :rtype: bool
         """
         return self.mi_toolTips.isChecked()
+
+    @property
+    def currentStyle(self):
+        """
+        Get current ui style
+
+        :return: Current style
+        :rtype: str
+        """
+        style = 'default'
+        for menuItem in self.m_style.children():
+            if menuItem.isChecked():
+                style = str(menuItem.text())
+        return style
+
+    def rf_menuVisibility(self):
+        """
+        Refresh menuItem visibility considering user grade
+        """
+        #-- Project Settings --#
+        if self._fdn._project.project is None:
+            self._editMenuVisibility(self.mi_projectSettings, state=False)
+        else:
+            self._editMenuVisibility(self.mi_projectSettings, state=True)
+        #-- Grade 1 --#
+        for menuItem in [self.mi_toolSettings]:
+            self._editMenuVisibility(menuItem, grade=1)
+        #-- Grade 2 --#
+        for menuItem in [self.mi_newProject]:
+            self._editMenuVisibility(menuItem, grade=2)
+        #-- Grade 4 --#
+        for menuItem in [self.mi_projectSettings]:
+            if self._fdn._project.project is not None:
+                self._editMenuVisibility(menuItem, grade=4)
+
+    def _editMenuVisibility(self, menuItem, grade=None, state=None):
+        """
+        Edit menu item visibility
+
+        :param menuItem: Menu item to edit
+        :type menuItem: QMenuAction
+        :param grade: Max allowed grade
+        :type grade: int
+        :param state: Visibility state
+        :type state: bool
+        """
+        #-- Get State And Font --#
+        if state is not None:
+            if state:
+                _font = self.enableFont
+            else:
+                _font = self.disableFont
+        else:
+            if self._fdn._users._user.grade <= grade:
+                _font = self.enableFont
+                state = True
+            else:
+                _font = self.disableFont
+                state = False
+        #-- Edit Menu Item --#
+        menuItem.setFont(_font)
+        menuItem.setEnabled(state)
+
+    def loadProject(self, project=None):
+        """
+        Load given project. If project is None, load current core project
+
+        :param project: Project (name--code)
+        :type project: str
+        """
+        if project is not None:
+            self._fdn._project.loadProject(project)
+        self.setWindowTitle("Foundation | %s | %s" % (self._fdn._project.project, self._fdn.__user__))
+        self.rf_menuVisibility()
+        self.qf_left.setVisible(True)
+        #--- Main Tree ---#
+
+    def on_miNewProject(self):
+        """
+        Command launched when 'New Project' QMenuItem is triggered
+
+        Launch NewProject dialog
+        """
+        self.log.detail(">>> Launch 'New Project' ...")
+        #--- Get Prompts ---#
+        prompts = [dict(promptType='line', promptLabel='projectName'),
+                   dict(promptType='line', promptLabel='projectCode')]
+        #--- Launch Dialog ---#
+        self.dial_newProject = promptMultiUi.PromptMulti(title="New Project", prompts=prompts, parent=self,
+                                                         acceptCmd=self.on_dialNewProject)
+        self.dial_newProject.exec_()
+
+    def on_dialNewProject(self):
+        """
+        Command launched when 'Save' dialog QPushButton is clicked
+
+        Save newProject
+        """
+        self.log.detail(">>> Save 'New Project' ...")
+        result = self.dial_newProject.result()
+        projectName = result.get('projectName')
+        projectCode = result.get('projectCode')
+        project = "%s--%s" % (projectName, projectCode)
+        #--- Check Values ---#
+        if projectName in self._fdn.typoExclusion or projectCode in self._fdn.typoExclusion:
+            pQt.errorDialog("Project Name or Project Code invalide: %s--%s" % (projectName, projectCode), self,
+                            raiseError=True)
+        if project in self._fdn._project.projects:
+            pQt.errorDialog("Project %s--%s already exists" % (projectName, projectCode), self, raiseError=True)
+        #--- Create Project ---#
+        self._fdn._project.newProject(projectName, projectCode)
+        self.dial_newProject.close()
+
+    def on_miLoadProject(self):
+        """
+        Command launched when 'Load Project' QMenuItem is triggered
+
+        Launch LoadProject dialog
+        """
+        self.log.detail(">>> Launch 'Load Project' ...")
+        dial_loadProject = loadProject.LoadProject(self)
+        dial_loadProject.exec_()
 
     def on_miToolSettings(self):
         """

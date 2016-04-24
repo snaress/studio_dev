@@ -1,6 +1,6 @@
 import os
 from coreSys import pFile
-import userGroups, users
+import userGroups, users, project
 
 
 class Fondation(object):
@@ -20,6 +20,7 @@ class Fondation(object):
         self._setup(logLvl)
         self._groups = userGroups.Groups(self)
         self._users = users.Users(self)
+        self._project = project.Project(self)
 
     def _setup(self, logLvl):
         """
@@ -32,6 +33,16 @@ class Fondation(object):
         self.log.debug("#--- Check Paths ---#")
         paths = [self.__rootPath__, self.__projectsPath__, self.__settingsPath__]
         pFile.createPath(paths, log=self.log)
+
+    @property
+    def contextTypes(self):
+        """
+        Get context types
+
+        :return: Context types
+        :rtype: list
+        """
+        return ['asset', 'shot']
 
     @property
     def typoExclusion(self):

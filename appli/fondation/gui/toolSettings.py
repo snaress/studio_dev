@@ -1,7 +1,7 @@
 from coreQt import pQt
 from PyQt4 import QtGui
-from dialogs import userGroups
-from coreQt.dialogs import settingsUi
+from dialogs import userGroups, users
+from coreQt.dialogs import confirmUi, settingsUi
 
 
 class ToolSettings(settingsUi.Settings):
@@ -38,8 +38,9 @@ class ToolSettings(settingsUi.Settings):
         self.setWindowTitle("%s | %s" % (self.log.title, self._fdn.__user__))
         #--- UserGroups ---#
         self.wg_groups = userGroups.Groups(self)
+        self.wg_users = users.Users(self, settingsMode='tool')
         #--- Refresh ---#
-        for widget in [self.wg_groups]:
+        for widget in [self.wg_groups, self.wg_users]:
             widget.setVisible(False)
             self.vl_settingsWidget.addWidget(widget)
 
@@ -66,7 +67,7 @@ class ToolSettings(settingsUi.Settings):
                                'subCat': {0: {'groups': {'widget': self.wg_groups,
                                                          'code': 'groups',
                                                          'label': 'Groups'}},
-                                          1: {'users': {'widget': None,
+                                          1: {'users': {'widget': self.wg_users,
                                                         'code': 'users',
                                                         'label': 'Users'}}}}}
 
@@ -97,3 +98,73 @@ class ToolSettings(settingsUi.Settings):
                 else:
                     item.setFont(0, QtGui.QFont())
                     item.setTextColor(0, QtGui.QColor(220, 220, 220))
+
+    def on_category(self):
+        """
+        Command launched when 'Category' tree item widget is clicked
+
+        Update category settings
+        """
+        super(ToolSettings, self).on_category()
+        selItems = self.tw_category.selectedItems() or []
+        #--- Build Tree ---#
+        if selItems:
+            if hasattr(selItems[0], 'itemWidget'):
+                if selItems[0].itemWidget is not None:
+                    if not selItems[0].itemWidget.__edited__:
+                        selItems[0].itemWidget._initWidget()
+                    selItems[0].itemWidget.buildTree()
+
+    def on_save(self):
+        """
+        Command launched when 'Save' QPushButton is clicked
+
+        Save settings to disk
+        """
+        super(ToolSettings, self).on_save()
+        #--- Parse Edited Items ---#
+        for item in self.getEditedItems():
+            self.log.detail("---> %s | %s" % (item.parent().itemCode, item.itemCode))
+            item.itemWidget.on_save()
+            item.itemWidget.__edited__ = False
+        #--- Refresh ---#
+        self.rf_editedItemStyle()
+
+    def on_close(self):
+        """
+        Command launched when 'Close' QPushButton is clicked
+
+        Close settings ui
+        """
+        self.log.debug("#--- Close Dialog ---#")
+        editedItems = self.getEditedItems()
+        #--- Edited Widget Found ---#
+        if editedItems:
+            message = ["!!! Warning !!!",
+                       "Unsaved category detected:"]
+            for item in editedItems:
+                message.append("---> %s" % item.itemLabel)
+            self.cd_close = confirmUi.Confirm(message='\n'.join(message), buttons=['Save', 'Discard'],
+                                              btnCmds=[self._saveSettings, self._discardSettings])
+            self.cd_close.setStyleSheet(self.parent().styleSheet())
+            self.cd_close.exec_()
+        #--- Close Settings ---#
+        else:
+            self.close()
+
+    def _saveSettings(self):
+        """
+        Save action confirmed
+        """
+        self.on_save()
+        self.cd_close.close()
+        self.close()
+
+    def _discardSettings(self):
+        """
+        Discard action confirmed
+        """
+        for item in self.getEditedItems():
+            item.itemWidget.on_discard()
+        self.cd_close.close()
+        self.close()
