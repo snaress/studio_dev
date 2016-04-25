@@ -8,10 +8,10 @@ from coreQt.dialogs import promptMultiUi
 
 #--- Compile Ui ---#
 gui.compileUi()
-import toolSettings
+# import toolSettings
 from _ui import fondationUI
-from dialogs import loadProject
 from fondation.core import fondation
+from dialogs import loadProject, settings
 
 
 class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
@@ -71,6 +71,8 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         #--- Menu Settings ---#
         self.mi_toolSettings.setShortcut("Ctrl+Shift+T")
         self.mi_toolSettings.triggered.connect(self.on_miToolSettings)
+        self.mi_projectSettings.setShortcut("Ctrl+Shift+P")
+        self.mi_projectSettings.triggered.connect(self.on_miProjectSettings)
         #--- Menu Help ---#
         #- Log Level
         for level in self.log.levels:
@@ -124,10 +126,10 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         #-- Grade 2 --#
         for menuItem in [self.mi_newProject]:
             self._editMenuVisibility(menuItem, grade=2)
-        #-- Grade 4 --#
+        #-- Grade 3 --#
         for menuItem in [self.mi_projectSettings]:
             if self._fdn._project.project is not None:
-                self._editMenuVisibility(menuItem, grade=4)
+                self._editMenuVisibility(menuItem, grade=3)
 
     def _editMenuVisibility(self, menuItem, grade=None, state=None):
         """
@@ -224,8 +226,18 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         Launch toolSettings dialog
         """
         self.log.detail(">>> Launch 'Tool Settings' ...")
-        dial_ts = toolSettings.ToolSettings(self._fdn, parent=self)
+        dial_ts = settings.ToolSettings(self._fdn, parent=self)
         dial_ts.exec_()
+
+    def on_miProjectSettings(self):
+        """
+        Command launched when 'Project Settings' QMenuItem is triggered
+
+        Launch projectSettings dialog
+        """
+        self.log.detail(">>> Launch 'Project Settings' ...")
+        dial_ps = settings.ProjectSettings(self._fdn, parent=self)
+        dial_ps.exec_()
 
     def on_miLogLevel(self, logLevel):
         """
@@ -249,9 +261,7 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         self._fdn.log.level = logLevel
         self._fdn._groups.log.level = logLevel
         self._fdn._users.log.level = logLevel
-        # self._fdn._project.log.level = logLevel
-        # for ctxtObj in self._fdn._project.contexts:
-        #     ctxtObj.log.level = logLevel
+        self._fdn._project.log.level = logLevel
 
     def on_miStyle(self, style):
         """
@@ -273,7 +283,6 @@ class FondationUi(QtGui.QMainWindow, fondationUI.Ui_mw_fondation):
         self.setStyleSheet(pQt.Style().getStyle(style))
 
 
-
 def launch(project=None, logLvl='info'):
     """
     Foundation launcher
@@ -291,6 +300,6 @@ def launch(project=None, logLvl='info'):
     sys.exit(app.exec_())
 
 
-
 if __name__ == '__main__':
-    launch(logLvl='detail')
+    # launch(logLvl='detail')
+    launch(project='animTest--ANT', logLvl='detail')

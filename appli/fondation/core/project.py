@@ -214,6 +214,13 @@ class Project(object):
         else:
             raise ValueError("User %r is not set as projectUser in %s !" % (self._fdn.__user__, project))
 
+    def reloadProject(self):
+        """
+        Reload current project
+        """
+        self.log.info("#--- Relooad Project: %r ---#" % self.project)
+        self.loadProject(self.project)
+
     def writeProject(self):
         """
         Write project file

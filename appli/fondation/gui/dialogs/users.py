@@ -25,6 +25,7 @@ class Users(basicTreeUi.BasicTree):
         self._fdn = self.pWidget._fdn
         self._groups = self._fdn._groups
         self._users = self._fdn._users
+        self._project = self._fdn._project
         super(Users, self).__init__(pWidget)
 
     def _initWidget(self):
@@ -33,6 +34,7 @@ class Users(basicTreeUi.BasicTree):
         """
         self.log = self.pWidget.log
         super(Users, self)._initWidget()
+        self._project.reloadProject()
         if self.settingsMode == 'tool':
             self._users.collecteUsers(clear=True)
         else:
@@ -436,6 +438,7 @@ class Users(basicTreeUi.BasicTree):
         """
         super(Users, self).on_cancel()
         self.pWidget.rf_editedItemStyle()
+        print self._project.watchers
 
     def on_discard(self):
         """
